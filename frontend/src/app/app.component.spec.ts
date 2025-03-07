@@ -6,19 +6,14 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import en from '../assets/i18n/en.json';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { getTranslocoModule } from './transloco/testing/transloco-testing.module';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         AppComponent,
-        TranslocoTestingModule.forRoot({
-          langs: { en },
-          translocoConfig: {
-            availableLangs: ['en'],
-            defaultLang: 'en',
-          }
-        })
+        getTranslocoModule()
       ],
       providers: [
         provideHttpClient(),
