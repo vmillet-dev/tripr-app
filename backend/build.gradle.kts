@@ -1,5 +1,3 @@
-import org.springframework.boot.gradle.dsl.SpringBootExtension
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
@@ -14,10 +12,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
-
-configure<SpringBootExtension> {
-    mainClass.set("com.adsearch.AdSearchApplication")
 }
 
 repositories {
