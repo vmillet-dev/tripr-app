@@ -59,7 +59,7 @@ export class RegisterComponent implements OnInit {
       email: this.f['email'].value as string
     }).subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/login'], { queryParams: { registered: true } });
       },
       error: error => {
         this.error = error.error?.message || 'Registration failed';

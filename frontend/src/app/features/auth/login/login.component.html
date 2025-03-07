@@ -5,7 +5,7 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">{{ 'app.auth.login.username' | transloco }}</label>
-        <input type="text" id="username" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
+        <input type="text" id="username" data-cy="username-input" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
         <div *ngIf="f['username'].touched && f['username'].errors" class="invalid-feedback">
           <div *ngIf="f['username'].errors['required']">Username is required</div>
         </div>
@@ -13,7 +13,7 @@
       
       <div class="form-group">
         <label for="password">{{ 'app.auth.login.password' | transloco }}</label>
-        <input type="password" id="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
+        <input type="password" id="password" data-cy="password-input" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
         <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
           <div *ngIf="f['password'].errors['required']">Password is required</div>
         </div>
@@ -24,13 +24,16 @@
       </div>
       
       <div class="form-group">
-        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading">
+        <button type="submit" data-cy="login-button" class="btn btn-primary" [disabled]="loginForm.invalid || loading">
           <span *ngIf="loading" class="spinner"></span>
           {{ 'app.auth.login.submit' | transloco }}
         </button>
       </div>
       
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      <div *ngIf="!error && router.url.includes('?registered=true')" class="alert alert-success" data-cy="success-message">
+        {{ 'app.auth.login.registrationSuccess' | transloco }}
+      </div>
     </form>
     
     <div class="auth-footer">
