@@ -1,6 +1,7 @@
 package com.adsearch.integration
 
 import com.adsearch.infrastructure.web.dto.AuthRequestDto
+import com.adsearch.infrastructure.web.dto.RegisterRequestDto
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -11,22 +12,47 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.test.annotation.DirtiesContext
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AuthControllerIntegrationTest : AbstractIntegrationTest() {
     
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
     
+    @BeforeEach
+    fun setup() {
+        // Create a test user for authentication
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+        
+        val registerRequest = RegisterRequestDto(
+            username = "testuser",
+            password = "password",
+            email = "testuser@example.com"
+        )
+        
+        try {
+            restTemplate.postForEntity(
+                "http://localhost:$port/api/auth/register",
+                HttpEntity(registerRequest, headers),
+                Map::class.java
+            )
+        } catch (e: Exception) {
+            // If registration fails (e.g., user already exists), log but continue
+            println("User registration failed, likely already exists: ${e.message}")
+        }
+    }
+    
     @Test
-    @Disabled("Temporarily disabled until user authentication is properly set up in test environment")
     fun `should login with valid credentials`() {
         // Given
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         
         val request = AuthRequestDto(
-            username = "user",
+            username = "testuser",
             password = "password"
         )
         
@@ -43,6 +69,6 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
         assertEquals(HttpStatus.OK, response.statusCode)
         assertNotNull(response.body)
         assertNotNull(response.body!!["accessToken"])
-        assertEquals("user", response.body!!["username"])
+        assertEquals("testuser", response.body!!["username"])
     }
 }

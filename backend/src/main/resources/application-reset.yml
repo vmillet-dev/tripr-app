@@ -1,16 +1,16 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
   liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    drop-first: true
-    clear-checksums: true
+    enabled: false
+  sql:
+    init:
+      mode: never
 
 logging:
   level:
@@ -20,12 +20,3 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     liquibase: INFO
-
-# Swagger UI configuration
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha

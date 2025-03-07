@@ -21,15 +21,20 @@ abstract class AbstractIntegrationTest {
     
     companion object {
         @Container
-        val postgresContainer = PostgreSQLContainer<Nothing>(DockerImageName.parse("postgres:17.3")).apply {
+        val postgresContainer = PostgreSQLContainer<Nothing>("postgres:16-alpine").apply {
             withDatabaseName("testdb")
             withUsername("test")
             withPassword("test")
+            withCommand("postgres", "-c", "max_connections=50")
+            // Don't reuse containers to avoid connection issues
+            withReuse(false)
         }
         
         @Container
-        val mailpitContainer = GenericContainer<Nothing>(DockerImageName.parse("axllent/mailpit:v1.23")).apply {
+        val mailpitContainer = GenericContainer<Nothing>("axllent/mailpit:v1.23").apply {
             withExposedPorts(1025, 8025)
+            // Don't reuse containers to avoid connection issues
+            withReuse(false)
         }
         
         @JvmStatic
@@ -39,12 +44,30 @@ abstract class AbstractIntegrationTest {
             registry.add("spring.datasource.username") { postgresContainer.username }
             registry.add("spring.datasource.password") { postgresContainer.password }
             
-            // Configure JPA to create the schema automatically for tests
+            // Use Hibernate for schema management in tests
             registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
             registry.add("spring.liquibase.enabled") { "false" }
+            registry.add("spring.sql.init.mode") { "never" }
+            
+            // Configure HikariCP for tests with more conservative settings
+            registry.add("spring.datasource.hikari.connection-timeout") { "30000" }
+            registry.add("spring.datasource.hikari.maximum-pool-size") { "5" }
+            registry.add("spring.datasource.hikari.minimum-idle") { "2" }
+            registry.add("spring.datasource.hikari.idle-timeout") { "30000" }
+            registry.add("spring.datasource.hikari.max-lifetime") { "60000" }
+            registry.add("spring.datasource.hikari.validation-timeout") { "5000" }
+            registry.add("spring.datasource.hikari.auto-commit") { "true" }
+            registry.add("spring.datasource.hikari.connection-test-query") { "SELECT 1" }
+            registry.add("spring.datasource.hikari.leak-detection-threshold") { "30000" }
             
             registry.add("spring.mail.host") { "localhost" }
             registry.add("spring.mail.port") { mailpitContainer.getMappedPort(1025) }
+            registry.add("spring.mail.username") { "" }
+            registry.add("spring.mail.password") { "" }
+            registry.add("spring.mail.properties.mail.smtp.auth") { "false" }
+            registry.add("spring.mail.properties.mail.smtp.starttls.enable") { "false" }
+            
+            registry.add("mailpit.url") { "http://localhost:${mailpitContainer.getMappedPort(8025)}" }
         }
     }
 }

@@ -3,8 +3,25 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        connection:
+          provider_disables_autocommit: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     enabled: false
+  datasource:
+    hikari:
+      connection-timeout: 30000
+      minimum-idle: 2
+      maximum-pool-size: 5
+      idle-timeout: 30000
+      max-lifetime: 60000
+      validation-timeout: 5000
+      auto-commit: true
+      connection-test-query: SELECT 1
+      leak-detection-threshold: 30000
 
 logging:
   level:
@@ -12,6 +29,7 @@ logging:
     com.adsearch: DEBUG
     org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
+    com.zaxxer.hikari: DEBUG
 
 # JWT configuration for tests
 jwt:
