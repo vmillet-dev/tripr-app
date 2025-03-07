@@ -106,9 +106,4 @@ jobs:
       - name: Run frontend tests
         working-directory: frontend
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
-          export CHROME_BIN=/usr/bin/chromium-browser
-          export DISPLAY=:99
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-          npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
+          npm run test
