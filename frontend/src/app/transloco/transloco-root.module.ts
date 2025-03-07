@@ -8,7 +8,7 @@ import {
   translocoConfig,
   TranslocoModule,
   provideTransloco
-} from '@ngneat/transloco';
+} from '@jsverse/transloco';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
