@@ -1,4 +1,4 @@
-import { TranslocoTestingModule, TranslocoTestingOptions } from '@jsverse/transloco';
+import { TranslocoTestingModule, TranslocoTestingOptions, TRANSLOCO_TRANSPILER } from '@jsverse/transloco';
 import en from '../../../assets/i18n/en.json';
 
 export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
@@ -10,6 +10,9 @@ export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
       reRenderOnLangChange: true,
     },
     preloadLangs: true,
-    ...options
+    ...options,
+    providers: [
+      { provide: TRANSLOCO_TRANSPILER, useValue: { interpolate: (value: string) => value } }
+    ]
   });
 }
