@@ -25,16 +25,18 @@ abstract class AbstractIntegrationTest {
             withDatabaseName("testdb")
             withUsername("test")
             withPassword("test")
-            withCommand("postgres", "-c", "max_connections=50")
-            // Don't reuse containers to avoid connection issues
-            withReuse(false)
+            withCommand("postgres", "-c", "max_connections=50", "-c", "log_statement=all")
+            // Use container reuse to improve test performance
+            withReuse(true)
+            withStartupTimeout(java.time.Duration.ofSeconds(60))
         }
         
         @Container
         val mailpitContainer = GenericContainer<Nothing>("axllent/mailpit:v1.23").apply {
             withExposedPorts(1025, 8025)
-            // Don't reuse containers to avoid connection issues
-            withReuse(false)
+            // Use container reuse to improve test performance
+            withReuse(true)
+            withStartupTimeout(java.time.Duration.ofSeconds(30))
         }
         
         @JvmStatic
