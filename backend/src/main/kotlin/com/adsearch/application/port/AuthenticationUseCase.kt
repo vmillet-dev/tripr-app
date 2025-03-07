@@ -35,4 +35,9 @@ interface AuthenticationUseCase {
      * Validate an access token
      */
     fun validateToken(token: String): Boolean
+    
+    /**
+     * Register a new user
+     */
+    suspend fun register(authRequest: AuthRequest, email: String)
 }

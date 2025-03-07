@@ -5,14 +5,17 @@ import com.adsearch.application.service.AuthenticationService
 import com.adsearch.application.service.RefreshTokenService
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.User
+import com.adsearch.domain.port.UserRepositoryPort
 import com.adsearch.infrastructure.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.web.dto.AuthResponseDto
+import com.adsearch.infrastructure.web.dto.RegisterRequestDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,7 +30,9 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authenticationUseCase: AuthenticationUseCase,
     private val authenticationService: AuthenticationService,
-    private val refreshTokenService: RefreshTokenService
+    private val refreshTokenService: RefreshTokenService,
+    private val userRepository: UserRepositoryPort,
+    private val passwordEncoder: PasswordEncoder
 ) {
     
     /**
@@ -97,5 +102,27 @@ class AuthController(
         authenticationUseCase.logout(request, response)
         
         return ResponseEntity.ok(mapOf("message" to "Logged out successfully"))
+    }
+    
+    /**
+     * Register endpoint
+     */
+    @PostMapping("/register")
+    @Operation(summary = "Register new user", description = "Registers a new user with username, password, and email")
+    suspend fun register(
+        @Valid @RequestBody request: RegisterRequestDto
+    ): ResponseEntity<Map<String, String>> {
+        return try {
+            val authRequest = AuthRequest(
+                username = request.username,
+                password = request.password
+            )
+            
+            authenticationUseCase.register(authRequest, request.email)
+            
+            ResponseEntity.ok(mapOf("message" to "User registered successfully"))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(mapOf("message" to (e.message ?: "Registration failed")))
+        }
     }
 }

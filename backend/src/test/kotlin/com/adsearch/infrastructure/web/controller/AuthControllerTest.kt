@@ -3,10 +3,12 @@ package com.adsearch.infrastructure.web.controller
 import com.adsearch.application.port.AuthenticationUseCase
 import com.adsearch.application.service.AuthenticationService
 import com.adsearch.application.service.RefreshTokenService
+import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.model.User
 import com.adsearch.infrastructure.web.dto.AuthRequestDto
+import com.adsearch.infrastructure.web.dto.RegisterRequestDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -30,6 +32,8 @@ class AuthControllerTest {
     private lateinit var authenticationUseCase: AuthenticationUseCase
     private lateinit var authenticationService: AuthenticationService
     private lateinit var refreshTokenService: RefreshTokenService
+    private lateinit var userRepository: com.adsearch.domain.port.UserRepositoryPort
+    private lateinit var passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder
     private lateinit var response: HttpServletResponse
     
     @BeforeEach
@@ -37,12 +41,16 @@ class AuthControllerTest {
         authenticationUseCase = mockk()
         authenticationService = mockk()
         refreshTokenService = mockk()
+        userRepository = mockk()
+        passwordEncoder = mockk()
         response = mockk(relaxed = true)
         
         authController = AuthController(
             authenticationUseCase,
             authenticationService,
-            refreshTokenService
+            refreshTokenService,
+            userRepository,
+            passwordEncoder
         )
     }
     
@@ -142,5 +150,35 @@ class AuthControllerTest {
         assertEquals("Logged out successfully", result.body?.get("message"))
         
         coVerify { authenticationUseCase.logout(request, response) }
+    }
+    
+    @Test
+    fun `should register user successfully`() = runBlocking {
+        // Given
+        val registerRequestDto = RegisterRequestDto(
+            username = "newuser",
+            password = "password",
+            email = "newuser@example.com"
+        )
+        
+        val authRequestSlot = slot<AuthRequest>()
+        val emailSlot = slot<String>()
+        
+        coEvery { 
+            authenticationUseCase.register(capture<AuthRequest>(authRequestSlot), capture<String>(emailSlot))
+        } returns Unit
+        
+        // When
+        val result = authController.register(registerRequestDto)
+        
+        // Then
+        assertEquals(HttpStatus.OK, result.statusCode)
+        assertEquals("User registered successfully", result.body?.get("message"))
+        
+        assertEquals("newuser", authRequestSlot.captured.username)
+        assertEquals("password", authRequestSlot.captured.password)
+        assertEquals("newuser@example.com", emailSlot.captured)
+        
+        coVerify { authenticationUseCase.register(any(), any()) }
     }
 }
