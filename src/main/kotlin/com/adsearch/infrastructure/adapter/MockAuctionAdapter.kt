@@ -58,15 +58,15 @@ class MockAuctionAdapter : AdSearchAdapter() {
             }
             
             Ad(
-                id = UUID.randomUUID(),
+                id = 0L,
                 title = title,
                 description = "This is an auction listing for $title. Bidding ends soon!",
                 price = Random.nextDouble(50.0, 5000.0),
                 currency = "USD",
-                imageUrl = "https://auction.example.com/lots/${UUID.randomUUID()}.jpg",
+                imageUrl = "https://auction.example.com/lots/${Random.nextInt(100000, 999999)}.jpg",
                 sourceId = "AU-${Random.nextInt(10000, 99999)}",
                 sourceName = sourceName,
-                externalUrl = "https://auction.example.com/lots/${UUID.randomUUID()}",
+                externalUrl = "https://auction.example.com/lots/${Random.nextInt(100000, 999999)}",
                 createdAt = LocalDateTime.now().minusDays(Random.nextLong(0, 7)),
                 category = selectedCategory,
                 location = listOf("London", "Paris", "New York", "Tokyo", "Berlin").random(),

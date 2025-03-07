@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
-import java.util.UUID
 
 @Repository
 @Primary
@@ -21,7 +20,7 @@ class JpaUserRepository(
         entity.toDomain()
     }
     
-    override suspend fun findById(id: UUID): User? = withContext(Dispatchers.IO) {
+    override suspend fun findById(id: Long): User? = withContext(Dispatchers.IO) {
         userJpaRepository.findById(id).orElse(null)?.toDomain()
     }
     

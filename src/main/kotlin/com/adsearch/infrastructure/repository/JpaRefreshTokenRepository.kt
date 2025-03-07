@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
-import java.util.UUID
 
 @Repository
 @Primary
@@ -21,7 +20,7 @@ class JpaRefreshTokenRepository(
         entity.toDomain()
     }
     
-    override suspend fun findByUserId(userId: UUID): List<RefreshToken> = withContext(Dispatchers.IO) {
+    override suspend fun findByUserId(userId: Long): List<RefreshToken> = withContext(Dispatchers.IO) {
         // Since the JPA repository doesn't have a findByUserId method that returns a list,
         // we'll use findAll and filter the results
         refreshTokenJpaRepository.findAll()
@@ -33,11 +32,11 @@ class JpaRefreshTokenRepository(
         refreshTokenJpaRepository.findByToken(token)?.toDomain()
     }
     
-    override suspend fun deleteById(id: UUID) = withContext(Dispatchers.IO) {
+    override suspend fun deleteById(id: Long) = withContext(Dispatchers.IO) {
         refreshTokenJpaRepository.deleteById(id)
     }
     
-    override suspend fun deleteByUserId(userId: UUID) = withContext(Dispatchers.IO) {
+    override suspend fun deleteByUserId(userId: Long) = withContext(Dispatchers.IO) {
         refreshTokenJpaRepository.deleteByUserId(userId)
     }
 }

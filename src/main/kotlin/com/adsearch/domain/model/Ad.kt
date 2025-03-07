@@ -1,13 +1,12 @@
 package com.adsearch.domain.model
 
 import java.time.LocalDateTime
-import java.util.UUID
 
 /**
  * Core domain entity representing an advertisement
  */
 data class Ad(
-    val id: UUID = UUID.randomUUID(),
+    val id: Long = 0,
     val title: String,
     val description: String,
     val price: Double? = null,

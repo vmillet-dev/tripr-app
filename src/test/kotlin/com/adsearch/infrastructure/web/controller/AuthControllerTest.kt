@@ -57,13 +57,13 @@ class AuthControllerTest {
         val authResponse = AuthResponse(
             accessToken = "test-access-token",
             username = "testuser",
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         val user = User(
             username = "testuser",
             password = "",
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         val refreshToken = RefreshToken(
@@ -106,7 +106,7 @@ class AuthControllerTest {
         val authResponse = AuthResponse(
             accessToken = "new-access-token",
             username = "testuser",
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         coEvery { 

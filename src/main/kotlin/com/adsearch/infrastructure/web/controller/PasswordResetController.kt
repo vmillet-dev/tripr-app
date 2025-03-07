@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.web.controller
 
-import com.adsearch.application.service.PasswordResetService
+import com.adsearch.application.port.PasswordResetUseCase
 import com.adsearch.infrastructure.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.web.dto.PasswordResetRequestDto
 import io.swagger.v3.oas.annotations.Operation
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/auth/password")
 @Tag(name = "Password Reset", description = "API for password reset operations")
 class PasswordResetController(
-    private val passwordResetService: PasswordResetService,
+    private val passwordResetUseCase: PasswordResetUseCase,
     private val ioDispatcher: CoroutineDispatcher
 ) {
     
@@ -41,7 +41,7 @@ class PasswordResetController(
         logger.info("Received password reset request for username: ${request.username}")
         
         return withContext(ioDispatcher) {
-            passwordResetService.requestPasswordReset(request.username)
+            passwordResetUseCase.requestPasswordReset(request.username)
             
             ResponseEntity.ok(mapOf(
                 "message" to "If the username exists, a password reset email has been sent"
@@ -60,7 +60,7 @@ class PasswordResetController(
         logger.info("Received password reset with token")
         
         return withContext(ioDispatcher) {
-            passwordResetService.resetPassword(request.token, request.newPassword)
+            passwordResetUseCase.resetPassword(request.token, request.newPassword)
             
             ResponseEntity.ok(mapOf(
                 "message" to "Password has been reset successfully"
@@ -79,7 +79,7 @@ class PasswordResetController(
         logger.info("Validating password reset token")
         
         return withContext(ioDispatcher) {
-            val isValid = passwordResetService.validateToken(token)
+            val isValid = passwordResetUseCase.validateToken(token)
             
             ResponseEntity.ok(mapOf(
                 "valid" to isValid

@@ -2,13 +2,12 @@ package com.adsearch.infrastructure.web.dto
 
 import com.adsearch.domain.model.Ad
 import java.time.LocalDateTime
-import java.util.UUID
 
 /**
  * Data Transfer Object for Ad entity
  */
 data class AdDto(
-    val id: UUID,
+    val id: Long,
     val title: String,
     val description: String,
     val price: Double?,

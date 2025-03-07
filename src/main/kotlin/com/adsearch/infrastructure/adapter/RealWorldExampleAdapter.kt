@@ -81,7 +81,7 @@ class RealWorldExampleAdapter(
         return SearchResult(
             ads = listOf(
                 Ad(
-                    id = UUID.randomUUID(),
+                    id = 0L,
                     title = "Example API Ad",
                     description = "This is a placeholder for a real API response",
                     price = 99.99,
@@ -133,7 +133,7 @@ class RealWorldExampleAdapter(
     private fun mapToSearchResult(response: ExampleApiResponse): SearchResult {
         val ads = response.items.map { item ->
             Ad(
-                id = UUID.randomUUID(),
+                id = 0L,
                 title = item.title,
                 description = item.description,
                 price = item.price,

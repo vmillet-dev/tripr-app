@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 class JwtServiceTest {
     
@@ -24,10 +23,10 @@ class JwtServiceTest {
     fun `should generate valid token`() {
         // Given
         val user = User(
-            id = UUID.randomUUID(),
+            id = 1L,
             username = "testuser",
             password = "password",
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         // When
@@ -52,9 +51,9 @@ class JwtServiceTest {
     @Test
     fun `should extract claims from token`() {
         // Given
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val username = "testuser"
-        val roles = listOf("USER", "ADMIN")
+        val roles = mutableListOf("USER", "ADMIN")
         
         val user = User(
             id = userId,

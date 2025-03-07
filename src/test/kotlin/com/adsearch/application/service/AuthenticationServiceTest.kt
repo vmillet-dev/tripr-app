@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.Instant
-import java.util.UUID
 
 class AuthenticationServiceTest {
     
@@ -67,10 +66,10 @@ class AuthenticationServiceTest {
         val authRequest = AuthRequest(username, password)
         
         val user = User(
-            id = UUID.randomUUID(),
+            id = 2L,
             username = username,
             password = encodedPassword,
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         val accessToken = "test-access-token"
@@ -123,10 +122,10 @@ class AuthenticationServiceTest {
         val authRequest = AuthRequest(username, password)
         
         val user = User(
-            id = UUID.randomUUID(),
+            id = 2L,
             username = username,
             password = encodedPassword,
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         coEvery { userRepository.findByUsername(username) } returns user
@@ -147,10 +146,10 @@ class AuthenticationServiceTest {
     fun `should refresh token successfully`() = runBlocking {
         // Given
         val refreshTokenValue = "test-refresh-token"
-        val userId = UUID.randomUUID()
+        val userId = 1L
         
         val refreshToken = RefreshToken(
-            id = UUID.randomUUID(),
+            id = 2L,
             userId = userId,
             token = refreshTokenValue,
             expiryDate = Instant.now().plusSeconds(3600)
@@ -160,11 +159,11 @@ class AuthenticationServiceTest {
             id = userId,
             username = "testuser",
             password = "encoded-password",
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         val newRefreshToken = RefreshToken(
-            id = UUID.randomUUID(),
+            id = 2L,
             userId = userId,
             token = "new-refresh-token",
             expiryDate = Instant.now().plusSeconds(3600)
@@ -223,10 +222,10 @@ class AuthenticationServiceTest {
     fun `should logout successfully`() = runBlocking {
         // Given
         val refreshTokenValue = "test-refresh-token"
-        val userId = UUID.randomUUID()
+        val userId = 1L
         
         val refreshToken = RefreshToken(
-            id = UUID.randomUUID(),
+            id = 2L,
             userId = userId,
             token = refreshTokenValue,
             expiryDate = Instant.now().plusSeconds(3600)
@@ -261,14 +260,14 @@ class AuthenticationServiceTest {
     @Test
     fun `should get current user from valid token`() = runBlocking {
         // Given
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val token = "valid-token"
         
         val user = User(
             id = userId,
             username = "testuser",
             password = "encoded-password",
-            roles = listOf("USER")
+            roles = mutableListOf("USER")
         )
         
         val request = mockk<HttpServletRequest>()

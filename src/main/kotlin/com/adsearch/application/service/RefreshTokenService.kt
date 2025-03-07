@@ -7,7 +7,6 @@ import com.adsearch.domain.port.RefreshTokenRepositoryPort
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.UUID
 
 /**
  * Service for refresh token operations
@@ -29,8 +28,8 @@ class RefreshTokenService(
         
         // For test users, always use the fixed ID
         val userId = when (user.username) {
-            "user" -> UUID.fromString("11111111-1111-1111-1111-111111111111")
-            "admin" -> UUID.fromString("22222222-2222-2222-2222-222222222222")
+            "user" -> 1L
+            "admin" -> 2L
             else -> user.id
         }
         
@@ -39,7 +38,7 @@ class RefreshTokenService(
         
         val refreshToken = RefreshToken(
             userId = userId,
-            token = UUID.randomUUID().toString(),
+            token = java.util.UUID.randomUUID().toString(),
             expiryDate = Instant.now().plusMillis(refreshTokenExpiration)
         )
         
@@ -71,7 +70,7 @@ class RefreshTokenService(
     /**
      * Delete all refresh tokens for a user
      */
-    suspend fun deleteByUserId(userId: UUID) {
+    suspend fun deleteByUserId(userId: Long) {
         refreshTokenRepository.deleteByUserId(userId)
     }
 }

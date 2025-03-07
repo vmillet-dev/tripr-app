@@ -8,7 +8,6 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.Date
-import java.util.UUID
 
 /**
  * Service for JWT token operations
@@ -61,14 +60,14 @@ class JwtService(
     /**
      * Extract user ID from a JWT token
      */
-    fun getUserIdFromToken(token: String): UUID {
+    fun getUserIdFromToken(token: String): Long {
         val algorithm = Algorithm.HMAC256(secret)
         val verifier = JWT.require(algorithm)
             .withIssuer(issuer)
             .build()
         
         val jwt = verifier.verify(token)
-        return UUID.fromString(jwt.subject)
+        return jwt.subject.toLong()
     }
     
     /**

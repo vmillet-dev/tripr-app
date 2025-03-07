@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.Instant
-import java.util.UUID
 
 class PasswordResetServiceTest {
     
@@ -55,7 +54,7 @@ class PasswordResetServiceTest {
         // Given
         val username = "user"
         val user = User(
-            id = UUID.randomUUID(),
+            id = 1L,
             username = username,
             password = "encoded-password"
         )
@@ -97,7 +96,7 @@ class PasswordResetServiceTest {
         val newPassword = "new-password"
         val encodedPassword = "encoded-new-password"
         
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val user = User(
             id = userId,
             username = "user",
@@ -152,7 +151,7 @@ class PasswordResetServiceTest {
         val token = "expired-token"
         val newPassword = "new-password"
         
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val resetToken = PasswordResetToken(
             userId = userId,
             token = token,
@@ -178,7 +177,7 @@ class PasswordResetServiceTest {
         val token = "used-token"
         val newPassword = "new-password"
         
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val resetToken = PasswordResetToken(
             userId = userId,
             token = token,
@@ -202,7 +201,7 @@ class PasswordResetServiceTest {
         val token = "valid-token"
         val newPassword = "new-password"
         
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val resetToken = PasswordResetToken(
             userId = userId,
             token = token,
@@ -228,7 +227,7 @@ class PasswordResetServiceTest {
         val token = "valid-token"
         
         val resetToken = PasswordResetToken(
-            userId = UUID.randomUUID(),
+            userId = 2L,
             token = token,
             expiryDate = Instant.now().plusMillis(tokenExpiration),
             used = false
@@ -265,7 +264,7 @@ class PasswordResetServiceTest {
         val token = "expired-token"
         
         val resetToken = PasswordResetToken(
-            userId = UUID.randomUUID(),
+            userId = 2L,
             token = token,
             expiryDate = Instant.now().minusMillis(1000), // Expired token
             used = false
@@ -289,7 +288,7 @@ class PasswordResetServiceTest {
         val token = "used-token"
         
         val resetToken = PasswordResetToken(
-            userId = UUID.randomUUID(),
+            userId = 2L,
             token = token,
             expiryDate = Instant.now().plusMillis(tokenExpiration),
             used = true // Already used token

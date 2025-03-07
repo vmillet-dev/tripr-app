@@ -1,7 +1,6 @@
 package com.adsearch.domain.port
 
 import com.adsearch.domain.model.RefreshToken
-import java.util.UUID
 
 /**
  * Port for refresh token repository operations
@@ -16,7 +15,7 @@ interface RefreshTokenRepositoryPort {
     /**
      * Find all refresh tokens for a user
      */
-    suspend fun findByUserId(userId: UUID): List<RefreshToken>
+    suspend fun findByUserId(userId: Long): List<RefreshToken>
     
     /**
      * Save a refresh token
@@ -26,10 +25,10 @@ interface RefreshTokenRepositoryPort {
     /**
      * Delete a refresh token
      */
-    suspend fun deleteById(id: UUID)
+    suspend fun deleteById(id: Long)
     
     /**
      * Delete all refresh tokens for a user
      */
-    suspend fun deleteByUserId(userId: UUID)
+    suspend fun deleteByUserId(userId: Long)
 }

@@ -5,15 +5,17 @@ import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.util.UUID
 
 @Entity
 @Table(name = "users")
 class UserEntity(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
     
     @Column(unique = true, nullable = false)
     val username: String,
@@ -26,7 +28,7 @@ class UserEntity(
 ) {
     // Default constructor required by JPA
     constructor() : this(
-        id = UUID.randomUUID(),
+        id = 0,
         username = "",
         password = "",
         roles = mutableListOf()

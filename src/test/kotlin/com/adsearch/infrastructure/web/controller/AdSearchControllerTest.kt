@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import java.util.UUID
 
 class AdSearchControllerTest {
     
@@ -31,7 +30,7 @@ class AdSearchControllerTest {
     fun `should return search results`() = runBlocking {
         // Given
         val ad = Ad(
-            id = UUID.randomUUID(),
+            id = 1L,
             title = "Test Ad",
             description = "Test Description",
             sourceId = "1",

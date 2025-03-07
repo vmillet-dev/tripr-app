@@ -3,19 +3,21 @@ package com.adsearch.infrastructure.repository.entity
 import com.adsearch.domain.model.RefreshToken
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.Instant
-import java.util.UUID
 
 @Entity
 @Table(name = "refresh_tokens")
 class RefreshTokenEntity(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
     
     @Column(nullable = false)
-    val userId: UUID,
+    val userId: Long,
     
     @Column(nullable = false, unique = true)
     val token: String,
@@ -28,8 +30,8 @@ class RefreshTokenEntity(
 ) {
     // Default constructor required by JPA
     constructor() : this(
-        id = UUID.randomUUID(),
-        userId = UUID.randomUUID(),
+        id = 0,
+        userId = 0,
         token = "",
         expiryDate = Instant.now(),
         revoked = false

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Instant
-import java.util.UUID
 
 class RefreshTokenServiceTest {
     
@@ -37,7 +36,7 @@ class RefreshTokenServiceTest {
     fun `should create refresh token`() = runBlocking {
         // Given
         val user = User(
-            id = UUID.randomUUID(),
+            id = 1L,
             username = "testuser",
             password = "password"
         )
@@ -64,9 +63,9 @@ class RefreshTokenServiceTest {
     @Test
     fun `should verify valid token`() = runBlocking {
         // Given
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val validToken = RefreshToken(
-            id = UUID.randomUUID(),
+            id = 1L,
             userId = userId,
             token = "valid-token",
             expiryDate = Instant.now().plusMillis(refreshTokenExpiration),
@@ -83,9 +82,9 @@ class RefreshTokenServiceTest {
     @Test
     fun `should throw exception for expired token`() = runBlocking {
         // Given
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val expiredToken = RefreshToken(
-            id = UUID.randomUUID(),
+            id = 1L,
             userId = userId,
             token = "expired-token",
             expiryDate = Instant.now().minusSeconds(10),
@@ -107,9 +106,9 @@ class RefreshTokenServiceTest {
     @Test
     fun `should throw exception for revoked token`() = runBlocking {
         // Given
-        val userId = UUID.randomUUID()
+        val userId = 1L
         val revokedToken = RefreshToken(
-            id = UUID.randomUUID(),
+            id = 1L,
             userId = userId,
             token = "revoked-token",
             expiryDate = Instant.now().plusMillis(refreshTokenExpiration),
@@ -133,8 +132,8 @@ class RefreshTokenServiceTest {
         // Given
         val tokenString = "test-token"
         val refreshToken = RefreshToken(
-            id = UUID.randomUUID(),
-            userId = UUID.randomUUID(),
+            id = 1L,
+            userId = 2L,
             token = tokenString,
             expiryDate = Instant.now().plusMillis(refreshTokenExpiration)
         )
@@ -152,7 +151,7 @@ class RefreshTokenServiceTest {
     @Test
     fun `should delete tokens by user ID`() = runBlocking {
         // Given
-        val userId = UUID.randomUUID()
+        val userId = 1L
         
         coEvery { refreshTokenRepository.deleteByUserId(userId) } returns Unit
         

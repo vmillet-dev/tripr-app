@@ -58,15 +58,15 @@ class MockMarketplaceAdapter : AdSearchAdapter() {
             }
             
             Ad(
-                id = UUID.randomUUID(),
+                id = 0L,
                 title = title,
                 description = "This is a marketplace listing for $title. Great condition, must see!",
                 price = Random.nextDouble(5.0, 500.0),
                 currency = "USD",
-                imageUrl = "https://marketplace.example.com/images/${UUID.randomUUID()}.jpg",
+                imageUrl = "https://marketplace.example.com/images/${Random.nextInt(100000, 999999)}.jpg",
                 sourceId = "MP-${Random.nextInt(10000, 99999)}",
                 sourceName = sourceName,
-                externalUrl = "https://marketplace.example.com/items/${UUID.randomUUID()}",
+                externalUrl = "https://marketplace.example.com/items/${Random.nextInt(100000, 999999)}",
                 createdAt = LocalDateTime.now().minusDays(Random.nextLong(0, 14)),
                 category = selectedCategory,
                 location = listOf("Boston", "Seattle", "Austin", "Denver", "Miami").random(),

@@ -1,7 +1,6 @@
 package com.adsearch.domain.port
 
 import com.adsearch.domain.model.PasswordResetToken
-import java.util.UUID
 
 /**
  * Port for password reset token repository operations
@@ -16,7 +15,7 @@ interface PasswordResetTokenRepositoryPort {
     /**
      * Find all tokens for a user
      */
-    suspend fun findByUserId(userId: UUID): List<PasswordResetToken>
+    suspend fun findByUserId(userId: Long): List<PasswordResetToken>
     
     /**
      * Save a token
@@ -26,10 +25,10 @@ interface PasswordResetTokenRepositoryPort {
     /**
      * Delete a token by ID
      */
-    suspend fun deleteById(id: UUID)
+    suspend fun deleteById(id: Long)
     
     /**
      * Delete all tokens for a user
      */
-    suspend fun deleteByUserId(userId: UUID)
+    suspend fun deleteByUserId(userId: Long)
 }

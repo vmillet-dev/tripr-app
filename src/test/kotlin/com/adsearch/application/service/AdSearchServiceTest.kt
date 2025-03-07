@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
 
 class AdSearchServiceTest {
     
@@ -57,7 +56,7 @@ class AdSearchServiceTest {
     fun `should aggregate results from all available sources`() = runBlocking {
         // Given
         val ad1 = Ad(
-            id = UUID.randomUUID(),
+            id = 1L,
             title = "Ad 1",
             description = "Description 1",
             sourceId = "1",
@@ -65,7 +64,7 @@ class AdSearchServiceTest {
         )
         
         val ad2 = Ad(
-            id = UUID.randomUUID(),
+            id = 2L,
             title = "Ad 2",
             description = "Description 2",
             sourceId = "2",

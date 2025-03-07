@@ -58,15 +58,15 @@ class MockClassifiedsAdapter : AdSearchAdapter() {
             }
             
             Ad(
-                id = UUID.randomUUID(),
+                id = 0L,
                 title = title,
                 description = "This is a mock ad for $title with detailed description",
                 price = Random.nextDouble(10.0, 1000.0),
                 currency = "USD",
-                imageUrl = "https://example.com/images/${UUID.randomUUID()}.jpg",
+                imageUrl = "https://example.com/images/${Random.nextInt(100000, 999999)}.jpg",
                 sourceId = "MC-${Random.nextInt(10000, 99999)}",
                 sourceName = sourceName,
-                externalUrl = "https://mockclassifieds.example.com/ads/${UUID.randomUUID()}",
+                externalUrl = "https://mockclassifieds.example.com/ads/${Random.nextInt(100000, 999999)}",
                 createdAt = LocalDateTime.now().minusDays(Random.nextLong(0, 30)),
                 category = selectedCategory,
                 location = listOf("New York", "Los Angeles", "Chicago", "Houston", "Phoenix").random(),

@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
-import java.util.UUID
 
 @Repository
 @Primary
@@ -25,15 +24,15 @@ class JpaPasswordResetTokenRepository(
         passwordResetTokenJpaRepository.findByToken(token)?.toDomain()
     }
     
-    override suspend fun findByUserId(userId: UUID): List<PasswordResetToken> = withContext(Dispatchers.IO) {
+    override suspend fun findByUserId(userId: Long): List<PasswordResetToken> = withContext(Dispatchers.IO) {
         passwordResetTokenJpaRepository.findByUserId(userId).map { it.toDomain() }
     }
     
-    override suspend fun deleteById(id: UUID) = withContext(Dispatchers.IO) {
+    override suspend fun deleteById(id: Long) = withContext(Dispatchers.IO) {
         passwordResetTokenJpaRepository.deleteById(id)
     }
     
-    override suspend fun deleteByUserId(userId: UUID) = withContext(Dispatchers.IO) {
+    override suspend fun deleteByUserId(userId: Long) = withContext(Dispatchers.IO) {
         passwordResetTokenJpaRepository.deleteByUserId(userId)
     }
 }

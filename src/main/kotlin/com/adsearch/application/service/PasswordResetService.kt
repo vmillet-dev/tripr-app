@@ -1,5 +1,6 @@
 package com.adsearch.application.service
 
+import com.adsearch.application.port.PasswordResetUseCase
 import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.UUID
 
 /**
  * Service for password reset operations
@@ -29,14 +29,14 @@ class PasswordResetService(
     
     @Value("\${password-reset.base-url}")
     private val baseUrl: String
-) {
+) : PasswordResetUseCase {
     
     private val logger = LoggerFactory.getLogger(PasswordResetService::class.java)
     
     /**
      * Request a password reset for a user
      */
-    suspend fun requestPasswordReset(username: String) {
+    override suspend fun requestPasswordReset(username: String) {
         val user = userRepository.findByUsername(username)
             ?: throw UserNotFoundException("User not found with username: $username")
         
@@ -46,8 +46,9 @@ class PasswordResetService(
         tokenRepository.deleteByUserId(user.id)
         
         // Create a new token
-        val token = UUID.randomUUID().toString()
+        val token = java.util.UUID.randomUUID().toString()
         val resetToken = PasswordResetToken(
+            id = 0,
             userId = user.id,
             token = token,
             expiryDate = Instant.now().plusMillis(tokenExpiration)
@@ -67,7 +68,7 @@ class PasswordResetService(
     /**
      * Reset a user's password using a token
      */
-    suspend fun resetPassword(token: String, newPassword: String) {
+    override suspend fun resetPassword(token: String, newPassword: String) {
         val resetToken = tokenRepository.findByToken(token)
             ?: throw InvalidTokenException("Invalid password reset token")
         
@@ -107,7 +108,7 @@ class PasswordResetService(
     /**
      * Validate a password reset token
      */
-    suspend fun validateToken(token: String): Boolean {
+    override suspend fun validateToken(token: String): Boolean {
         val resetToken = tokenRepository.findByToken(token) ?: return false
         
         // Check if token is expired

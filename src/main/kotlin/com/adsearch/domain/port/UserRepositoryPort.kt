@@ -1,7 +1,6 @@
 package com.adsearch.domain.port
 
 import com.adsearch.domain.model.User
-import java.util.UUID
 
 /**
  * Port for user repository operations
@@ -16,7 +15,7 @@ interface UserRepositoryPort {
     /**
      * Find a user by ID
      */
-    suspend fun findById(id: UUID): User?
+    suspend fun findById(id: Long): User?
     
     /**
      * Save a user

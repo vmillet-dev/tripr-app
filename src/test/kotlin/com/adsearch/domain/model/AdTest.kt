@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.UUID
 
 class AdTest {
     
@@ -33,7 +32,7 @@ class AdTest {
     
     @Test
     fun `should create ad with all fields`() {
-        val id = UUID.randomUUID()
+        val id = 1L
         val title = "Test Ad"
         val description = "Test Description"
         val price = 99.99

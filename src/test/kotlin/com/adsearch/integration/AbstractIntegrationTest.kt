@@ -39,6 +39,10 @@ abstract class AbstractIntegrationTest {
             registry.add("spring.datasource.username") { postgresContainer.username }
             registry.add("spring.datasource.password") { postgresContainer.password }
             
+            // Configure JPA to create the schema automatically for tests
+            registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
+            registry.add("spring.liquibase.enabled") { "false" }
+            
             registry.add("spring.mail.host") { "localhost" }
             registry.add("spring.mail.port") { mailpitContainer.getMappedPort(1025) }
         }
