@@ -7,9 +7,11 @@ BACKEND_PID=$!
 
 # Wait for backend to start
 echo "Waiting for backend to start..."
-until curl -s http://localhost:8081/api/health > /dev/null; do
-  sleep 1
+until curl -s http://localhost:8081/api/auth/login -o /dev/null -w "%{http_code}" | grep -q "4"; do
+  echo "Backend not ready yet, waiting..."
+  sleep 2
 done
+echo "Backend is ready!"
 
 # Start frontend
 cd ../frontend
