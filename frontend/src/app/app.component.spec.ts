@@ -12,9 +12,6 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         AppComponent,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([]),
         TranslocoTestingModule.forRoot({
           langs: { en },
           translocoConfig: {
@@ -24,6 +21,9 @@ describe('AppComponent', () => {
         })
       ],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { queryParams: {} } } }
       ]
     }).compileComponents();
