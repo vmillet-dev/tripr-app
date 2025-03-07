@@ -2,14 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NgIf } from '@angular/common';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgIf, TranslocoModule]
+  imports: [RouterLink, RouterLinkActive, NgIf, TranslocoPipe]
 })
 export class HeaderComponent implements OnInit {
   isAuthenticated = false;
