@@ -9,7 +9,6 @@ import { TranslocoModule } from '@ngneat/transloco';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  standalone: true,
   imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink, TranslocoModule]
 })
 export class RegisterComponent implements OnInit {
@@ -42,7 +41,7 @@ export class RegisterComponent implements OnInit {
     } else {
       formGroup.get('confirmPassword')?.setErrors(null);
     }
-    
+
     return null;
   }
 

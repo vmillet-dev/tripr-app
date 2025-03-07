@@ -6,7 +6,6 @@ import { TranslocoModule } from '@ngneat/transloco';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
   imports: [TranslocoModule]
 })
 export class DashboardComponent implements OnInit {
