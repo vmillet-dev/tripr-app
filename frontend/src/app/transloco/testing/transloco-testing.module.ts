@@ -8,11 +8,9 @@ export function getTranslocoModule(options: TranslocoTestingOptions = {}) {
       availableLangs: ['en'],
       defaultLang: 'en',
       reRenderOnLangChange: true,
+      transpiler: { interpolate: (value: string) => value }
     },
     preloadLangs: true,
-    ...options,
-    providers: [
-      { provide: TRANSLOCO_TRANSPILER, useValue: { interpolate: (value: string) => value } }
-    ]
+    ...options
   });
 }
