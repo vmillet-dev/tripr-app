@@ -1,16 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import en from '../assets/i18n/en.json';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        AppComponent, 
-        RouterTestingModule,
+        AppComponent,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
         TranslocoTestingModule.forRoot({
           langs: { en },
           translocoConfig: {
