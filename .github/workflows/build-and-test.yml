@@ -43,8 +43,8 @@ jobs:
         image: postgres:17.3
         env:
           POSTGRES_DB: testdb
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
+          POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -76,8 +76,8 @@ jobs:
       run: cd backend && ./gradlew test
       env:
         SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
-        SPRING_DATASOURCE_USERNAME: test
-        SPRING_DATASOURCE_PASSWORD: test
+        SPRING_DATASOURCE_USERNAME: ${{ secrets.TEST_DB_USER }}
+        SPRING_DATASOURCE_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
         SPRING_MAIL_HOST: localhost
         SPRING_MAIL_PORT: 1025
     
