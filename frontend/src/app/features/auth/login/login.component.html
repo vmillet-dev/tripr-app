@@ -1,0 +1,40 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>{{ 'app.auth.login.title' | transloco }}</h2>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">{{ 'app.auth.login.username' | transloco }}</label>
+        <input type="text" id="username" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
+        <div *ngIf="f['username'].touched && f['username'].errors" class="invalid-feedback">
+          <div *ngIf="f['username'].errors['required']">Username is required</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">{{ 'app.auth.login.password' | transloco }}</label>
+        <input type="password" id="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
+        <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <a routerLink="/forgot-password" class="forgot-password">{{ 'app.auth.login.forgotPassword' | transloco }}</a>
+      </div>
+      
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading">
+          <span *ngIf="loading" class="spinner"></span>
+          {{ 'app.auth.login.submit' | transloco }}
+        </button>
+      </div>
+      
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    </form>
+    
+    <div class="auth-footer">
+      <p>{{ 'app.auth.login.noAccount' | transloco }} <a routerLink="/register">{{ 'app.auth.login.signUp' | transloco }}</a></p>
+    </div>
+  </div>
+</div>
