@@ -2,12 +2,23 @@ import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
-import { getTranslocoModule } from './transloco/testing/transloco-testing.module';
+import { TranslocoTestingModule } from '@jsverse/transloco';
+import en from '../assets/i18n/en.json';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent, RouterTestingModule, getTranslocoModule()],
+      imports: [
+        AppComponent, 
+        RouterTestingModule,
+        TranslocoTestingModule.forRoot({
+          langs: { en },
+          translocoConfig: {
+            availableLangs: ['en'],
+            defaultLang: 'en',
+          }
+        })
+      ],
       providers: [
         { provide: ActivatedRoute, useValue: { snapshot: { queryParams: {} } } }
       ]
