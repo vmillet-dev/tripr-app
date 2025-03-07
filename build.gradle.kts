@@ -29,6 +29,12 @@ dependencies {
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.docker.compose)
     
+    // Liquibase
+    implementation(libs.liquibase.core)
+    
+    // Swagger UI
+    implementation(libs.springdoc.openapi.starter.webmvc.ui)
+    
     // Kotlin
     implementation(libs.kotlin.reflect)
     implementation(libs.jackson.module.kotlin)
@@ -54,6 +60,10 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit.platform.launcher)
+    
+    // TestContainers
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.testcontainers.postgresql)
 }
 
 configurations.all {

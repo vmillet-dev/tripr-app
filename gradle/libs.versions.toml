@@ -10,6 +10,9 @@ janino = "3.1.10"
 auth0-jwt = "4.4.0"
 spring-security = "6.2.0"
 postgresql = "42.7.2"
+liquibase = "4.25.1"
+springdoc-openapi = "2.3.0"
+testcontainers = "1.19.3"
 
 [libraries]
 # Spring Boot
@@ -47,6 +50,16 @@ auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
 
 # Database
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+
+# Liquibase
+liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+
+# Swagger UI
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
+
+# TestContainers
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

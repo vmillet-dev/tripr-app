@@ -7,6 +7,8 @@ import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.User
 import com.adsearch.infrastructure.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.web.dto.AuthResponseDto
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "API for user authentication and token management")
 class AuthController(
     private val authenticationUseCase: AuthenticationUseCase,
     private val authenticationService: AuthenticationService,
@@ -31,6 +34,7 @@ class AuthController(
      * Login endpoint
      */
     @PostMapping("/login")
+    @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
     suspend fun login(
         @Valid @RequestBody request: AuthRequestDto,
         response: HttpServletResponse
@@ -65,6 +69,7 @@ class AuthController(
      * Refresh token endpoint
      */
     @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token", description = "Uses the refresh token cookie to generate a new access token")
     suspend fun refreshToken(
         request: HttpServletRequest,
         response: HttpServletResponse
@@ -84,6 +89,7 @@ class AuthController(
      * Logout endpoint
      */
     @PostMapping("/logout")
+    @Operation(summary = "Logout user", description = "Invalidates the refresh token and clears the refresh token cookie")
     suspend fun logout(
         request: HttpServletRequest,
         response: HttpServletResponse

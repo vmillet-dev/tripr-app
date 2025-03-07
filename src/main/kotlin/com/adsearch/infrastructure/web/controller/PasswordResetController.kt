@@ -3,6 +3,8 @@ package com.adsearch.infrastructure.web.controller
 import com.adsearch.application.service.PasswordResetService
 import com.adsearch.infrastructure.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.web.dto.PasswordResetRequestDto
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/api/auth/password")
+@Tag(name = "Password Reset", description = "API for password reset operations")
 class PasswordResetController(
     private val passwordResetService: PasswordResetService,
     private val ioDispatcher: CoroutineDispatcher
@@ -31,6 +34,7 @@ class PasswordResetController(
      * Request a password reset
      */
     @PostMapping("/reset-request")
+    @Operation(summary = "Request password reset", description = "Sends a password reset email to the user if the username exists")
     suspend fun requestPasswordReset(
         @Valid @RequestBody request: PasswordResetRequestDto
     ): ResponseEntity<Map<String, String>> {
@@ -49,6 +53,7 @@ class PasswordResetController(
      * Reset a password using a token
      */
     @PostMapping("/reset")
+    @Operation(summary = "Reset password", description = "Resets a user's password using a valid token")
     suspend fun resetPassword(
         @Valid @RequestBody request: PasswordResetDto
     ): ResponseEntity<Map<String, String>> {
@@ -67,6 +72,7 @@ class PasswordResetController(
      * Validate a password reset token
      */
     @GetMapping("/validate-token")
+    @Operation(summary = "Validate token", description = "Checks if a password reset token is valid and not expired")
     suspend fun validateToken(
         @RequestParam token: String
     ): ResponseEntity<Map<String, Boolean>> {
