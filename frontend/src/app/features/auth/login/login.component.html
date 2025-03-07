@@ -31,7 +31,7 @@
       </div>
       
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-      <div *ngIf="!error && router.url.includes('?registered=true')" class="alert alert-success" data-cy="success-message">
+      <div *ngIf="!error && isRegistered" class="alert alert-success" data-cy="success-message">
         {{ 'app.auth.login.registrationSuccess' | transloco }}
       </div>
     </form>
