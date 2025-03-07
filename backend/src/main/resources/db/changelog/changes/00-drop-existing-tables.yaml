@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00
+      author: devin
+      preConditions:
+        onFail: CONTINUE
+      changes:
+        - dropTable:
+            tableName: password_reset_tokens
+            cascadeConstraints: true
+            ifExists: true
+        - dropTable:
+            tableName: refresh_tokens
+            cascadeConstraints: true
+            ifExists: true
+        - dropTable:
+            tableName: user_entity_roles
+            cascadeConstraints: true
+            ifExists: true
+        - dropTable:
+            tableName: users
+            cascadeConstraints: true
+            ifExists: true
