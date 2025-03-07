@@ -1,0 +1,55 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>{{ 'app.auth.register.title' | transloco }}</h2>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">{{ 'app.auth.register.username' | transloco }}</label>
+        <input type="text" id="username" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
+        <div *ngIf="f['username'].touched && f['username'].errors" class="invalid-feedback">
+          <div *ngIf="f['username'].errors['required']">Username is required</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">{{ 'app.auth.register.email' | transloco }}</label>
+        <input type="email" id="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].errors }" />
+        <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
+          <div *ngIf="f['email'].errors['required']">Email is required</div>
+          <div *ngIf="f['email'].errors['email']">Email is invalid</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">{{ 'app.auth.register.password' | transloco }}</label>
+        <input type="password" id="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
+        <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': f['confirmPassword'].touched && f['confirmPassword'].errors }" />
+        <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].errors" class="invalid-feedback">
+          <div *ngIf="f['confirmPassword'].errors['required']">Confirm Password is required</div>
+          <div *ngIf="f['confirmPassword'].errors['passwordMismatch']">Passwords do not match</div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || loading">
+          <span *ngIf="loading" class="spinner"></span>
+          {{ 'app.auth.register.submit' | transloco }}
+        </button>
+      </div>
+      
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    </form>
+    
+    <div class="auth-footer">
+      <p>{{ 'app.auth.register.haveAccount' | transloco }} <a routerLink="/login">{{ 'app.auth.register.login' | transloco }}</a></p>
+    </div>
+  </div>
+</div>

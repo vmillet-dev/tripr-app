@@ -1,0 +1,23 @@
+<header class="header">
+  <div class="container">
+    <div class="logo">
+      <a routerLink="/">{{ 'app.title' | transloco }}</a>
+    </div>
+    <nav class="nav">
+      <ul>
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'app.header.home' | transloco }}</a></li>
+        <li *ngIf="isAuthenticated"><a routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <ng-container *ngIf="!isAuthenticated">
+        <a routerLink="/login" class="btn btn-outline">{{ 'app.header.login' | transloco }}</a>
+        <a routerLink="/register" class="btn btn-primary">{{ 'app.header.signup' | transloco }}</a>
+      </ng-container>
+      <ng-container *ngIf="isAuthenticated">
+        <span class="username">{{ username }}</span>
+        <button class="btn btn-outline" (click)="logout()">{{ 'app.header.logout' | transloco }}</button>
+      </ng-container>
+    </div>
+  </div>
+</header>

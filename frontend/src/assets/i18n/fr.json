@@ -1,0 +1,37 @@
+{
+  "app": {
+    "title": "Tripr App",
+    "header": {
+      "home": "Accueil",
+      "dashboard": "Tableau de bord",
+      "login": "Connexion",
+      "signup": "S'inscrire",
+      "logout": "Déconnexion"
+    },
+    "auth": {
+      "login": {
+        "title": "Connexion",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "submit": "Connexion",
+        "forgotPassword": "Mot de passe oublié?",
+        "noAccount": "Vous n'avez pas de compte?",
+        "signUp": "S'inscrire"
+      },
+      "register": {
+        "title": "S'inscrire",
+        "username": "Nom d'utilisateur",
+        "email": "Email",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "submit": "S'inscrire",
+        "haveAccount": "Vous avez déjà un compte?",
+        "login": "Connexion"
+      }
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "welcome": "Bienvenue, {{username}}!"
+    }
+  }
+}
