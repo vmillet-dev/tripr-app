@@ -3,6 +3,7 @@ package com.adsearch.infrastructure.web.controller
 import com.adsearch.application.port.AuthenticationUseCase
 import com.adsearch.application.service.AuthenticationService
 import com.adsearch.application.service.RefreshTokenService
+import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.model.User
@@ -160,21 +161,12 @@ class AuthControllerTest {
             email = "newuser@example.com"
         )
         
-        coEvery { 
-            userRepository.findByUsername("newuser") 
-        } returns null
+        val authRequestSlot = slot<AuthRequest>()
+        val emailSlot = slot<String>()
         
         coEvery { 
-            passwordEncoder.encode("password") 
-        } returns "encoded_password"
-        
-        val userSlot = slot<User>()
-        
-        coEvery { 
-            userRepository.save(capture(userSlot)) 
-        } answers { 
-            userSlot.captured 
-        }
+            authenticationUseCase.register(capture<AuthRequest>(authRequestSlot), capture<String>(emailSlot))
+        } returns Unit
         
         // When
         val result = authController.register(registerRequestDto)
@@ -183,8 +175,10 @@ class AuthControllerTest {
         assertEquals(HttpStatus.OK, result.statusCode)
         assertEquals("User registered successfully", result.body?.get("message"))
         
-        coVerify { userRepository.findByUsername("newuser") }
-        coVerify { passwordEncoder.encode("password") }
-        coVerify { userRepository.save(any()) }
+        assertEquals("newuser", authRequestSlot.captured.username)
+        assertEquals("password", authRequestSlot.captured.password)
+        assertEquals("newuser@example.com", emailSlot.captured)
+        
+        coVerify { authenticationUseCase.register(any(), any()) }
     }
 }

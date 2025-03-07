@@ -112,21 +112,17 @@ class AuthController(
     suspend fun register(
         @Valid @RequestBody request: RegisterRequestDto
     ): ResponseEntity<Map<String, String>> {
-        // Check if username already exists
-        val existingUser = userRepository.findByUsername(request.username)
-        if (existingUser != null) {
-            return ResponseEntity.badRequest().body(mapOf("message" to "Username already exists"))
+        return try {
+            val authRequest = AuthRequest(
+                username = request.username,
+                password = request.password
+            )
+            
+            authenticationUseCase.register(authRequest, request.email)
+            
+            ResponseEntity.ok(mapOf("message" to "User registered successfully"))
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().body(mapOf("message" to (e.message ?: "Registration failed")))
         }
-        
-        // Create new user
-        val user = User(
-            username = request.username,
-            password = passwordEncoder.encode(request.password),
-            roles = mutableListOf("USER")
-        )
-        
-        userRepository.save(user)
-        
-        return ResponseEntity.ok(mapOf("message" to "User registered successfully"))
     }
 }

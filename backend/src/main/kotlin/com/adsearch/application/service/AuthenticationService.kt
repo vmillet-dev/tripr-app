@@ -162,6 +162,24 @@ class AuthenticationService(
     }
     
     /**
+     * Register a new user
+     */
+    override suspend fun register(authRequest: AuthRequest, email: String) {
+        val existingUser = userRepository.findByUsername(authRequest.username)
+        if (existingUser != null) {
+            throw AuthenticationException("Username already exists")
+        }
+        
+        val user = User(
+            username = authRequest.username,
+            password = passwordEncoder.encode(authRequest.password),
+            roles = mutableListOf("USER")
+        )
+        
+        userRepository.save(user)
+    }
+    
+    /**
      * Extract refresh token from cookies
      */
     private fun extractRefreshTokenFromCookies(request: HttpServletRequest): String? {
