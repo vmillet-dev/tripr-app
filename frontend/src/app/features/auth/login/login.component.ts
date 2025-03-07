@@ -13,7 +13,6 @@ import { TranslocoModule } from '@ngneat/transloco';
   imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink, TranslocoModule]
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
   loading = false;
   error = '';
   returnUrl = '/';
@@ -23,12 +22,12 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  ngOnInit(): void {
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
+  loginForm = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required]
+  });
 
+  ngOnInit(): void {
     // Get return URL from route parameters or default to '/dashboard'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
   }
@@ -44,8 +43,8 @@ export class LoginComponent implements OnInit {
     this.error = '';
 
     this.authService.login({
-      username: this.f['username'].value,
-      password: this.f['password'].value
+      username: this.f['username'].value as string,
+      password: this.f['password'].value as string
     }).subscribe({
       next: () => {
         this.router.navigate([this.returnUrl]);

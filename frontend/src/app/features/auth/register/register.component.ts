@@ -13,7 +13,6 @@ import { TranslocoModule } from '@ngneat/transloco';
   imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink, TranslocoModule]
 })
 export class RegisterComponent implements OnInit {
-  registerForm!: FormGroup;
   loading = false;
   error = '';
 
@@ -21,16 +20,16 @@ export class RegisterComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  ngOnInit(): void {
-    this.registerForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
-    }, {
-      validators: this.passwordMatchValidator
-    });
-  }
+  registerForm = this.formBuilder.group({
+    username: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', Validators.required]
+  }, {
+    validators: this.passwordMatchValidator
+  });
+
+  ngOnInit(): void {}
 
   get f() { return this.registerForm.controls; }
 
@@ -56,9 +55,9 @@ export class RegisterComponent implements OnInit {
     this.error = '';
 
     this.authService.register({
-      username: this.f['username'].value,
-      password: this.f['password'].value,
-      email: this.f['email'].value
+      username: this.f['username'].value as string,
+      password: this.f['password'].value as string,
+      email: this.f['email'].value as string
     }).subscribe({
       next: () => {
         this.router.navigate(['/login']);

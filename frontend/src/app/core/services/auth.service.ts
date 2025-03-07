@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -14,8 +14,9 @@ export class AuthService {
   private jwtHelper = new JwtHelperService();
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private http = inject(HttpClient);
   
-  constructor(private http: HttpClient) {
+  constructor() {
     this.loadToken();
   }
   
