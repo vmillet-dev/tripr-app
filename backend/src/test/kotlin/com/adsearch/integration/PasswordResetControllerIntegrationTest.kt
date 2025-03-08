@@ -35,7 +35,11 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
     
     /**
      * Sets up a test user for password reset tests.
-     * This method runs before each test to ensure a valid user exists.
+     * 
+     * Note: While the controller documentation suggests it should always return OK
+     * for security reasons (to not reveal if a username exists), the current service
+     * implementation throws UserNotFoundException for non-existent users, which results
+     * in a 500 error. Therefore, we need to create a valid test user for the test to pass.
      */
     @BeforeEach
     override fun setUp() {
@@ -67,6 +71,7 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
     @DisplayName("POST /api/auth/password/reset-request should initiate password reset")
     fun shouldRequestPasswordReset() {
         // Given: Valid username for password reset
+        // Note: We must use an existing username due to the current implementation
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         
