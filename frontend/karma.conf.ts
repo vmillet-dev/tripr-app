@@ -40,7 +40,7 @@ module.exports =  config => {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['ChromeHeadless'],
+    browsers: ['HeadlessChrome'],
     singleRun: true,
     restartOnFileChange: true,
     customLaunchers: {
