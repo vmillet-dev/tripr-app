@@ -17,8 +17,13 @@ describe('Authentication', () => {
     // Submit the form
     cy.get('[data-cy=register-button]').click();
     
+    // Wait for API call to complete and redirect
+    cy.intercept('POST', '/api/auth/register').as('registerRequest');
+    cy.wait('@registerRequest');
+    
     // Verify successful registration (redirected to login page with query parameter)
-    cy.url().should('include', '/login?registered=true');
+    cy.url().should('include', '/login');
+    cy.url().should('include', 'registered=true');
     cy.get('[data-cy=success-message]').should('be.visible');
   });
 
@@ -29,8 +34,10 @@ describe('Authentication', () => {
     cy.get('[data-cy=username-input]').type(username);
     cy.get('[data-cy=password-input]').type(password);
     
-    // Submit the form
+    // Submit the form and wait for API call to complete
+    cy.intercept('POST', '/api/auth/login').as('loginRequest');
     cy.get('[data-cy=login-button]').click();
+    cy.wait('@loginRequest');
     
     // Verify successful login (redirected to dashboard)
     cy.url().should('include', '/dashboard');

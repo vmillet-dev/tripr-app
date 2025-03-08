@@ -7,7 +7,7 @@ BACKEND_PID=$!
 
 # Wait for backend to start
 echo "Waiting for backend to start..."
-until curl -s http://localhost:8081/api/auth/login -o /dev/null -w "%{http_code}" | grep -q "4"; do
+until curl -s -X POST -H "Content-Type: application/json" -d '{"username":"test", "password":"test"}' http://localhost:8081/api/auth/login -o /dev/null -w "%{http_code}" | grep -q "5"; do
   echo "Backend not ready yet, waiting..."
   sleep 2
 done
@@ -21,8 +21,9 @@ FRONTEND_PID=$!
 # Wait for frontend to start
 echo "Waiting for frontend to start..."
 until curl -s http://localhost:4200 > /dev/null; do
-  sleep 1
+  sleep 2
 done
+echo "Frontend is ready!"
 
 # Run Cypress tests
 cd ../e2e
