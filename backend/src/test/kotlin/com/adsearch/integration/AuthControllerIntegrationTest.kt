@@ -12,11 +12,8 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.fail
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -79,28 +76,26 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertEquals(HttpStatus.OK, response.statusCode)
-            assertNotNull(response.body)
+            assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(response.body).isNotNull()
             
             // Verify token information is present
-            assertNotNull(response.body!!["accessToken"])
-            // Then
-            assertEquals(HttpStatus.OK, response.statusCode)
-            assertNotNull(response.body)
+            assertThat(response.body!!["accessToken"]).isNotNull()
             
             // Verify token information is present
-            assertNotNull(response.body!!["accessToken"])
-            assertNotNull(response.body!!["username"])
+            assertThat(response.body!!["accessToken"]).isNotNull()
+            assertThat(response.body!!["username"]).isNotNull()
             
             // Verify username matches the test user
-            assertTrue(response.body!!["username"].toString().isNotEmpty(), 
-                      "Username should not be empty")
+            assertThat(response.body!!["username"].toString())
+                .withFailMessage("Username should not be empty")
+                .isNotEmpty()
             
             // Verify roles are returned correctly
             @Suppress("UNCHECKED_CAST")
             val roles = response.body!!["roles"] as List<String>
-            assertEquals(1, roles.size)
-            assertEquals("USER", roles[0])
+            assertThat(roles).hasSize(1)
+            assertThat(roles[0]).isEqualTo("USER")
         }
         
         @Test
@@ -183,16 +178,17 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertTrue(response.statusCode == HttpStatus.CREATED || 
-                      response.statusCode == HttpStatus.OK,
-                      "Response should indicate successful registration")
-            assertNotNull(response.body)
+            assertThat(response.statusCode == HttpStatus.CREATED || response.statusCode == HttpStatus.OK)
+                .withFailMessage("Response should indicate successful registration")
+                .isTrue()
+            assertThat(response.body).isNotNull()
             
             // Verify the response contains a success message
-            assertNotNull(response.body!!["message"])
-            assertTrue(response.body!!["message"].toString().contains("registered") || 
-                       response.body!!["message"].toString().contains("success"), 
-                "Response should indicate successful registration")
+            assertThat(response.body!!["message"]).isNotNull()
+            assertThat(response.body!!["message"].toString().contains("registered") || 
+                       response.body!!["message"].toString().contains("success"))
+                .withFailMessage("Response should indicate successful registration")
+                .isTrue()
             
             // Verify user can login
             val loginHeaders = HttpHeaders()
@@ -213,8 +209,9 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
                 )
                 
                 // If we get here, the login was successful
-                assertTrue(loginResponse.statusCode.is2xxSuccessful(), 
-                          "Login with new user should succeed with 2xx status code")
+                assertThat(loginResponse.statusCode.is2xxSuccessful())
+                    .withFailMessage("Login with new user should succeed with 2xx status code")
+                    .isTrue()
             } catch (e: Exception) {
                 fail("Login with new user should succeed but failed: ${e.message}")
             }
@@ -243,7 +240,7 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+            assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         }
     }
     
@@ -301,11 +298,11 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
             
             // Then
             // Don't check status code - just verify response exists
-            assertNotNull(refreshResponse, "Response should not be null")
+            assertThat(refreshResponse).withFailMessage("Response should not be null").isNotNull()
             
             // If successful, verify token information
             if (refreshResponse.statusCode.is2xxSuccessful() && refreshResponse.body != null) {
-                assertTrue(refreshResponse.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(refreshResponse.body!!).withFailMessage("Response body should contain data").isNotEmpty()
                 
                 // Check for token in different possible formats
                 val hasToken = refreshResponse.body!!.containsKey("accessToken") || 
@@ -321,13 +318,13 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
                         else -> ""
                     }
                     
-                    assertTrue(tokenValue.isNotEmpty(), "Token value should not be empty")
+                    assertThat(tokenValue).withFailMessage("Token value should not be empty").isNotEmpty()
                 }
                 
                 // Check username if present
                 if (refreshResponse.body!!.containsKey("username")) {
                     val username = refreshResponse.body!!["username"].toString()
-                    assertTrue(username.isNotEmpty(), "Username should not be empty")
+                    assertThat(username).withFailMessage("Username should not be empty").isNotEmpty()
                 }
             }
         }
@@ -350,7 +347,7 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
             
             // Then
             // Don't check status code - just verify response exists
-            assertNotNull(refreshResponse, "Response should not be null")
+            assertThat(refreshResponse).withFailMessage("Response should not be null").isNotNull()
             
             // If we got a 2xx response with an error message, verify the message
             if (refreshResponse.statusCode.is2xxSuccessful() && 
@@ -359,10 +356,10 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
                 
                 if (refreshResponse.body!!.containsKey("error")) {
                     val errorMsg = refreshResponse.body!!["error"].toString()
-                    assertTrue(errorMsg.isNotEmpty(), "Error message should not be empty")
+                    assertThat(errorMsg).withFailMessage("Error message should not be empty").isNotEmpty()
                 } else if (refreshResponse.body!!.containsKey("message")) {
                     val message = refreshResponse.body!!["message"].toString()
-                    assertTrue(message.isNotEmpty(), "Message should not be empty")
+                    assertThat(message).withFailMessage("Message should not be empty").isNotEmpty()
                 }
             }
         }
@@ -423,7 +420,7 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
             
             // Then
             // Don't check status code - just verify response exists
-            assertNotNull(logoutResponse, "Response should not be null")
+            assertThat(logoutResponse).withFailMessage("Response should not be null").isNotNull()
         }
     }
 }

@@ -13,11 +13,8 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.fail
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -80,36 +77,39 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertTrue(response.statusCode.is2xxSuccessful(), 
-                      "Response should have a 2xx status code")
+            assertThat(response.statusCode.is2xxSuccessful())
+                .withFailMessage("Response should have a 2xx status code")
+                .isTrue()
             
             // Verify response body exists and contains data
             if (response.body != null) {
-                assertTrue(response.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(response.body!!)
+                    .withFailMessage("Response body should contain data")
+                    .isNotEmpty()
                 
                 // Check for common response fields that should be present
                 if (response.body!!.containsKey("message")) {
                     val message = response.body!!["message"].toString()
-                    assertTrue(message.isNotEmpty(), "Message should not be empty")
+                    assertThat(message)
+                        .withFailMessage("Message should not be empty")
+                        .isNotEmpty()
                     
                     // Check message content is positive (not an error)
-                    assertFalse(
-                        message.contains("error") || 
-                        message.contains("fail") || 
-                        message.contains("invalid"),
-                        "Message should not indicate an error"
-                    )
+                    assertThat(message.contains("error") || 
+                              message.contains("fail") || 
+                              message.contains("invalid"))
+                        .withFailMessage("Message should not indicate an error")
+                        .isFalse()
                 }
                 
                 // If there's a success field, verify it's true
                 if (response.body!!.containsKey("success")) {
                     val success = response.body!!["success"]
                     // Could be Boolean or String
-                    assertTrue(
-                        (success is Boolean && success) || 
-                        (success.toString() == "true"),
-                        "Success field should indicate successful operation"
-                    )
+                    assertThat((success is Boolean && success) || 
+                              (success.toString() == "true"))
+                        .withFailMessage("Success field should indicate successful operation")
+                        .isTrue()
                 }
             }
         }
@@ -137,7 +137,7 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
             
             // Then
             // Don't check status code - just verify response exists
-            assertNotNull(response, "Response should not be null")
+            assertThat(response).withFailMessage("Response should not be null").isNotNull()
             
             // For security by obscurity, the API should not indicate whether the user exists
             // So we don't need to check the specific response content
@@ -174,7 +174,7 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
             
             // Then
             // Don't check status code - just verify response exists
-            assertNotNull(response, "Response should not be null")
+            assertThat(response).withFailMessage("Response should not be null").isNotNull()
             
             // Skip login verification if password reset failed
             if (!response.statusCode.is2xxSuccessful()) {
@@ -201,7 +201,7 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
                 )
                 
                 // If we get here, the login was successful
-                assertNotNull(loginResponse, "Login response should not be null")
+                assertThat(loginResponse).withFailMessage("Login response should not be null").isNotNull()
             } catch (e: Exception) {
                 // If login fails, it might be because the password reset didn't actually change the password
                 // This is acceptable in a test environment
@@ -234,7 +234,7 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
             // Then
             // Accept any response that indicates token validation failure
             // This could be 4xx error or 2xx with error message
-            assertTrue(
+            assertThat(
                 // Either a 4xx client error
                 response.statusCode.isError() ||
                 // Or a 2xx with error message
@@ -242,9 +242,8 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
                  response.body != null && 
                  (response.body!!.containsKey("error") || 
                   (response.body!!.containsKey("message") && 
-                   response.body!!["message"].toString().contains("invalid")))),
-                "Response should indicate token validation failure"
-            )
+                   response.body!!["message"].toString().contains("invalid"))))
+            ).withFailMessage("Response should indicate token validation failure").isTrue()
             
             // If we got a 2xx response with an error message, verify the message
             if (response.statusCode.is2xxSuccessful() && 
@@ -252,12 +251,11 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
                 
                 if (response.body!!.containsKey("error")) {
                     val errorMsg = response.body!!["error"].toString()
-                    assertTrue(
-                        errorMsg.contains("invalid") || 
-                        errorMsg.contains("expired") || 
-                        errorMsg.contains("token"),
-                        "Error message should indicate token problem"
-                    )
+                    assertThat(errorMsg.contains("invalid") || 
+                              errorMsg.contains("expired") || 
+                              errorMsg.contains("token"))
+                        .withFailMessage("Error message should indicate token problem")
+                        .isTrue()
                 } else if (response.body!!.containsKey("message")) {
                     val message = response.body!!["message"].toString()
                     if (message.contains("invalid") || message.contains("expired") || 
@@ -286,33 +284,34 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertTrue(response.statusCode.is2xxSuccessful(), 
-                      "Response should have a 2xx status code")
+            assertThat(response.statusCode.is2xxSuccessful())
+                .withFailMessage("Response should have a 2xx status code")
+                .isTrue()
             
             // Verify response body exists and contains data
             if (response.body != null) {
-                assertTrue(response.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(response.body!!)
+                    .withFailMessage("Response body should contain data")
+                    .isNotEmpty()
                 
                 // Check for common response fields
                 if (response.body!!.containsKey("valid")) {
                     val isValid = response.body!!["valid"]
                     // Could be Boolean or String
-                    assertTrue(
-                        (isValid is Boolean && isValid) || 
-                        (isValid.toString() == "true"),
-                        "Valid field should be true for valid token"
-                    )
+                    assertThat((isValid is Boolean && isValid) || 
+                              (isValid.toString() == "true"))
+                        .withFailMessage("Valid field should be true for valid token")
+                        .isTrue()
                 }
                 
                 // Check for success field if present
                 if (response.body!!.containsKey("success")) {
                     val success = response.body!!["success"]
                     // Could be Boolean or String
-                    assertTrue(
-                        (success is Boolean && success) || 
-                        (success.toString() == "true"),
-                        "Success field should indicate successful operation"
-                    )
+                    assertThat((success is Boolean && success) || 
+                              (success.toString() == "true"))
+                        .withFailMessage("Success field should indicate successful operation")
+                        .isTrue()
                 }
             }
         }
@@ -332,7 +331,7 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
             // Then
             // Accept any response that indicates token is invalid
             // This could be 2xx with valid=false or 4xx error
-            assertTrue(
+            assertThat(
                 // Either a 2xx success with valid=false
                 (response.statusCode.is2xxSuccessful() && 
                  response.body != null && 
@@ -343,34 +342,31 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
                    (response.body!!.containsKey("message") && 
                     response.body!!["message"].toString().contains("invalid"))))) ||
                 // Or a 4xx client error
-                response.statusCode.is4xxClientError(),
-                "Response should indicate token is invalid"
-            )
+                response.statusCode.is4xxClientError()
+            ).withFailMessage("Response should indicate token is invalid").isTrue()
             
             // If we got a 2xx response, verify the response details
             if (response.statusCode.is2xxSuccessful() && response.body != null) {
-                assertTrue(response.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(response.body!!).withFailMessage("Response body should contain data").isNotEmpty()
                 
                 // Check for valid field if present
                 if (response.body!!.containsKey("valid")) {
                     val isValid = response.body!!["valid"]
                     // Could be Boolean or String
-                    assertTrue(
-                        (isValid is Boolean && !isValid) || 
-                        (isValid.toString() == "false"),
-                        "Valid field should be false for invalid token"
-                    )
+                    assertThat((isValid is Boolean && !isValid) || 
+                              (isValid.toString() == "false"))
+                        .withFailMessage("Valid field should be false for invalid token")
+                        .isTrue()
                 }
                 
                 // Check for error message if present
                 if (response.body!!.containsKey("error")) {
                     val errorMsg = response.body!!["error"].toString()
-                    assertTrue(
-                        errorMsg.contains("invalid") || 
-                        errorMsg.contains("expired") || 
-                        errorMsg.contains("token"),
-                        "Error message should indicate token problem"
-                    )
+                    assertThat(errorMsg.contains("invalid") || 
+                              errorMsg.contains("expired") || 
+                              errorMsg.contains("token"))
+                        .withFailMessage("Error message should indicate token problem")
+                        .isTrue()
                 } else if (response.body!!.containsKey("message")) {
                     val message = response.body!!["message"].toString()
                     if (message.contains("invalid") || message.contains("expired") || 

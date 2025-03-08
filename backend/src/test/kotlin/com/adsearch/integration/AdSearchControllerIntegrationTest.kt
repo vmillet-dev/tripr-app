@@ -11,9 +11,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -65,14 +63,14 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertEquals(HttpStatus.OK, response.statusCode)
-            assertNotNull(response.body)
-            assertNotNull(response.body!!["sources"])
+            assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(response.body).isNotNull()
+            assertThat(response.body!!["sources"]).isNotNull()
             
             // Verify the sources list is present (even if empty in test environment)
             @Suppress("UNCHECKED_CAST")
             val sources = response.body!!["sources"] as List<String>
-            assertTrue(sources is List<*>)
+            assertThat(sources).isInstanceOf(List::class.java)
         }
     }
     
@@ -96,36 +94,36 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertEquals(HttpStatus.OK, response.statusCode)
-            assertNotNull(response.body)
-            assertNotNull(response.body!!["ads"])
-            assertNotNull(response.body!!["totalCount"])
-            assertNotNull(response.body!!["sources"])
+            assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(response.body).isNotNull()
+            assertThat(response.body!!["ads"]).isNotNull()
+            assertThat(response.body!!["totalCount"]).isNotNull()
+            assertThat(response.body!!["sources"]).isNotNull()
             
             // Check if pagination uses offset/limit or page/pageSize
             if (response.body!!.containsKey("offset") && response.body!!.containsKey("limit")) {
                 // Verify pagination information is present (offset/limit style)
                 val offset = response.body!!["offset"] as Int
                 val limit = response.body!!["limit"] as Int
-                assertTrue(offset >= 0, "Offset should be non-negative")
-                assertTrue(limit > 0, "Limit should be positive")
+                assertThat(offset).withFailMessage("Offset should be non-negative").isGreaterThanOrEqualTo(0)
+                assertThat(limit).withFailMessage("Limit should be positive").isGreaterThan(0)
                 
                 // Verify total pages is present
                 if (response.body!!.containsKey("totalPages")) {
                     val totalPages = response.body!!["totalPages"] as Int
-                    assertTrue(totalPages >= 0, "Total pages should be non-negative")
+                    assertThat(totalPages).withFailMessage("Total pages should be non-negative").isGreaterThanOrEqualTo(0)
                 }
             } else if (response.body!!.containsKey("page") && response.body!!.containsKey("pageSize")) {
                 // Verify pagination information is present (page/pageSize style)
                 val page = response.body!!["page"] as Int
                 val pageSize = response.body!!["pageSize"] as Int
-                assertTrue(page >= 0, "Page should be non-negative")
-                assertTrue(pageSize > 0, "Page size should be positive")
+                assertThat(page).withFailMessage("Page should be non-negative").isGreaterThanOrEqualTo(0)
+                assertThat(pageSize).withFailMessage("Page size should be positive").isGreaterThan(0)
                 
                 // Verify total pages is present
                 if (response.body!!.containsKey("totalPages")) {
                     val totalPages = response.body!!["totalPages"] as Int
-                    assertTrue(totalPages >= 0, "Total pages should be non-negative")
+                    assertThat(totalPages).withFailMessage("Total pages should be non-negative").isGreaterThanOrEqualTo(0)
                 }
             }
         }
@@ -148,8 +146,8 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertEquals(HttpStatus.OK, response.statusCode)
-            assertNotNull(response.body)
+            assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(response.body).isNotNull()
             
             // Don't check pagination details - just verify response exists
             // Different API implementations might use different pagination schemes
@@ -172,12 +170,12 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             )
             
             // Then
-            assertEquals(HttpStatus.OK, response.statusCode)
-            assertNotNull(response.body)
+            assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(response.body).isNotNull()
             
             // Verify empty query returns results
-            assertNotNull(response.body!!["ads"])
-            assertNotNull(response.body!!["totalCount"])
+            assertThat(response.body!!["ads"]).isNotNull()
+            assertThat(response.body!!["totalCount"]).isNotNull()
         }
         
         @Test
@@ -204,18 +202,18 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             // Both are valid implementations
             
             // Don't check status code - just verify response exists
-            assertNotNull(response, "Response should not be null")
+            assertThat(response).withFailMessage("Response should not be null").isNotNull()
             
             // If we got a successful response, verify the content
             if (response.statusCode.is2xxSuccessful() && response.body != null) {
                 // Verify response body exists and contains data
-                assertTrue(response.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(response.body!!).withFailMessage("Response body should contain data").isNotEmpty()
                 
                 // Check for common response fields that should be present
                 if (response.body!!.containsKey("items") || response.body!!.containsKey("ads")) {
                     // Verify items/ads field exists (might be empty for no results)
                     val resultsField = if (response.body!!.containsKey("items")) "items" else "ads"
-                    assertNotNull(response.body!![resultsField], "Results field should exist")
+                    assertThat(response.body!![resultsField]).withFailMessage("Results field should exist").isNotNull()
                 }
                 
                 // Check pagination information if present - using a more flexible approach
@@ -224,29 +222,29 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
                 // For offset/limit pagination
                 if (response.body!!.containsKey("offset")) {
                     val offset = (response.body!!["offset"] as Number).toInt()
-                    assertTrue(offset >= 0, "Offset should be non-negative")
+                    assertThat(offset).withFailMessage("Offset should be non-negative").isGreaterThanOrEqualTo(0)
                 }
                 
                 if (response.body!!.containsKey("limit")) {
                     val limit = (response.body!!["limit"] as Number).toInt()
-                    assertTrue(limit > 0, "Limit should be positive")
+                    assertThat(limit).withFailMessage("Limit should be positive").isGreaterThan(0)
                 }
                 
                 // For page/pageSize pagination
                 if (response.body!!.containsKey("page")) {
                     val page = (response.body!!["page"] as Number).toInt()
-                    assertTrue(page >= 0, "Page should be non-negative")
+                    assertThat(page).withFailMessage("Page should be non-negative").isGreaterThanOrEqualTo(0)
                 }
                 
                 if (response.body!!.containsKey("pageSize")) {
                     val pageSize = (response.body!!["pageSize"] as Number).toInt()
-                    assertTrue(pageSize > 0, "Page size should be positive")
+                    assertThat(pageSize).withFailMessage("Page size should be positive").isGreaterThan(0)
                 }
                 
                 // Check total count if present
                 if (response.body!!.containsKey("totalCount")) {
                     val totalCount = (response.body!!["totalCount"] as Number).toInt()
-                    assertTrue(totalCount >= 0, "Total count should be non-negative")
+                    assertThat(totalCount).withFailMessage("Total count should be non-negative").isGreaterThanOrEqualTo(0)
                 }
             }
             // No need to check error message for 4xx - the status code itself is sufficient validation
@@ -286,18 +284,18 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             // Some implementations might return 404 or other status codes for unsupported methods
             
             // Don't check status code - just verify response exists
-            assertNotNull(response, "Response should not be null")
+            assertThat(response).withFailMessage("Response should not be null").isNotNull()
             
             // If we got a successful response, verify the content
             if (response.statusCode.is2xxSuccessful() && response.body != null) {
                 // Verify response body exists and contains data
-                assertTrue(response.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(response.body!!).withFailMessage("Response body should contain data").isNotEmpty()
                 
                 // Check for common response fields that should be present
                 if (response.body!!.containsKey("items") || response.body!!.containsKey("ads")) {
                     // Verify items/ads field exists (might be empty for no results)
                     val resultsField = if (response.body!!.containsKey("items")) "items" else "ads"
-                    assertNotNull(response.body!![resultsField], "Results field should exist")
+                    assertThat(response.body!![resultsField]).withFailMessage("Results field should exist").isNotNull()
                 }
             }
             // No need to check error message for non-2xx - the status code itself is sufficient validation
@@ -332,18 +330,18 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
             // Some implementations might return 404 or other status codes for unsupported methods
             
             // Don't check status code - just verify response exists
-            assertNotNull(response, "Response should not be null")
+            assertThat(response).withFailMessage("Response should not be null").isNotNull()
             
             // If we got a successful response, verify the content
             if (response.statusCode.is2xxSuccessful() && response.body != null) {
                 // Verify response body exists and contains data
-                assertTrue(response.body!!.isNotEmpty(), "Response body should contain data")
+                assertThat(response.body!!).withFailMessage("Response body should contain data").isNotEmpty()
                 
                 // Check for common response fields that should be present
                 if (response.body!!.containsKey("items") || response.body!!.containsKey("ads")) {
                     // Verify items/ads field exists (might be empty for no results)
                     val resultsField = if (response.body!!.containsKey("items")) "items" else "ads"
-                    assertNotNull(response.body!![resultsField], "Results field should exist")
+                    assertThat(response.body!![resultsField]).withFailMessage("Results field should exist").isNotNull()
                 }
                 
                 // Check pagination information if present - using a more flexible approach
@@ -352,20 +350,20 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
                 // For offset/limit pagination
                 if (response.body!!.containsKey("limit")) {
                     val limit = (response.body!!["limit"] as Number).toInt()
-                    assertTrue(limit > 0, "Limit should be positive")
+                    assertThat(limit).withFailMessage("Limit should be positive").isGreaterThan(0)
                     // Don't check for upper bound as API might handle this differently
                 }
                 
                 // For page/pageSize pagination
                 if (response.body!!.containsKey("pageSize")) {
                     val pageSize = (response.body!!["pageSize"] as Number).toInt()
-                    assertTrue(pageSize > 0, "Page size should be positive")
+                    assertThat(pageSize).withFailMessage("Page size should be positive").isGreaterThan(0)
                 }
                 
                 // Check total count if present
                 if (response.body!!.containsKey("totalCount")) {
                     val totalCount = (response.body!!["totalCount"] as Number).toInt()
-                    assertTrue(totalCount >= 0, "Total count should be non-negative")
+                    assertThat(totalCount).withFailMessage("Total count should be non-negative").isGreaterThanOrEqualTo(0)
                 }
             }
             // No need to check error message for non-2xx - the status code itself is sufficient validation
