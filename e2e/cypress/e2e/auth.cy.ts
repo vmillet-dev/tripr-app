@@ -6,6 +6,9 @@ describe('Authentication', () => {
   const password = 'Password123!';
 
   it('should register a new user', () => {
+    // Intercept the register API call before visiting the page
+    cy.intercept('POST', '**/api/auth/register').as('registerRequest');
+    
     cy.visit('/register');
     
     // Fill out the registration form
@@ -17,9 +20,8 @@ describe('Authentication', () => {
     // Submit the form
     cy.get('[data-cy=register-button]').click();
     
-    // Wait for API call to complete and redirect
-    cy.intercept('POST', '/api/auth/register').as('registerRequest');
-    cy.wait('@registerRequest');
+    // Wait for API call to complete
+    cy.wait('@registerRequest').its('response.statusCode').should('eq', 200);
     
     // Verify successful registration (redirected to login page with query parameter)
     cy.url().should('include', '/login');
@@ -28,16 +30,20 @@ describe('Authentication', () => {
   });
 
   it('should login with newly created credentials', () => {
+    // Intercept the login API call before visiting the page
+    cy.intercept('POST', '**/api/auth/login').as('loginRequest');
+    
     cy.visit('/login');
     
     // Fill out the login form
     cy.get('[data-cy=username-input]').type(username);
     cy.get('[data-cy=password-input]').type(password);
     
-    // Submit the form and wait for API call to complete
-    cy.intercept('POST', '/api/auth/login').as('loginRequest');
+    // Submit the form
     cy.get('[data-cy=login-button]').click();
-    cy.wait('@loginRequest');
+    
+    // Wait for API call to complete
+    cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
     
     // Verify successful login (redirected to dashboard)
     cy.url().should('include', '/dashboard');
