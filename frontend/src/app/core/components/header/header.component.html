@@ -15,7 +15,7 @@
         <a routerLink="/register" class="btn btn-primary">{{ 'app.header.signup' | transloco }}</a>
       </ng-container>
       <ng-container *ngIf="isAuthenticated">
-        <span class="username">{{ username }}</span>
+        <span class="username" data-cy="user-menu">{{ username }}</span>
         <button class="btn btn-outline" (click)="logout()">{{ 'app.header.logout' | transloco }}</button>
       </ng-container>
     </div>

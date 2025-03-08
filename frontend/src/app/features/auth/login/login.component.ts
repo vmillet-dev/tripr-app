@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
   returnUrl = '/';
+  isRegistered = false;
 
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -29,6 +30,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Get return URL from route parameters or default to '/dashboard'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+    // Check if user was redirected after registration
+    this.isRegistered = this.route.snapshot.queryParams['registered'] === 'true';
   }
 
   get f() { return this.loginForm.controls; }
