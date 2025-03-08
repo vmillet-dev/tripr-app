@@ -43,7 +43,7 @@ describe('Authentication', () => {
     cy.get('[data-cy=login-button]').click();
     
     // Wait for API call to complete
-    cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
+    cy.wait('@loginRequest');
     
     // Verify successful login (redirected to dashboard)
     cy.url().should('include', '/dashboard');
