@@ -10,13 +10,10 @@ import { provideLocationMocks } from '@angular/common/testing';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let authService: AuthService;
+  let router: Router;
 
   beforeEach(async () => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['login']);
-    const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
-
     await TestBed.configureTestingModule({
       imports: [
         LoginComponent,
@@ -25,8 +22,8 @@ describe('LoginComponent', () => {
         getTranslocoModule()
       ],
       providers: [
-        { provide: AuthService, useValue: authSpy },
-        { provide: Router, useValue: routerSpyObj },
+        { provide: AuthService, useValue: { login: jasmine.createSpy('login') } },
+        { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -41,8 +38,8 @@ describe('LoginComponent', () => {
 
     }).compileComponents();
 
-    authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    authService = TestBed.inject(AuthService);
+    router = TestBed.inject(Router);
   });
 
   beforeEach(() => {
@@ -79,7 +76,7 @@ describe('LoginComponent', () => {
 
   it('should call auth service and navigate on successful login', () => {
     pending('Skipping test due to ChromeHeadless browser issues in CI');
-    authServiceSpy.login.and.returnValue(of({
+    (authService.login as jasmine.Spy).and.returnValue(of({
       accessToken: 'test-token',
       username: 'testuser',
       roles: ['USER']
@@ -92,16 +89,16 @@ describe('LoginComponent', () => {
 
     component.onSubmit();
 
-    expect(authServiceSpy.login).toHaveBeenCalledWith({
+    expect(authService.login).toHaveBeenCalledWith({
       username: 'testuser',
       password: 'password123'
     });
-    expect(routerSpy.navigate).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalled();
   });
 
   it('should display error message on login failure', () => {
     pending('Skipping test due to ChromeHeadless browser issues in CI');
-    authServiceSpy.login.and.returnValue(throwError(() => ({ error: { message: 'Invalid credentials' } })));
+    (authService.login as jasmine.Spy).and.returnValue(throwError(() => ({ error: { message: 'Invalid credentials' } })));
 
     component.loginForm.patchValue({
       username: 'testuser',
@@ -110,7 +107,7 @@ describe('LoginComponent', () => {
 
     component.onSubmit();
 
-    expect(authServiceSpy.login).toHaveBeenCalled();
+    expect(authService.login).toHaveBeenCalled();
     expect(component.error).toBe('Invalid credentials');
     expect(component.loading).toBe(false);
   });

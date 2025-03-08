@@ -10,13 +10,10 @@ import { provideLocationMocks } from '@angular/common/testing';
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-  let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let authService: AuthService;
+  let router: Router;
 
   beforeEach(async () => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['register']);
-    const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
-
     await TestBed.configureTestingModule({
       imports: [
         RegisterComponent,
@@ -25,8 +22,8 @@ describe('RegisterComponent', () => {
         getTranslocoModule()
       ],
       providers: [
-        { provide: AuthService, useValue: authSpy },
-        { provide: Router, useValue: routerSpyObj },
+        { provide: AuthService, useValue: { register: jasmine.createSpy('register') } },
+        { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -40,8 +37,8 @@ describe('RegisterComponent', () => {
       ]
     }).compileComponents();
 
-    authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    authService = TestBed.inject(AuthService);
+    router = TestBed.inject(Router);
   });
 
   beforeEach(() => {
@@ -107,7 +104,7 @@ describe('RegisterComponent', () => {
 
   it('should call auth service and navigate on successful registration', () => {
     pending('Skipping test due to ChromeHeadless browser issues in CI');
-    authServiceSpy.register.and.returnValue(of({ success: true }));
+    (authService.register as jasmine.Spy).and.returnValue(of({ success: true }));
 
     component.registerForm.patchValue({
       username: 'testuser',
@@ -118,17 +115,17 @@ describe('RegisterComponent', () => {
 
     component.onSubmit();
 
-    expect(authServiceSpy.register).toHaveBeenCalledWith({
+    expect(authService.register).toHaveBeenCalledWith({
       username: 'testuser',
       email: 'test@example.com',
       password: 'password123'
     });
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login'], { queryParams: { registered: true } });
+    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], { queryParams: { registered: true } });
   });
 
   it('should display error message on registration failure', () => {
     pending('Skipping test due to ChromeHeadless browser issues in CI');
-    authServiceSpy.register.and.returnValue(throwError(() => ({ error: { message: 'Username already exists' } })));
+    (authService.register as jasmine.Spy).and.returnValue(throwError(() => ({ error: { message: 'Username already exists' } })));
 
     component.registerForm.patchValue({
       username: 'existinguser',
@@ -139,7 +136,7 @@ describe('RegisterComponent', () => {
 
     component.onSubmit();
 
-    expect(authServiceSpy.register).toHaveBeenCalled();
+    expect(authService.register).toHaveBeenCalled();
     expect(component.error).toBe('Username already exists');
     expect(component.loading).toBe(false);
   });
