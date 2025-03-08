@@ -59,7 +59,7 @@ export class RegisterComponent {
       email: this.formControls['email'].value as string
     }).subscribe({
       next: () => {
-        this.router.navigate(['/login'], { queryParams: { registered: true } });
+        this.router.navigate(['/auth/login'], { queryParams: { registered: true } });
       },
       error: error => {
         this.error = error.error?.message || 'Registration failed';
