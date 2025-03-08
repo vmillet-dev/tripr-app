@@ -64,6 +64,9 @@ dependencies {
     // TestContainers
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
+    
+    // ArchUnit
+    testImplementation(libs.archunit.junit5)
 }
 
 configurations.all {
