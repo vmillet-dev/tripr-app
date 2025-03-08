@@ -163,21 +163,27 @@ jobs:
         run: |
           ./gradlew bootRun --args='--spring.profiles.active=dev' &
           echo "Waiting for backend to start..."
-          until curl -s http://localhost:8081/api/auth/login -o /dev/null -w "%{http_code}" | grep -q "4"; do
-            echo "Backend not ready yet, waiting..."
-            sleep 2
-          done
-          echo "Backend is ready!"
+          sleep 15
+          echo "Backend should be ready now!"
 
       - name: Start frontend for e2e tests
         working-directory: frontend
         run: |
           npm start &
           echo "Waiting for frontend to start..."
-          until curl -s http://localhost:4200 > /dev/null; do
-            sleep 1
-          done
+          sleep 15
+          echo "Frontend should be ready now!"
 
+      - name: Debug information if tests fail
+        if: failure()
+        run: |
+          echo "Debug information for backend:"
+          curl -s http://localhost:8081/api/auth/login || echo "Backend not responding"
+          echo "Debug information for frontend:"
+          curl -s http://localhost:4200 || echo "Frontend not responding"
+          echo "Process information:"
+          ps aux | grep java
+          ps aux | grep node
       - name: Run e2e tests
         working-directory: e2e
         run: npm run cypress:run

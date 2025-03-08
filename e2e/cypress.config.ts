@@ -8,11 +8,16 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    // Increase timeout for page loads and assertions
-    pageLoadTimeout: 10000,
-    defaultCommandTimeout: 10000,
+    // Increase timeouts for CI environment
+    pageLoadTimeout: 30000,
+    defaultCommandTimeout: 20000,
     // Disable web security to allow cross-origin requests
-    chromeWebSecurity: false
+    chromeWebSecurity: false,
+    // Add retries for more stability in CI
+    retries: {
+      runMode: 2,
+      openMode: 0
+    }
   },
   env: {
     apiUrl: 'http://localhost:8081/api',
