@@ -1,8 +1,11 @@
 package com.adsearch.integration
 
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -10,6 +13,16 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
+/**
+ * Base class for all integration tests.
+ * 
+ * This class sets up the Spring Boot test environment with a random port,
+ * configures TestContainers for PostgreSQL and Mailpit, and provides
+ * common functionality for all integration tests.
+ * 
+ * The PostgreSQL container is shared across all tests to improve performance,
+ * but each test should clean up its own data to ensure test isolation.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers
@@ -17,6 +30,18 @@ abstract class AbstractIntegrationTest {
     
     @LocalServerPort
     protected var port: Int = 0
+    
+    @Autowired
+    protected lateinit var jdbcTemplate: JdbcTemplate
+    
+    /**
+     * Setup method that runs before each test.
+     * Override this method in subclasses to set up test data.
+     */
+    @BeforeEach
+    open fun setUp() {
+        // Base setup - can be extended by subclasses
+    }
     
     companion object {
         // Static containers that will be shared between all test classes
@@ -56,8 +81,13 @@ abstract class AbstractIntegrationTest {
         }
     }
     
+    /**
+     * Cleanup method that runs after each test.
+     * This method helps release database connections and resources.
+     * Override this method in subclasses to add custom cleanup logic.
+     */
     @AfterEach
-    fun cleanupConnections() {
+    open fun cleanupConnections() {
         // Force garbage collection to help release any lingering connections
         System.gc()
         

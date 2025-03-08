@@ -3,6 +3,8 @@ package com.adsearch.integration
 import com.adsearch.infrastructure.web.dto.PasswordResetRequestDto
 import com.adsearch.infrastructure.web.dto.RegisterRequestDto
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
@@ -10,19 +12,35 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.test.annotation.DirtiesContext
 
+/**
+ * Integration tests for the PasswordResetController.
+ * 
+ * These tests verify that the password reset endpoints work correctly
+ * by making actual HTTP requests to the running application.
+ * 
+ * The @DirtiesContext annotation ensures that the Spring context is reset
+ * before each test method to provide a clean testing environment.
+ */
+@Tag("integration")
+@DisplayName("Password Reset Controller Integration Tests")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
     
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
     
+    /**
+     * Sets up a test user for password reset tests.
+     * This method runs before each test to ensure a valid user exists.
+     */
     @BeforeEach
-    fun setup() {
+    override fun setUp() {
+        super.setUp()
+        
         // Create a test user for password reset
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
@@ -46,8 +64,9 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
     }
     
     @Test
-    fun `should request password reset`() {
-        // Given
+    @DisplayName("POST /api/auth/password/reset-request should initiate password reset")
+    fun shouldRequestPasswordReset() {
+        // Given: Valid username for password reset
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         
@@ -57,16 +76,16 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
         
         val entity = HttpEntity(request, headers)
         
-        // When
+        // When: Requesting password reset
         val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
             "http://localhost:$port/api/auth/password/reset-request",
             entity,
             Map::class.java
         )
         
-        // Then
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertNotNull(response.body)
-        assertEquals("If the username exists, a password reset email has been sent", response.body!!["message"])
+        // Then: Response should be successful and contain confirmation message
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(response.body).isNotNull
+        assertThat(response.body!!["message"]).isEqualTo("If the username exists, a password reset email has been sent")
     }
 }
