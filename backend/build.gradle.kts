@@ -66,7 +66,7 @@ dependencies {
     testImplementation(libs.testcontainers.postgresql)
     
     // ArchUnit
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.2.1")
+    testImplementation(libs.archunit.junit5)
 }
 
 configurations.all {
