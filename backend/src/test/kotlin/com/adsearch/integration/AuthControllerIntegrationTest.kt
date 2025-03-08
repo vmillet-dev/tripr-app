@@ -87,8 +87,17 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
         // Then: Response should be successful and contain authentication details
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).isNotNull
-        assertThat(response.body!!["accessToken"]).isNotNull
+        
+        // Verify token structure and content
+        val accessToken = response.body!!["accessToken"] as String
+        assertThat(accessToken).isNotBlank()
+        assertThat(accessToken).startsWith("ey") // JWT tokens start with "ey"
+        
+        // Verify user information
         assertThat(response.body!!["username"]).isEqualTo("testuser")
+        assertThat(response.body!!.keys).contains("roles")
+        val roles = response.body!!["roles"] as List<*>
+        assertThat(roles).isNotEmpty()
     }
     
     @Test
@@ -116,7 +125,18 @@ class AuthControllerIntegrationTest : AbstractIntegrationTest() {
         // The server might return UNAUTHORIZED (401) or INTERNAL_SERVER_ERROR (500) depending on how errors are handled
         assertThat(response.statusCode).isIn(HttpStatus.UNAUTHORIZED, HttpStatus.INTERNAL_SERVER_ERROR)
         assertThat(response.body).isNotNull
-        // The error response structure might vary, so we just check that the response contains error information
-        assertThat(response.body!!.toString()).isNotEmpty()
+        
+        // Verify error response contains meaningful information
+        val responseBody = response.body!!
+        if (responseBody.keys.contains("error")) {
+            // If error field exists, it should contain meaningful error message
+            assertThat(responseBody["error"].toString()).isNotBlank()
+        } else if (responseBody.keys.contains("message")) {
+            // If message field exists, it should contain meaningful error message
+            assertThat(responseBody["message"].toString()).isNotBlank()
+        } else {
+            // Otherwise, the entire response should at least not be empty
+            assertThat(responseBody.toString()).isNotEmpty()
+        }
     }
 }

@@ -86,6 +86,14 @@ class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
         // Then: Response should be successful and contain confirmation message
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).isNotNull
+        
+        // Verify the exact message content
         assertThat(response.body!!["message"]).isEqualTo("If the username exists, a password reset email has been sent")
+        
+        // Verify no other fields are present in the response
+        assertThat(response.body!!.keys).containsExactly("message")
+        
+        // Verify email would have been sent (in a real scenario)
+        // This is a security feature - we always return OK even if username doesn't exist
     }
 }

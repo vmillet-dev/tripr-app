@@ -37,8 +37,15 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
         // Then: Response should be successful and contain sources
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body).isNotNull
-        assertThat(response.body!!["sources"]).isNotNull
-        assertThat(response.body!!["sources"]).isInstanceOf(List::class.java)
+        
+        // Verify sources is a non-empty list
+        val sources = response.body!!["sources"] as List<*>
+        assertThat(sources).isNotEmpty
+        // Sources are returned as strings
+        sources.forEach { source ->
+            assertThat(source).isInstanceOf(String::class.java)
+            assertThat((source as String)).isNotBlank()
+        }
     }
     
     @Test
@@ -60,19 +67,23 @@ class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
         
         // Verify response structure contains expected keys
         val responseBody = response.body!!
-        assertThat(responseBody.containsKey("ads")).isTrue()
-        assertThat(responseBody.containsKey("totalCount")).isTrue()
-        assertThat(responseBody.containsKey("sources")).isTrue()
-        assertThat(responseBody.containsKey("page")).isTrue()
-        assertThat(responseBody.containsKey("pageSize")).isTrue()
-        assertThat(responseBody.containsKey("totalPages")).isTrue()
+        assertThat(responseBody.keys).contains("ads", "totalCount", "sources", "page", "pageSize", "totalPages")
         
         // Verify pagination information
-        assertThat(response.body!!["page"]).isNotNull
-        assertThat(response.body!!["pageSize"]).isNotNull
-        assertThat(response.body!!["totalPages"]).isNotNull
+        assertThat(responseBody["page"]).isEqualTo(1)
+        assertThat(responseBody["pageSize"]).isEqualTo(20) // Default page size is 20 as per SearchRequestDto
+        assertThat(responseBody["totalPages"]).isInstanceOf(Number::class.java)
+        assertThat(responseBody["totalCount"]).isInstanceOf(Number::class.java)
         
-        // Verify sources information
-        assertThat(response.body!!["sources"]).isInstanceOf(List::class.java)
+        // Verify ads is a list (may be empty depending on test data)
+        assertThat(responseBody["ads"]).isInstanceOf(List::class.java)
+        
+        // Verify sources is a list of strings
+        val sources = responseBody["sources"] as List<*>
+        assertThat(sources).isNotNull
+        sources.forEach { source ->
+            assertThat(source).isInstanceOf(String::class.java)
+            assertThat((source as String)).isNotBlank()
+        }
     }
 }

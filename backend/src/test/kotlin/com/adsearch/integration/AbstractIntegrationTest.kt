@@ -83,19 +83,11 @@ abstract class AbstractIntegrationTest {
     
     /**
      * Cleanup method that runs after each test.
-     * This method helps release database connections and resources.
+     * This method helps with test isolation.
      * Override this method in subclasses to add custom cleanup logic.
      */
     @AfterEach
     open fun cleanupConnections() {
-        // Force garbage collection to help release any lingering connections
-        System.gc()
-        
-        // Add a small delay to allow connections to be properly closed
-        try {
-            Thread.sleep(500)
-        } catch (e: InterruptedException) {
-            // Ignore interruption
-        }
+        // Subclasses can implement specific cleanup logic
     }
 }
