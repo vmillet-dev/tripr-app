@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, provideRouter } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { of, throwError } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { getTranslocoModule } from '../../../transloco/testing/transloco-testing.module';
+import { provideLocationMocks } from '@angular/common/testing';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -20,6 +21,7 @@ describe('LoginComponent', () => {
       imports: [
         LoginComponent,
         ReactiveFormsModule,
+        RouterModule,
         getTranslocoModule()
       ],
       providers: [
@@ -32,8 +34,11 @@ describe('LoginComponent', () => {
               queryParams: {}
             }
           }
-        }
+        },
+        provideRouter([]),
+        provideLocationMocks()
       ]
+
     }).compileComponents();
 
     authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;

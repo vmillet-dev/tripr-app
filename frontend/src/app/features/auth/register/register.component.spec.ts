@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RegisterComponent } from './register.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, provideRouter } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { of, throwError } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { getTranslocoModule } from '../../../transloco/testing/transloco-testing.module';
+import { provideLocationMocks } from '@angular/common/testing';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -20,11 +21,22 @@ describe('RegisterComponent', () => {
       imports: [
         RegisterComponent,
         ReactiveFormsModule,
+        RouterModule,
         getTranslocoModule()
       ],
       providers: [
         { provide: AuthService, useValue: authSpy },
-        { provide: Router, useValue: routerSpyObj }
+        { provide: Router, useValue: routerSpyObj },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParams: {}
+            }
+          }
+        },
+        provideRouter([]),
+        provideLocationMocks()
       ]
     }).compileComponents();
 
