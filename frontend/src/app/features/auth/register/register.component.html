@@ -5,51 +5,77 @@
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">{{ 'app.auth.register.username' | transloco }}</label>
-        <input type="text" id="username" data-cy="username-input" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
-        <div *ngIf="f['username'].touched && f['username'].errors" class="invalid-feedback">
-          <div *ngIf="f['username'].errors['required']">Username is required</div>
-        </div>
+        <input type="text" id="username" data-cy="username-input" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': formControls['username'].touched && formControls['username'].errors }" />
+        @if (formControls['username'].touched && formControls['username'].errors) {
+          <div class="invalid-feedback">
+            @if (formControls['username'].errors['required']) {
+              <div>Username is required</div>
+            }
+          </div>
+        }
       </div>
       
       <div class="form-group">
         <label for="email">{{ 'app.auth.register.email' | transloco }}</label>
-        <input type="email" id="email" data-cy="email-input" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].errors }" />
-        <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
-          <div *ngIf="f['email'].errors['required']">Email is required</div>
-          <div *ngIf="f['email'].errors['email']">Email is invalid</div>
-        </div>
+        <input type="email" id="email" data-cy="email-input" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': formControls['email'].touched && formControls['email'].errors }" />
+        @if (formControls['email'].touched && formControls['email'].errors) {
+          <div class="invalid-feedback">
+            @if (formControls['email'].errors['required']) {
+              <div>Email is required</div>
+            }
+            @if (formControls['email'].errors['email']) {
+              <div>Email is invalid</div>
+            }
+          </div>
+        }
       </div>
       
       <div class="form-group">
         <label for="password">{{ 'app.auth.register.password' | transloco }}</label>
-        <input type="password" id="password" data-cy="password-input" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
-        <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
-          <div *ngIf="f['password'].errors['required']">Password is required</div>
-          <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
-        </div>
+        <input type="password" id="password" data-cy="password-input" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': formControls['password'].touched && formControls['password'].errors }" />
+        @if (formControls['password'].touched && formControls['password'].errors) {
+          <div class="invalid-feedback">
+            @if (formControls['password'].errors['required']) {
+              <div>Password is required</div>
+            }
+            @if (formControls['password'].errors['minlength']) {
+              <div>Password must be at least 6 characters</div>
+            }
+          </div>
+        }
       </div>
       
       <div class="form-group">
         <label for="confirmPassword">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
-        <input type="password" id="confirmPassword" data-cy="confirm-password-input" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': f['confirmPassword'].touched && f['confirmPassword'].errors }" />
-        <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].errors" class="invalid-feedback">
-          <div *ngIf="f['confirmPassword'].errors['required']">Confirm Password is required</div>
-          <div *ngIf="f['confirmPassword'].errors['passwordMismatch']">Passwords do not match</div>
-        </div>
+        <input type="password" id="confirmPassword" data-cy="confirm-password-input" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': formControls['confirmPassword'].touched && formControls['confirmPassword'].errors }" />
+        @if (formControls['confirmPassword'].touched && formControls['confirmPassword'].errors) {
+          <div class="invalid-feedback">
+            @if (formControls['confirmPassword'].errors['required']) {
+              <div>Confirm Password is required</div>
+            }
+            @if (formControls['confirmPassword'].errors['passwordMismatch']) {
+              <div>Passwords do not match</div>
+            }
+          </div>
+        }
       </div>
       
       <div class="form-group">
         <button type="submit" data-cy="register-button" class="btn btn-primary" [disabled]="registerForm.invalid || loading">
-          <span *ngIf="loading" class="spinner"></span>
+          @if (loading) {
+            <span class="spinner"></span>
+          }
           {{ 'app.auth.register.submit' | transloco }}
         </button>
       </div>
       
-      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      @if (error) {
+        <div class="alert alert-danger">{{ error }}</div>
+      }
     </form>
     
     <div class="auth-footer">
-      <p>{{ 'app.auth.register.haveAccount' | transloco }} <a routerLink="/login">{{ 'app.auth.register.login' | transloco }}</a></p>
+      <p>{{ 'app.auth.register.haveAccount' | transloco }} <a routerLink="/auth/login">{{ 'app.auth.register.login' | transloco }}</a></p>
     </div>
   </div>
 </div>

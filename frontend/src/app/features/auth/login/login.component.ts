@@ -1,17 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink, TranslocoPipe]
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   loading = false;
   error = '';
   returnUrl = '/';
@@ -27,14 +27,14 @@ export class LoginComponent implements OnInit {
     password: ['', Validators.required]
   });
 
-  ngOnInit(): void {
+  constructor() {
     // Get return URL from route parameters or default to '/dashboard'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
     // Check if user was redirected after registration
     this.isRegistered = this.route.snapshot.queryParams['registered'] === 'true';
   }
 
-  get f() { return this.loginForm.controls; }
+  get formControls() { return this.loginForm.controls; }
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -45,8 +45,8 @@ export class LoginComponent implements OnInit {
     this.error = '';
 
     this.authService.login({
-      username: this.f['username'].value as string,
-      password: this.f['password'].value as string
+      username: this.formControls['username'].value as string,
+      password: this.formControls['password'].value as string
     }).subscribe({
       next: () => {
         this.router.navigate([this.returnUrl]);

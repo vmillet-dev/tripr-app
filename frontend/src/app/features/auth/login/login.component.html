@@ -5,18 +5,26 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">{{ 'app.auth.login.username' | transloco }}</label>
-        <input type="text" id="username" data-cy="username-input" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
-        <div *ngIf="f['username'].touched && f['username'].errors" class="invalid-feedback">
-          <div *ngIf="f['username'].errors['required']">Username is required</div>
-        </div>
+        <input type="text" id="username" data-cy="username-input" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': formControls['username'].touched && formControls['username'].errors }" />
+        @if (formControls['username'].touched && formControls['username'].errors) {
+          <div class="invalid-feedback">
+            @if (formControls['username'].errors['required']) {
+              <div>Username is required</div>
+            }
+          </div>
+        }
       </div>
       
       <div class="form-group">
         <label for="password">{{ 'app.auth.login.password' | transloco }}</label>
-        <input type="password" id="password" data-cy="password-input" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
-        <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
-          <div *ngIf="f['password'].errors['required']">Password is required</div>
-        </div>
+        <input type="password" id="password" data-cy="password-input" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': formControls['password'].touched && formControls['password'].errors }" />
+        @if (formControls['password'].touched && formControls['password'].errors) {
+          <div class="invalid-feedback">
+            @if (formControls['password'].errors['required']) {
+              <div>Password is required</div>
+            }
+          </div>
+        }
       </div>
       
       <div class="form-group">
@@ -25,19 +33,25 @@
       
       <div class="form-group">
         <button type="submit" data-cy="login-button" class="btn btn-primary" [disabled]="loginForm.invalid || loading">
-          <span *ngIf="loading" class="spinner"></span>
+          @if (loading) {
+            <span class="spinner"></span>
+          }
           {{ 'app.auth.login.submit' | transloco }}
         </button>
       </div>
       
-      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-      <div *ngIf="!error && isRegistered" class="alert alert-success" data-cy="success-message">
-        {{ 'app.auth.login.registrationSuccess' | transloco }}
-      </div>
+      @if (error) {
+        <div class="alert alert-danger">{{ error }}</div>
+      }
+      @if (!error && isRegistered) {
+        <div class="alert alert-success" data-cy="success-message">
+          {{ 'app.auth.login.registrationSuccess' | transloco }}
+        </div>
+      }
     </form>
     
     <div class="auth-footer">
-      <p>{{ 'app.auth.login.noAccount' | transloco }} <a routerLink="/register">{{ 'app.auth.login.signUp' | transloco }}</a></p>
+      <p>{{ 'app.auth.login.noAccount' | transloco }} <a routerLink="/auth/register">{{ 'app.auth.login.signUp' | transloco }}</a></p>
     </div>
   </div>
 </div>

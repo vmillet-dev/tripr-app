@@ -1,17 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  imports: [ReactiveFormsModule, NgIf, NgClass, RouterLink, TranslocoPipe]
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe]
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   loading = false;
   error = '';
 
@@ -28,9 +28,9 @@ export class RegisterComponent implements OnInit {
     validators: this.passwordMatchValidator
   });
 
-  ngOnInit(): void {}
 
-  get f() { return this.registerForm.controls; }
+
+  get formControls() { return this.registerForm.controls; }
 
   passwordMatchValidator(formGroup: FormGroup) {
     const password = formGroup.get('password')?.value;
@@ -54,9 +54,9 @@ export class RegisterComponent implements OnInit {
     this.error = '';
 
     this.authService.register({
-      username: this.f['username'].value as string,
-      password: this.f['password'].value as string,
-      email: this.f['email'].value as string
+      username: this.formControls['username'].value as string,
+      password: this.formControls['password'].value as string,
+      email: this.formControls['email'].value as string
     }).subscribe({
       next: () => {
         this.router.navigate(['/login'], { queryParams: { registered: true } });
