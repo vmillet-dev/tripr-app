@@ -1,6 +1,9 @@
 package com.adsearch.integration
 
+import com.adsearch.integration.util.TestDataHelper
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
@@ -17,6 +20,9 @@ abstract class AbstractIntegrationTest {
     
     @LocalServerPort
     protected var port: Int = 0
+    
+    @Autowired
+    protected lateinit var testDataHelper: TestDataHelper
     
     companion object {
         // Static containers that will be shared between all test classes
@@ -56,8 +62,16 @@ abstract class AbstractIntegrationTest {
         }
     }
     
+    @BeforeEach
+    fun setUp() {
+        // Common setup for all integration tests
+    }
+    
     @AfterEach
-    fun cleanupConnections() {
+    fun tearDown() {
+        // Clean up test data after each test
+        testDataHelper.cleanupTestData()
+        
         // Force garbage collection to help release any lingering connections
         System.gc()
         
