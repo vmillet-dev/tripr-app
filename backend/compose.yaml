@@ -20,6 +20,30 @@ services:
     restart: unless-stopped
     networks:
       - mynet
+      
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - mynet
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.2.3
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    networks:
+      - mynet
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
 
 volumes:
   postgres_data:

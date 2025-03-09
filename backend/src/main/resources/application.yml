@@ -78,3 +78,19 @@ jwt:
 password-reset:
   token-expiration: 86400000  # 24 hours in milliseconds
   base-url: http://localhost:8080/reset-password
+
+# Actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+      base-path: /actuator
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+  server:
+    address: 127.0.0.1
+    port: 8082
