@@ -48,7 +48,7 @@ Cypress.Commands.add('requestPasswordReset', (username) => {
 Cypress.Commands.add('resetPassword', (token, newPassword) => {
   cy.visit(`/password-reset?token=${token}`);
   
-  // Intercept the token validation API call
+  // Intercept the token validation API call for waiting
   cy.intercept('GET', '/api/auth/password/validate-token*').as('validateToken');
   cy.wait('@validateToken');
   
@@ -58,7 +58,7 @@ Cypress.Commands.add('resetPassword', (token, newPassword) => {
       cy.get('[data-cy=new-password-input]').type(newPassword);
       cy.get('[data-cy=confirm-password-input]').type(newPassword);
       
-      // Intercept the password reset API call
+      // Intercept the password reset API call for waiting
       cy.intercept('POST', '/api/auth/password/reset').as('resetPassword');
       cy.get('[data-cy=reset-password-button]').click();
       cy.wait('@resetPassword');

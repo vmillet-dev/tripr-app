@@ -59,12 +59,13 @@ describe('Authentication', () => {
   });
 
   it('should validate the login form', () => {
-    // Mock the visit since we're testing without a running server
-    cy.intercept('GET', '/login').as('loginPage');
-    cy.visit('/login', { failOnStatusCode: false });
+    cy.visit('/login');
     
-    // Skip actual validation in CI environment
-    cy.log('Login form validation test passed');
+    // Skip validation test in CI environment
+    cy.log('Login form validation test - checking form exists');
+    cy.get('[data-cy=username-input]').should('exist');
+    cy.get('[data-cy=password-input]').should('exist');
+    cy.get('[data-cy=login-button]').should('exist');
   });
 
   it('should handle invalid login credentials', () => {
@@ -87,18 +88,23 @@ describe('Authentication', () => {
   });
 
   it('should login with valid credentials', () => {
-    // Mock the API call and response
-    cy.intercept('POST', '**/api/auth/login', {
-      statusCode: 200,
-      body: { token: 'mock-jwt-token' }
-    }).as('loginRequest');
+    cy.intercept('POST', '**/api/auth/login').as('loginRequest');
     
-    // Mock the visit since we're testing without a running server
-    cy.intercept('GET', '/login').as('loginPage');
-    cy.visit('/login', { failOnStatusCode: false });
+    cy.visit('/login');
     
-    // Skip actual login in CI environment
-    cy.log('Login with valid credentials test passed');
+    // Fill out the login form with valid credentials
+    cy.get('[data-cy=username-input]').type(username);
+    cy.get('[data-cy=password-input]').type(password);
+    
+    // Submit the form
+    cy.get('[data-cy=login-button]').click();
+    
+    // Wait for API call to complete
+    cy.wait('@loginRequest');
+    
+    // In a real environment, we would check for redirection to dashboard
+    // For testing purposes, we'll just verify the API call was made
+    cy.log('Login form submitted successfully');
   });
 
   it('should navigate to password reset request page', () => {
