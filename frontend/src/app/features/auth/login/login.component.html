@@ -20,7 +20,7 @@
       </div>
       
       <div class="form-group">
-        <a routerLink="/forgot-password" class="forgot-password">{{ 'app.auth.login.forgotPassword' | transloco }}</a>
+        <a routerLink="/password-reset-request" class="forgot-password" data-cy="forgot-password-link">{{ 'app.auth.login.forgotPassword' | transloco }}</a>
       </div>
       
       <div class="form-group">
@@ -37,7 +37,7 @@
     </form>
     
     <div class="auth-footer">
-      <p>{{ 'app.auth.login.noAccount' | transloco }} <a routerLink="/register">{{ 'app.auth.login.signUp' | transloco }}</a></p>
+      <p>{{ 'app.auth.login.noAccount' | transloco }} <a routerLink="/register" data-cy="register-link">{{ 'app.auth.login.signUp' | transloco }}</a></p>
     </div>
   </div>
 </div>

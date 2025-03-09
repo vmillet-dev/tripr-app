@@ -9,6 +9,8 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'password-reset-request', loadComponent: () => import('./features/auth/password-reset-request/password-reset-request.component').then(c => c.PasswordResetRequestComponent) },
+  { path: 'password-reset', loadComponent: () => import('./features/auth/password-reset/password-reset.component').then(c => c.PasswordResetComponent) },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
