@@ -73,7 +73,8 @@
               "buildTarget": "tripr-app-frontend:build:production"
             },
             "development": {
-              "buildTarget": "tripr-app-frontend:build:development"
+              "buildTarget": "tripr-app-frontend:build:development",
+              "proxyConfig": "proxy.config.json"
             }
           },
           "defaultConfiguration": "development"
