@@ -1,0 +1,88 @@
+version: 2
+updates:
+  # Backend dependencies (Gradle)
+  - package-ecosystem: "gradle"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework*"
+          - "org.springframework.boot*"
+          - "io.spring*"
+        update-types:
+          - "minor"
+          - "patch"
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+        update-types:
+          - "minor"
+          - "patch"
+      test-dependencies:
+        patterns:
+          - "org.junit*"
+          - "org.mockito*"
+          - "org.assertj*"
+          - "io.kotest*"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 10
+
+  # Frontend dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    groups:
+      angular-core:
+        patterns:
+          - "@angular/*"
+        update-types:
+          - "minor"
+          - "patch"
+      angular-dev:
+        patterns:
+          - "@angular-devkit/*"
+        update-types:
+          - "minor"
+          - "patch"
+      testing-libraries:
+        patterns:
+          - "jasmine*"
+          - "karma*"
+          - "@types/jasmine"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 10
+
+  # E2E test dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/e2e"
+    schedule:
+      interval: "weekly"
+    groups:
+      cypress:
+        patterns:
+          - "cypress"
+          - "@cypress/*"
+        update-types:
+          - "minor"
+          - "patch"
+      testing-utilities:
+        patterns:
+          - "@testing-library/*"
+        update-types:
+          - "minor"
+          - "patch"
+    open-pull-requests-limit: 5
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
