@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { PasswordResetService } from '../../../core/services/password-reset.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { PasswordResetService } from '../../../core/services/password-reset.serv
   templateUrl: './password-reset-request.component.html',
   styleUrls: ['./password-reset-request.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [ReactiveFormsModule]
 })
 export class PasswordResetRequestComponent implements OnInit {
   resetForm!: FormGroup;

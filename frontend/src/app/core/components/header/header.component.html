@@ -6,18 +6,20 @@
     <nav class="nav">
       <ul>
         <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'app.header.home' | transloco }}</a></li>
-        <li *ngIf="isAuthenticated"><a routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a></li>
+        @if (isAuthenticated) {
+          <li><a routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a></li>
+        }
       </ul>
     </nav>
     <div class="auth-buttons">
-      <ng-container *ngIf="!isAuthenticated">
+      @if (!isAuthenticated) {
         <a routerLink="/login" class="btn btn-outline">{{ 'app.header.login' | transloco }}</a>
         <a routerLink="/register" class="btn btn-primary">{{ 'app.header.signup' | transloco }}</a>
-      </ng-container>
-      <ng-container *ngIf="isAuthenticated">
+      }
+      @if (isAuthenticated) {
         <span class="username" data-cy="user-menu">{{ username }}</span>
         <button class="btn btn-outline" (click)="logout()">{{ 'app.header.logout' | transloco }}</button>
-      </ng-container>
+      }
     </div>
   </div>
 </header>
