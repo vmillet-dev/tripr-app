@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
+    id("org.openrewrite.rewrite") version "6.10.0"
 }
 
 group = "com.adsearch"
@@ -89,4 +90,9 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+rewrite {
+    activeRecipe("com.adsearch.rewrite.SpringBootRecipes")
+    configFile = file("config/openrewrite/rewrite.yml")
 }

@@ -1,0 +1,10 @@
+{
+  "name": "tripr-app-frontend-rewrite",
+  "private": true,
+  "dependencies": {
+    "rewrite-typescript": "latest"
+  },
+  "rewrite": {
+    "configFile": "rewrite.yml"
+  }
+}

@@ -1,0 +1,13 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.adsearch.rewrite.SpringBootRecipes
+displayName: Spring Boot Modernization Recipes
+description: A collection of recipes to keep Spring Boot applications up-to-date and following best practices.
+recipeList:
+  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2
+  - org.openrewrite.java.spring.NoRequestMappingAnnotation
+  - org.openrewrite.java.spring.ImplicitWebAnnotationNames
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_2
+  - org.openrewrite.java.spring.security6.UpgradeSpringSecurity_6_2
+  - org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta
+  - org.openrewrite.java.format.AutoFormat
