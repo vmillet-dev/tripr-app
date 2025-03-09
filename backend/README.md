@@ -90,7 +90,7 @@ The application uses PostgreSQL with the following default configuration:
 - **Port**: 5432
 - **Database**: tripr
 - **Username**: postgres
-- **Password**: P4ssword!
+- **Password**: (configured in compose.yaml)
 
 Database migrations are managed with Liquibase and located in `src/main/resources/db/changelog/`.
 
