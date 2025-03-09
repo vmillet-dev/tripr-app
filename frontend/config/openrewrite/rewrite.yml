@@ -1,0 +1,12 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: com.adsearch.rewrite.AngularRecipes
+displayName: Angular Modernization Recipes
+description: A collection of recipes to keep Angular applications up-to-date and following best practices.
+recipeList:
+  - org.openrewrite.typescript.cleanup.ExplicitReturnType
+  - org.openrewrite.typescript.cleanup.NoImplicitAny
+  - org.openrewrite.typescript.cleanup.UseTypeAlias
+  - org.openrewrite.typescript.format.TabsAndIndents
+  - org.openrewrite.typescript.format.MethodChainFormat
+  - org.openrewrite.typescript.cleanup.UnnecessaryStrictNullChecks
