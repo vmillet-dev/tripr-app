@@ -1,80 +1,79 @@
 # Tripr App
 
-A Spring Boot application using Gradle and Kotlin that implements a hexagonal architecture for searching ads across multiple external APIs.
+A modern travel planning application with a Spring Boot backend and Angular frontend.
 
-## Features
+## Overview
 
-- **Hexagonal Architecture**: Clean separation of concerns with domain, application, and infrastructure layers
-- **JWT Authentication**: Secure authentication with refresh tokens stored in HTTP-only cookies
-- **Password Reset Workflow**: Complete password reset functionality with email notifications
-- **External API Integration**: Adapter pattern for easy integration with multiple external ad sources
-- **Swagger UI Documentation**: API documentation available in development mode
-- **PostgreSQL Database**: Persistent storage with Liquibase for database migrations
-- **Comprehensive Testing**: Unit and integration tests with TestContainers
+Tripr App is a comprehensive travel planning platform built with a robust backend written in Kotlin using Spring Boot and a responsive frontend developed with Angular. The application implements a hexagonal architecture for clean separation of concerns and follows best practices for security, testing, and monitoring.
 
-## Project Structure
+## Components
 
-```
-backend/
-├── gradle/                  # Gradle configuration
-├── src/
-│   ├── main/
-│   │   ├── kotlin/          # Kotlin source code
-│   │   │   └── com/adsearch/
-│   │   │       ├── application/    # Application layer (use cases)
-│   │   │       ├── domain/         # Domain layer (core business logic)
-│   │   │       └── infrastructure/ # Infrastructure layer (adapters)
-│   │   └── resources/       # Application resources
-│   │       ├── db/          # Database migrations
-│   │       └── templates/   # Email templates
-│   └── test/                # Test source code
-└── build.gradle.kts         # Gradle build configuration
-```
+### Backend
+- **Spring Boot** application using Kotlin and Gradle
+- **Hexagonal Architecture** with domain, application, and infrastructure layers
+- **JWT Authentication** with refresh tokens
+- **PostgreSQL Database** with Liquibase migrations
+- **Monitoring** with Prometheus and Grafana
+- **Email Integration** with Mailpit for testing
 
-## Getting Started
+### Frontend
+- **Angular 19** application with standalone components
+- **Responsive UI** for desktop and mobile devices
+- **Internationalization** with Transloco
+- **Authentication Workflows** including login, registration, and password reset
+
+### E2E Testing
+- **Cypress** for end-to-end testing
+- **Comprehensive Test Coverage** for critical user flows
+- **CI/CD Integration** with GitHub Actions
+
+## Quick Start
 
 ### Prerequisites
-
 - Java 21
+- Node.js 18+
 - Docker and Docker Compose
 
 ### Running the Application
 
-1. Start the required services (PostgreSQL and Mailpit):
-
+1. Start the required services:
 ```bash
-docker-compose up -d
+cd backend
+docker compose up -d
 ```
 
-2. Run the application:
-
+2. Start the backend:
 ```bash
+cd backend
 ./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
-3. Access the application:
-   - API: http://localhost:8080/api
-   - Swagger UI: http://localhost:8080/swagger-ui.html (dev mode only)
-   - Mailpit UI: http://localhost:8025 (for email testing)
-
-## Development
-
-### Building the Project
-
+3. Start the frontend:
 ```bash
-./gradlew clean build
+cd frontend
+npm install
+ng serve
 ```
 
-### Running Tests
+4. Access the application at http://localhost:4200
 
-```bash
-./gradlew test
-```
+## Service URLs
 
-### API Documentation
+| Service | URL | Description |
+|---------|-----|-------------|
+| Frontend | http://localhost:4200 | Angular application |
+| Backend API | http://localhost:8081/api | REST API endpoints |
+| Swagger UI | http://localhost:8081/swagger-ui.html | API documentation (dev mode only) |
+| Prometheus | http://localhost:9090 | Metrics monitoring |
+| Grafana | http://localhost:3000 | Dashboards and visualizations (admin/admin) |
+| Mailpit | http://localhost:8026 | Email testing interface |
+| Actuator | http://localhost:8082/actuator | Spring Boot Actuator endpoints |
 
-The API documentation is available via Swagger UI in development mode at:
-http://localhost:8080/swagger-ui.html
+## Documentation
+
+- [Backend Documentation](./backend/README.md)
+- [Frontend Documentation](./frontend/README.md)
+- [E2E Testing Documentation](./e2e/README.md)
 
 ## License
 
