@@ -29,6 +29,10 @@ dependencies {
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.docker.compose)
     
+    // Spring Boot Actuator and Prometheus
+    implementation(libs.spring.boot.starter.actuator)
+    implementation(libs.micrometer.registry.prometheus)
+    
     // Liquibase
     implementation(libs.liquibase.core)
     

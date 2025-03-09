@@ -14,6 +14,7 @@ liquibase = "4.25.1"
 springdoc-openapi = "2.3.0"
 testcontainers = "1.19.3"
 archunit = "1.2.1"
+micrometer-prometheus = "1.12.0"
 
 [libraries]
 # Spring Boot
@@ -26,6 +27,8 @@ spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
 spring-boot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer-prometheus" }
 
 # Kotlin
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
@@ -77,3 +80,4 @@ kotlin = ["kotlin-reflect", "jackson-module-kotlin"]
 coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-reactor", "kotlinx-coroutines-slf4j"]
 logging = ["logback-classic", "janino"]
 testing = ["spring-boot-starter-test", "kotlin-test-junit5", "mockk", "kotlinx-coroutines-test", "junit-platform-launcher"]
+monitoring = ["spring-boot-starter-actuator", "micrometer-registry-prometheus"]
