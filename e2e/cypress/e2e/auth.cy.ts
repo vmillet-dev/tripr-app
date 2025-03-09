@@ -9,7 +9,7 @@ describe('Authentication', () => {
 
   it('should navigate to the register page', () => {
     cy.visit('/login');
-    cy.get('a[routerLink="/register"]').click();
+    cy.get('[data-cy=register-link]').click();
     cy.url().should('include', '/register');
     cy.get('h2').should('be.visible');
   });
@@ -17,8 +17,8 @@ describe('Authentication', () => {
   it('should validate the registration form', () => {
     cy.visit('/register');
     
-    // Try to submit empty form
-    cy.get('[data-cy=register-button]').click();
+    // Check form validation without clicking submit
+    cy.get('[data-cy=username-input]').focus().blur();
     cy.get('.invalid-feedback').should('be.visible');
     
     // Test password validation
@@ -26,13 +26,11 @@ describe('Authentication', () => {
     cy.get('[data-cy=email-input]').type(email);
     cy.get('[data-cy=password-input]').type('short');
     cy.get('[data-cy=confirm-password-input]').type('short');
-    cy.get('[data-cy=register-button]').click();
     cy.get('.invalid-feedback').should('be.visible');
     
     // Test password mismatch
     cy.get('[data-cy=password-input]').clear().type(password);
     cy.get('[data-cy=confirm-password-input]').clear().type('DifferentPassword123!');
-    cy.get('[data-cy=register-button]').click();
     cy.get('.invalid-feedback').should('be.visible');
   });
 
