@@ -1,59 +1,84 @@
-# TriprAppFrontend
+# Tripr App Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.1.
+Angular 19 frontend for the Tripr travel planning application.
 
-## Development server
+## Architecture
 
-To start a local development server, run:
+The frontend is built with Angular 19 using a feature-based architecture:
+
+```
+src/
+├── app/
+│   ├── core/              # Core functionality (services, guards, interceptors)
+│   │   ├── components/    # Shared components
+│   │   ├── guards/        # Route guards
+│   │   ├── interceptors/  # HTTP interceptors
+│   │   ├── models/        # Data models
+│   │   └── services/      # Core services
+│   ├── features/          # Feature modules
+│   │   ├── auth/          # Authentication features
+│   │   ├── dashboard/     # Dashboard features
+│   │   └── home/          # Home page features
+│   └── transloco/         # Internationalization
+└── environments/          # Environment configurations
+```
+
+### Key Features
+
+- **Authentication**: Login, registration, and password reset workflows
+- **Internationalization**: Multi-language support with Transloco
+- **Responsive Design**: Mobile-friendly UI components
+- **HTTP Interceptors**: JWT token handling and error handling
+- **Route Guards**: Protected routes for authenticated users
+
+## Development
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+### Installation
+
+```bash
+npm install
+```
+
+### Running the Development Server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The application will be available at http://localhost:4200 and will automatically reload when you make changes to the source files.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Building for Production
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Running Unit Tests
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+### Code Scaffolding
 
-For end-to-end (e2e) testing, run:
+Generate new components, directives, pipes, services, etc:
 
 ```bash
-ng e2e
+ng generate component components/component-name
+ng generate service services/service-name
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Best Practices
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Use standalone components where possible
+- Follow Angular style guide for naming conventions
+- Implement lazy loading for feature modules
+- Use reactive forms for complex form handling
+- Add comprehensive unit tests for services and components
