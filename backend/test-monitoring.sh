@@ -42,7 +42,7 @@ else
 fi
 
 echo -e "\nTesting Spring Boot Actuator metrics endpoint..."
-curl -s http://localhost:8081/actuator/prometheus
+curl -s http://localhost:8082/actuator/prometheus
 if [ $? -eq 0 ]; then
   echo "✅ Spring Boot Actuator metrics endpoint is accessible"
 else
