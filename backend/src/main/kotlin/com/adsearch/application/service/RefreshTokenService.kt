@@ -3,7 +3,7 @@ package com.adsearch.application.service
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.RefreshTokenRepositoryPort
+import com.adsearch.domain.port.repository.RefreshTokenRepositoryPort
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant

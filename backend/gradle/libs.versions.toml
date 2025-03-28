@@ -16,6 +16,7 @@ testcontainers = "1.19.3"
 archunit = "1.2.1"
 micrometer-prometheus = "1.12.0"
 
+
 [libraries]
 # Spring Boot
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
@@ -67,6 +68,8 @@ testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.
 
 # ArchUnit
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
+
+
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
