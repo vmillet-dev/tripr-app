@@ -6,7 +6,7 @@ import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.repository.UserRepositoryPort
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

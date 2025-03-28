@@ -5,9 +5,9 @@ import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.PasswordResetToken
-import com.adsearch.domain.port.EmailServicePort
-import com.adsearch.domain.port.PasswordResetTokenRepositoryPort
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.service.EmailServicePort
+import com.adsearch.domain.port.repository.PasswordResetTokenRepositoryPort
+import com.adsearch.domain.port.repository.UserRepositoryPort
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
