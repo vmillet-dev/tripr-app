@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.20" // For JPA support
 }
 
 group = "com.adsearch"
@@ -57,6 +58,8 @@ dependencies {
     
     // Database
     implementation(libs.postgresql)
+    
+    // We'll use direct mapping instead of MapStruct due to compatibility issues
     
     // Testing
     testImplementation(libs.spring.boot.starter.test)

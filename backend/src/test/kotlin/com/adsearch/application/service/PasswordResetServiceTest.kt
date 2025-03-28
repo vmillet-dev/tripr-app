@@ -5,9 +5,9 @@ import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.EmailServicePort
-import com.adsearch.domain.port.PasswordResetTokenRepositoryPort
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.service.EmailServicePort
+import com.adsearch.domain.port.repository.PasswordResetTokenRepositoryPort
+import com.adsearch.domain.port.repository.UserRepositoryPort
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify

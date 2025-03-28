@@ -2,7 +2,7 @@ package com.adsearch.infrastructure.adapter
 
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.domain.model.SearchResult
-import com.adsearch.domain.port.AdSearchPort
+import com.adsearch.domain.port.service.AdSearchPort
 
 /**
  * Base abstract class for ad search adapters that implements common functionality

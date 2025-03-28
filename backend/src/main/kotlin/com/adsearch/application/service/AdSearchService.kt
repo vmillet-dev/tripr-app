@@ -5,7 +5,7 @@ import com.adsearch.domain.exception.SourceErrorException
 import com.adsearch.domain.model.Ad
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.domain.model.SearchResult
-import com.adsearch.domain.port.AdSearchPort
+import com.adsearch.domain.port.service.AdSearchPort
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import kotlinx.coroutines.async

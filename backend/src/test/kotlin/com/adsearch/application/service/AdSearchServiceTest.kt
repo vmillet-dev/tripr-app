@@ -4,7 +4,7 @@ import com.adsearch.domain.exception.SourceErrorException
 import com.adsearch.domain.model.Ad
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.domain.model.SearchResult
-import com.adsearch.domain.port.AdSearchPort
+import com.adsearch.domain.port.service.AdSearchPort
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
