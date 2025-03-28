@@ -7,7 +7,7 @@ import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.repository.UserRepositoryPort
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
