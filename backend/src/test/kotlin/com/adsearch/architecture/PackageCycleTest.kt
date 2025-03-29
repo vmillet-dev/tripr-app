@@ -1,5 +1,7 @@
 package com.adsearch.architecture
 
+import com.tngtech.archunit.core.importer.ImportOption
+import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition
@@ -7,6 +9,10 @@ import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition
 /**
  * Tests to verify that there are no package cycles in the codebase
  */
+@AnalyzeClasses(
+    packages = ["com.adsearch"],
+    importOptions = [ImportOption.DoNotIncludeTests::class]
+)
 class PackageCycleTest : BaseArchitectureTest() {
     
     @ArchTest

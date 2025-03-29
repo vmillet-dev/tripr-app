@@ -7,10 +7,10 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
   mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:1026}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -18,18 +18,13 @@ spring:
           starttls:
             enable: false
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:tripr}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:P4ssword!}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml

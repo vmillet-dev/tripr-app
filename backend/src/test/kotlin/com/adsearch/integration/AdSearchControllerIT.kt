@@ -30,7 +30,7 @@ import org.springframework.web.util.UriComponentsBuilder
  * - POST search requests with different payload structures
  */
 @DisplayName("Ad Search Controller Integration Tests")
-class AdSearchControllerIntegrationTest : AbstractIntegrationTest() {
+class AdSearchControllerIT : BaseIT() {
     
     @Autowired
     private lateinit var restTemplate: TestRestTemplate

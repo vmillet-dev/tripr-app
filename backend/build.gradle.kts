@@ -90,3 +90,9 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.bootRun {
+    environment["SPRING_PROFILES_ACTIVE"] = environment["SPRING_PROFILES_ACTIVE"] ?: "dev"
+//    workingDir = project.rootDir.resolve("./../")
+}
+

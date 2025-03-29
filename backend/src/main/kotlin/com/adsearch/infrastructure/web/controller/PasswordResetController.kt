@@ -54,9 +54,7 @@ class PasswordResetController(
      */
     @PostMapping("/reset")
     @Operation(summary = "Reset password", description = "Resets a user's password using a valid token")
-    suspend fun resetPassword(
-        @Valid @RequestBody request: PasswordResetDto
-    ): ResponseEntity<Map<String, String>> {
+    suspend fun resetPassword(@Valid @RequestBody request: PasswordResetDto): ResponseEntity<Map<String, String>> {
         logger.info("Received password reset with token")
         
         return withContext(ioDispatcher) {
@@ -73,9 +71,7 @@ class PasswordResetController(
      */
     @GetMapping("/validate-token")
     @Operation(summary = "Validate token", description = "Checks if a password reset token is valid and not expired")
-    suspend fun validateToken(
-        @RequestParam token: String
-    ): ResponseEntity<Map<String, Boolean>> {
+    suspend fun validateToken(@RequestParam token: String): ResponseEntity<Map<String, Boolean>> {
         logger.info("Validating password reset token")
         
         return withContext(ioDispatcher) {

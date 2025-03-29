@@ -1,47 +1,55 @@
 spring:
+  mail:
+    host: localhost
+    port: 1026
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  datasource:
+    url: jdbc:postgresql://localhost:5433/tripr
+    username: postgres
+    password: P4ssword!
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
-    drop-first: true
-    clear-checksums: false
+  docker:
+    compose:
+      enabled: true
+      file: compose.yaml
 
 logging:
   level:
     root: INFO
     com.adsearch: DEBUG
-    org.springframework.web: DEBUG
+    org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    liquibase: INFO
 
-# Swagger UI configuration
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-
-# Spring Boot Actuator configuration for development
-management:
+api:
+  keys: dummy-key-1,dummy-key-2,dummy-key-3
   endpoints:
-    web:
-      exposure:
-        include: prometheus
-      base-path: /actuator
-  endpoint:
-    prometheus:
-      enabled: true
-    health:
-      show-details: always
-  server:
-    address: 127.0.0.1
-    port: 8082
+    classifieds: https://api.mockclassifieds.example.com/v1
+    marketplace: https://api.mockmarketplace.example.com/v2
+    auction: https://api.mockauction.example.com/v1
+
+jwt:
+  secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
+  expiration: 3600000  # 1 hour in milliseconds
+  issuer: spring-ad-search
+  refresh-token:
+    cookie-name: refresh-token
+    expiration: 604800000  # 7 days in milliseconds
+
+password-reset:
+  token-expiration: 86400000  # 24 hours in milliseconds
+  base-url: http://localhost:4200/reset-password

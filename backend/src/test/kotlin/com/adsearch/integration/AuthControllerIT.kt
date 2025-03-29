@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Nested
  * - Response structure validation for authentication endpoints
  */
 @DisplayName("Auth Controller Integration Tests")
-class AuthControllerIntegrationTest : AbstractIntegrationTest() {
+class AuthControllerIT : BaseIT() {
     
     @Autowired
     private lateinit var restTemplate: TestRestTemplate

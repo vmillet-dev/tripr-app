@@ -75,10 +75,7 @@ class AuthController(
      */
     @PostMapping("/refresh")
     @Operation(summary = "Refresh access token", description = "Uses the refresh token cookie to generate a new access token")
-    suspend fun refreshToken(
-        request: HttpServletRequest,
-        response: HttpServletResponse
-    ): ResponseEntity<AuthResponseDto> {
+    suspend fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
         val authResponse = authenticationUseCase.refreshToken(request, response)
         
         return ResponseEntity.ok(

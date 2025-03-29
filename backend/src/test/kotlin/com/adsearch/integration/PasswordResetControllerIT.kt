@@ -10,11 +10,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -33,7 +31,7 @@ import java.util.UUID
  * - Security aspects of the password reset flow
  */
 @DisplayName("Password Reset Controller Integration Tests")
-class PasswordResetControllerIntegrationTest : AbstractIntegrationTest() {
+class PasswordResetControllerIT : BaseIT() {
     
     @Autowired
     private lateinit var restTemplate: TestRestTemplate

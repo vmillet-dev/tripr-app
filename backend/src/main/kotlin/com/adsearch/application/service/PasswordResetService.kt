@@ -55,7 +55,7 @@ class PasswordResetService(
         )
         
         tokenRepository.save(resetToken)
-        logger.debug("Created password reset token: $resetToken")
+        logger.debug("Created password reset token: {}", resetToken)
         
         // Generate reset link
         val resetLink = "$baseUrl?token=$token"
@@ -71,8 +71,8 @@ class PasswordResetService(
     override suspend fun resetPassword(token: String, newPassword: String) {
         val resetToken = tokenRepository.findByToken(token)
             ?: throw InvalidTokenException("Invalid password reset token")
-        
-        logger.debug("Processing password reset with token: $resetToken")
+
+        logger.debug("Processing password reset with token: {}", resetToken)
         
         // Check if token is expired
         if (resetToken.expiryDate.isBefore(Instant.now())) {

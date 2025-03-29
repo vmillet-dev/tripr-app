@@ -4,16 +4,13 @@ import com.adsearch.infrastructure.security.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.security.authorization.AuthorizationDecision
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -38,9 +35,6 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/auth/password/reset-request").permitAll()
-                    .requestMatchers("/api/auth/password/reset").permitAll()
-                    .requestMatchers("/api/auth/password/validate-token").permitAll()
                     .requestMatchers("/api/ads/sources").permitAll()
                     .requestMatchers("/api/ads/search").permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api-docs/**").permitAll()
@@ -56,9 +50,9 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("*")
+        configuration.allowedOrigins = listOf("http://localhost:4200")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        configuration.allowedHeaders = listOf("Authorization", "Content-Type", "X-Requested-With")
+//        configuration.allowedHeaders = listOf("Authorization", "Content-Type", "X-Requested-With")
         configuration.allowCredentials = true
         configuration.maxAge = 3600L
         

@@ -2,8 +2,7 @@ package com.adsearch.architecture
 
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.junit.AnalyzeClasses
-import com.tngtech.archunit.junit.ArchTest
-import com.tngtech.archunit.lang.ArchRule
+
 
 /**
  * Base class for architecture tests with common constants and configurations

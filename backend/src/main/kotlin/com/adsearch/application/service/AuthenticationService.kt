@@ -40,8 +40,8 @@ class AuthenticationService(
         
         val user = userRepository.findByUsername(authRequest.username)
             ?: throw UserNotFoundException("User not found with username: ${authRequest.username}")
-        
-        logger.debug("Found user for authentication: $user with ID: ${user.id}")
+
+        logger.debug("Found user for authentication: {} with ID: {}", user, user.id)
         
         if (!passwordEncoder.matches(authRequest.password, user.password)) {
             throw AuthenticationException("Invalid password")
@@ -74,7 +74,7 @@ class AuthenticationService(
         }
         
         val storedToken = refreshTokenService.findByToken(refreshToken)
-        logger.debug("Found stored token: $storedToken")
+        logger.debug("Found stored token: {}", storedToken)
         
         if (storedToken == null) {
             logger.error("Refresh token not found in database: $refreshToken")
@@ -82,15 +82,15 @@ class AuthenticationService(
         }
         
         val verifiedToken = refreshTokenService.verifyExpiration(storedToken)
-        logger.debug("Verified token: $verifiedToken")
+        logger.debug("Verified token: {}", verifiedToken)
         
         // Log all users in the repository for debugging
         logger.debug("All users in repository:")
         val allUsers = userRepository.findAll()
-        allUsers.forEach { logger.debug("User: $it with ID: ${it.id}") }
+        allUsers.forEach { logger.debug("User: {} with ID: {}", it, it.id) }
         
         val user = userRepository.findById(verifiedToken.userId)
-        logger.debug("Found user: $user with ID: ${verifiedToken.userId}")
+        logger.debug("Found user: {} with ID: {}", user, verifiedToken.userId)
         
         if (user == null) {
             logger.error("User not found for refresh token with user ID: ${verifiedToken.userId}")
@@ -101,7 +101,7 @@ class AuthenticationService(
         
         // Create a new refresh token and update the cookie
         val newRefreshToken = refreshTokenService.createRefreshToken(user)
-        logger.debug("Created new refresh token: $newRefreshToken")
+        logger.debug("Created new refresh token: {}", newRefreshToken)
         addRefreshTokenCookie(response, newRefreshToken.token)
         
         return AuthResponse(
