@@ -22,10 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
-    private val environment: Environment
-) {
+class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
     
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -65,6 +62,4 @@ class SecurityConfig(
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
-    
-    // Method removed as we're using a lambda expression directly in the access method
 }
