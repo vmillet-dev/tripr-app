@@ -18,14 +18,15 @@ export const authInterceptor: HttpInterceptorFn = (
 ): Observable<any> => {
   const authService = inject(AuthService);
   const token = authService.getToken();
-  
+
   if (token) {
     request = addToken(request, token);
   }
 
   return next(request).pipe(
     catchError(error => {
-      if (error instanceof HttpErrorResponse && error.status === 401) {
+        console.log(error)
+      if (error instanceof HttpErrorResponse && error.status === 401 && error.error === 'FUNC_002') {
         return handle401Error(request, next, authService);
       }
       return throwError(() => error);

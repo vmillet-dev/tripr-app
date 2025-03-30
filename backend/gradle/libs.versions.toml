@@ -1,12 +1,11 @@
 [versions]
-kotlin = "1.9.20"
+kotlin = "2.1.20"
 spring-boot = "3.2.0"
 spring-dependency-management = "1.1.4"
 coroutines = "1.7.3"
 logback = "1.4.11"
 mockk = "1.13.8"
 junit-platform = "1.10.1"
-janino = "3.1.10"
 auth0-jwt = "4.4.0"
 spring-security = "6.2.0"
 postgresql = "42.7.2"
@@ -15,7 +14,8 @@ springdoc-openapi = "2.3.0"
 testcontainers = "1.19.3"
 archunit = "1.2.1"
 micrometer-prometheus = "1.12.0"
-jackson-kotlin = "2.18.3"
+httpclient5 = "5.4.3"
+jackson-kotlin = "2.15.3"
 
 [libraries]
 # Spring Boot
@@ -46,11 +46,11 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 
 # Logging
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-janino = { module = "org.codehaus.janino:janino", version.ref = "janino" }
 
 # Testing
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+apache-httpclient5  = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
 
 # JWT Authentication
 auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
@@ -75,6 +75,7 @@ archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 

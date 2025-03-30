@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.kotlin.jpa)
+    alias(libs.plugins.kotlin.noarg)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
 }
@@ -30,14 +31,14 @@ dependencies {
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     // Kotlin
     implementation(libs.kotlin.reflect)
-    implementation(libs.jackson.module.kotlin)
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.reactor)
     implementation(libs.kotlinx.coroutines.slf4j)
     // Logging
     implementation(libs.logback.classic)
-    implementation(libs.janino)
+    implementation(libs.jackson.module.kotlin)
+
     // JWT Authentication
     implementation(libs.auth0.java.jwt)
 
@@ -46,11 +47,12 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit.platform.launcher)
+    testImplementation(libs.archunit.junit5)
+    testImplementation(libs.apache.httpclient5)
     // TestContainers
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
-    // ArchUnit
-    testImplementation(libs.archunit.junit5)
+
 }
 
 configurations.all {

@@ -23,28 +23,28 @@ class PasswordResetService(
     private val tokenRepository: PasswordResetTokenRepositoryPort,
     private val emailService: EmailServicePort,
     private val passwordEncoder: PasswordEncoder,
-    
+
     @Value("\${password-reset.token-expiration}")
     private val tokenExpiration: Long,
-    
+
     @Value("\${password-reset.base-url}")
     private val baseUrl: String
 ) : PasswordResetUseCase {
-    
+
     private val logger = LoggerFactory.getLogger(PasswordResetService::class.java)
-    
+
     /**
      * Request a password reset for a user
      */
     override suspend fun requestPasswordReset(username: String) {
         val user = userRepository.findByUsername(username)
             ?: throw UserNotFoundException("User not found with username: $username")
-        
+
         logger.debug("Processing password reset request for user: ${user.username}")
-        
+
         // Delete any existing tokens for this user
         tokenRepository.deleteByUserId(user.id)
-        
+
         // Create a new token
         val token = java.util.UUID.randomUUID().toString()
         val resetToken = PasswordResetToken(
@@ -53,18 +53,18 @@ class PasswordResetService(
             token = token,
             expiryDate = Instant.now().plusMillis(tokenExpiration)
         )
-        
+
         tokenRepository.save(resetToken)
         logger.debug("Created password reset token: {}", resetToken)
-        
+
         // Generate reset link
         val resetLink = "$baseUrl?token=$token"
-        
+
         // Send email
         emailService.sendPasswordResetEmail(username, resetLink)
         logger.info("Password reset email sent to: $username")
     }
-    
+
     /**
      * Reset a user's password using a token
      */
@@ -73,55 +73,55 @@ class PasswordResetService(
             ?: throw InvalidTokenException("Invalid password reset token")
 
         logger.debug("Processing password reset with token: {}", resetToken)
-        
+
         // Check if token is expired
         if (resetToken.expiryDate.isBefore(Instant.now())) {
             tokenRepository.deleteById(resetToken.id)
             throw TokenExpiredException("Password reset token has expired")
         }
-        
+
         // Check if token has been used
         if (resetToken.used) {
             throw InvalidTokenException("Password reset token has already been used")
         }
-        
+
         // Find the user
         val user = userRepository.findById(resetToken.userId)
             ?: throw UserNotFoundException("User not found for password reset token")
-        
+
         // Update the password
         val updatedUser = user.copy(
             password = passwordEncoder.encode(newPassword)
         )
-        
+
         userRepository.save(updatedUser)
         logger.info("Password reset successful for user: ${user.username}")
-        
+
         // Mark token as used
         val usedToken = resetToken.copy(used = true)
         tokenRepository.save(usedToken)
-        
+
         // Delete all tokens for this user
         tokenRepository.deleteByUserId(user.id)
     }
-    
+
     /**
      * Validate a password reset token
      */
     override suspend fun validateToken(token: String): Boolean {
         val resetToken = tokenRepository.findByToken(token) ?: return false
-        
+
         // Check if token is expired
         if (resetToken.expiryDate.isBefore(Instant.now())) {
             tokenRepository.deleteById(resetToken.id)
             return false
         }
-        
+
         // Check if token has been used
         if (resetToken.used) {
             return false
         }
-        
+
         return true
     }
 }

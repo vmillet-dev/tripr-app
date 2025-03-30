@@ -1,4 +1,5 @@
 spring:
+  mvc.log-resolved-exception: false
   application:
     name: spring-ad-search
   jackson:

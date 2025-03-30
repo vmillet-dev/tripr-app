@@ -1,4 +1,5 @@
 spring:
+  mvc.log-resolved-exception: false
   mail:
     host: localhost
     port: 1026
