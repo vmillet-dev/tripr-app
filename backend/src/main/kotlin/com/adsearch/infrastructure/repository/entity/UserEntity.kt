@@ -26,14 +26,6 @@ class UserEntity(
     @ElementCollection(fetch = FetchType.EAGER)
     val roles: MutableList<String> = mutableListOf("USER")
 ) {
-    // Default constructor required by JPA
-    constructor() : this(
-        id = 0,
-        username = "",
-        password = "",
-        roles = mutableListOf()
-    )
-    
     fun toDomain(): User {
         return User(
             id = id,

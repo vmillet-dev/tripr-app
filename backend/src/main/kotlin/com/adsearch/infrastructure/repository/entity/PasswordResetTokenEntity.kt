@@ -28,15 +28,6 @@ class PasswordResetTokenEntity(
     @Column(nullable = false)
     val used: Boolean = false
 ) {
-    // Default constructor required by JPA
-    constructor() : this(
-        id = 0,
-        userId = 0,
-        token = "",
-        expiryDate = Instant.now(),
-        used = false
-    )
-    
     fun toDomain(): PasswordResetToken {
         return PasswordResetToken(
             id = id,

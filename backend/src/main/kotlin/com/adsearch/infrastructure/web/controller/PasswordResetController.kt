@@ -6,8 +6,6 @@ import com.adsearch.infrastructure.web.dto.PasswordResetRequestDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/auth/password")
 @Tag(name = "Password Reset", description = "API for password reset operations")
-class PasswordResetController(
-    private val passwordResetUseCase: PasswordResetUseCase,
-    private val ioDispatcher: CoroutineDispatcher
-) {
+class PasswordResetController(private val passwordResetUseCase: PasswordResetUseCase) {
     
     private val logger = LoggerFactory.getLogger(PasswordResetController::class.java)
     
@@ -40,13 +35,11 @@ class PasswordResetController(
     ): ResponseEntity<Map<String, String>> {
         logger.info("Received password reset request for username: ${request.username}")
         
-        return withContext(ioDispatcher) {
-            passwordResetUseCase.requestPasswordReset(request.username)
-            
-            ResponseEntity.ok(mapOf(
-                "message" to "If the username exists, a password reset email has been sent"
-            ))
-        }
+        passwordResetUseCase.requestPasswordReset(request.username)
+
+        return ResponseEntity.ok(mapOf(
+            "message" to "If the username exists, a password reset email has been sent"
+        ))
     }
     
     /**
@@ -57,13 +50,11 @@ class PasswordResetController(
     suspend fun resetPassword(@Valid @RequestBody request: PasswordResetDto): ResponseEntity<Map<String, String>> {
         logger.info("Received password reset with token")
         
-        return withContext(ioDispatcher) {
-            passwordResetUseCase.resetPassword(request.token, request.newPassword)
-            
-            ResponseEntity.ok(mapOf(
-                "message" to "Password has been reset successfully"
-            ))
-        }
+        passwordResetUseCase.resetPassword(request.token, request.newPassword)
+
+        return ResponseEntity.ok(mapOf(
+            "message" to "Password has been reset successfully"
+        ))
     }
     
     /**
@@ -74,12 +65,10 @@ class PasswordResetController(
     suspend fun validateToken(@RequestParam token: String): ResponseEntity<Map<String, Boolean>> {
         logger.info("Validating password reset token")
         
-        return withContext(ioDispatcher) {
-            val isValid = passwordResetUseCase.validateToken(token)
-            
-            ResponseEntity.ok(mapOf(
-                "valid" to isValid
-            ))
-        }
+        val isValid = passwordResetUseCase.validateToken(token)
+
+        return ResponseEntity.ok(mapOf(
+            "valid" to isValid
+        ))
     }
 }

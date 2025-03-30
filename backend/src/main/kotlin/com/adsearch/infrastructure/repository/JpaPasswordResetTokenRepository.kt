@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
 
 @Repository
-@Primary
 class JpaPasswordResetTokenRepository(
     private val passwordResetTokenJpaRepository: PasswordResetTokenJpaRepository
 ) : PasswordResetTokenRepositoryPort {

@@ -28,15 +28,6 @@ class RefreshTokenEntity(
     @Column(nullable = false)
     val revoked: Boolean = false
 ) {
-    // Default constructor required by JPA
-    constructor() : this(
-        id = 0,
-        userId = 0,
-        token = "",
-        expiryDate = Instant.now(),
-        revoked = false
-    )
-    
     fun toDomain(): RefreshToken {
         return RefreshToken(
             id = id,

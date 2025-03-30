@@ -33,6 +33,12 @@ spring:
       enabled: true
       file: compose.yaml
 
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
+
 server:
   port: 8081
   error:
@@ -42,17 +48,9 @@ server:
 logging:
   level:
     root: INFO
-    com.adsearch: DEBUG
-    org.springframework.web: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 # API configuration
 api:
-  # Comma-separated list of API keys for external services
-  # In a real application, these would be stored securely
-  keys: dummy-key-1,dummy-key-2,dummy-key-3
-  
   # Configuration for external API endpoints
   # These are not used in the mock implementations
   endpoints:
@@ -62,7 +60,7 @@ api:
 
 # JWT configuration
 jwt:
-  secret: ${JWT_SECRET:verySecretKeyThatShouldBeAtLeast32CharactersLong}
+  secret: ${JWT_SECRET}
   expiration: 3600000  # 1 hour in milliseconds
   issuer: spring-ad-search
   refresh-token:
@@ -72,7 +70,7 @@ jwt:
 # Password reset configuration
 password-reset:
   token-expiration: 86400000  # 24 hours in milliseconds
-  base-url: http://localhost:8080/reset-password
+  base-url: ${BASE_URL}/reset-password
 
 # Actuator configuration
 management:
