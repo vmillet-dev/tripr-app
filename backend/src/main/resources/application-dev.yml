@@ -19,12 +19,10 @@ spring:
     hibernate:
       ddl-auto: validate
   liquibase:
-    enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
   docker:
     compose:
-      enabled: true
-      file: compose.yaml
+      file: backend/compose.yaml
 
 logging:
   level:

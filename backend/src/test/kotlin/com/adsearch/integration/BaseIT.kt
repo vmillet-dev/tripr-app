@@ -43,20 +43,6 @@ abstract class BaseIT {
             registry.add("spring.datasource.username") { POSTGRES_CONTAINER.username }
             registry.add("spring.datasource.password") { POSTGRES_CONTAINER.password }
             
-            // Configure JPA to create-drop for tests
-            registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
-            registry.add("spring.liquibase.enabled") { "false" }
-            
-            // Configure HikariCP for tests with more conservative settings
-            registry.add("spring.datasource.hikari.maximum-pool-size") { "3" }
-            registry.add("spring.datasource.hikari.minimum-idle") { "1" }
-            registry.add("spring.datasource.hikari.idle-timeout") { "10000" }
-            registry.add("spring.datasource.hikari.max-lifetime") { "20000" }
-            registry.add("spring.datasource.hikari.connection-timeout") { "10000" }
-            registry.add("spring.datasource.hikari.validation-timeout") { "2000" }
-            registry.add("spring.datasource.hikari.leak-detection-threshold") { "30000" }
-            registry.add("spring.datasource.hikari.connection-test-query") { "SELECT 1" }
-            
             registry.add("spring.mail.host") { "localhost" }
             registry.add("spring.mail.port") { MAILPIT_CONTAINER.getMappedPort(1025) }
         }
@@ -69,17 +55,6 @@ abstract class BaseIT {
     
     @AfterEach
     fun tearDown() {
-        // Clean up test data after each test
         testDataHelper.cleanupTestData()
-        
-        // Force garbage collection to help release any lingering connections
-        System.gc()
-        
-        // Add a small delay to allow connections to be properly closed
-        try {
-            Thread.sleep(500)
-        } catch (e: InterruptedException) {
-            // Ignore interruption
-        }
     }
 }

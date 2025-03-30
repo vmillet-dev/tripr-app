@@ -15,7 +15,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.runBlocking
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.time.Instant
-import java.util.UUID
 
 class AuthControllerTest {
     
@@ -32,8 +30,6 @@ class AuthControllerTest {
     private lateinit var authenticationUseCase: AuthenticationUseCase
     private lateinit var authenticationService: AuthenticationService
     private lateinit var refreshTokenService: RefreshTokenService
-    private lateinit var userRepository: com.adsearch.domain.port.UserRepositoryPort
-    private lateinit var passwordEncoder: org.springframework.security.crypto.password.PasswordEncoder
     private lateinit var response: HttpServletResponse
     
     @BeforeEach
@@ -41,16 +37,12 @@ class AuthControllerTest {
         authenticationUseCase = mockk()
         authenticationService = mockk()
         refreshTokenService = mockk()
-        userRepository = mockk()
-        passwordEncoder = mockk()
         response = mockk(relaxed = true)
         
         authController = AuthController(
             authenticationUseCase,
             authenticationService,
-            refreshTokenService,
-            userRepository,
-            passwordEncoder
+            refreshTokenService
         )
     }
     
