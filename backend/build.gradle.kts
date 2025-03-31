@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.noarg)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.version.catalog.update)
 }
 
 group = "com.adsearch"
@@ -27,29 +28,21 @@ dependencies {
     implementation(libs.bundles.springboot) // Spring Boot bundles
     implementation(libs.micrometer.registry.prometheus)
     implementation(libs.liquibase.core)
-    // Swagger UI
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
-    // Kotlin
     implementation(libs.kotlin.reflect)
-    // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.reactor)
     implementation(libs.kotlinx.coroutines.slf4j)
-    // Logging
     implementation(libs.logback.classic)
     implementation(libs.jackson.module.kotlin)
-
-    // JWT Authentication
     implementation(libs.auth0.java.jwt)
 
     testImplementation(libs.springboot.starter.test)
     testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.junit.platform.launcher)
     testImplementation(libs.archunit.junit5)
     testImplementation(libs.apache.httpclient5)
-    // TestContainers
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
 
