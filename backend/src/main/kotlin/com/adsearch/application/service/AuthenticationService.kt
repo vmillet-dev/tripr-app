@@ -6,7 +6,9 @@ import com.adsearch.common.exception.UserAlreadyExistsException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.port.AuthenticationPort
-import com.adsearch.domain.port.UserPersistencePort
+import com.adsearch.domain.port.TokenManagementPort
+import com.adsearch.domain.port.UserDetailsPort
+import com.adsearch.domain.port.UserRegistrationPort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -17,7 +19,9 @@ import org.springframework.stereotype.Service
 @Service
 class AuthenticationService(
     private val authenticationPort: AuthenticationPort,
-    private val userPersistencePort: UserPersistencePort,
+    private val userRegistrationPort: UserRegistrationPort,
+    private val tokenManagementPort: TokenManagementPort,
+    private val userDetailsPort: UserDetailsPort
 ) : AuthenticationUseCase {
 
     companion object {
@@ -40,7 +44,7 @@ class AuthenticationService(
             throw InvalidTokenException(message = "Refresh token is missing")
         }
 
-        return authenticationPort.refreshAccessToken(refreshToken)
+        return tokenManagementPort.refreshAccessToken(refreshToken)
     }
 
     /**
@@ -48,7 +52,7 @@ class AuthenticationService(
      */
     override suspend fun logout(refreshToken: String?) {
         if (refreshToken != null) {
-            authenticationPort.logout(refreshToken)
+            tokenManagementPort.logout(refreshToken)
         }
     }
 
@@ -56,11 +60,11 @@ class AuthenticationService(
      * Register a new user
      */
     override suspend fun register(authRequest: AuthRequest, email: String) {
-        val existingUser = userPersistencePort.findByUsername(authRequest.username)
+        val existingUser = userDetailsPort.loadUserByUsername(authRequest.username)
         if (existingUser != null) {
             throw UserAlreadyExistsException("Username already exists")
         }
 
-        authenticationPort.register(authRequest)
+        userRegistrationPort.register(authRequest)
     }
 }
