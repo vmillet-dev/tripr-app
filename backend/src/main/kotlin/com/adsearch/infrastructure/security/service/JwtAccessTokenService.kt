@@ -1,6 +1,6 @@
-package com.adsearch.infrastructure.security
+package com.adsearch.infrastructure.security.service
 
-import com.adsearch.infrastructure.model.JwtUserDetails
+import com.adsearch.infrastructure.security.model.JwtUserDetails
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException

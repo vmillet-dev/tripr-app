@@ -1,10 +1,10 @@
-package com.adsearch.infrastructure.security
+package com.adsearch.infrastructure.security.service
 
 import com.adsearch.common.exception.InvalidTokenException
 import com.adsearch.common.exception.TokenExpiredException
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.RefreshTokenPersistencePort
-import com.adsearch.infrastructure.model.JwtUserDetails
+import com.adsearch.infrastructure.security.model.JwtUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

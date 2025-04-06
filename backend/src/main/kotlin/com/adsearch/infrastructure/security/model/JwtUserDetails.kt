@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.model
+package com.adsearch.infrastructure.security.model
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.User

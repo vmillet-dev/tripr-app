@@ -1,8 +1,8 @@
-package com.adsearch.infrastructure.security
+package com.adsearch.infrastructure.security.service
 
 
 import com.adsearch.domain.port.UserPersistencePort
-import com.adsearch.infrastructure.model.JwtUserDetails
+import com.adsearch.infrastructure.security.model.JwtUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.authority.SimpleGrantedAuthority

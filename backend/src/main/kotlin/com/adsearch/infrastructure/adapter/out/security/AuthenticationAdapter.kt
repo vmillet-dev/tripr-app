@@ -8,9 +8,9 @@ import com.adsearch.domain.model.User
 import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.domain.port.RefreshTokenPersistencePort
 import com.adsearch.domain.port.UserPersistencePort
-import com.adsearch.infrastructure.security.JwtUserDetailsService
-import com.adsearch.infrastructure.security.JwtAccessTokenService
-import com.adsearch.infrastructure.security.JwtRefreshTokenService
+import com.adsearch.infrastructure.security.service.JwtUserDetailsService
+import com.adsearch.infrastructure.security.service.JwtAccessTokenService
+import com.adsearch.infrastructure.security.service.JwtRefreshTokenService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
