@@ -26,7 +26,6 @@ dependencies {
     developmentOnly(libs.springboot.devtools)
 
     implementation(libs.bundles.springboot) // Spring Boot bundles
-    implementation(libs.micrometer.registry.prometheus)
     implementation(libs.liquibase.core)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.kotlin.reflect)
