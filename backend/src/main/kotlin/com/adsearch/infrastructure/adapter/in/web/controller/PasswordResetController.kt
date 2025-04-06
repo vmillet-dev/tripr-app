@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
  * Controller for password reset operations
  */
 @RestController
-@RequestMapping("/api/auth/password")
+@RequestMapping("/auth/password")
 @Tag(name = "Password Reset", description = "API for password reset operations")
 class PasswordResetController(private val passwordResetUseCase: PasswordResetUseCase) {
 

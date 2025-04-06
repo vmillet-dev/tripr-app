@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
  * REST controller for ad search operations
  */
 @RestController
-@RequestMapping("/api/ads")
+@RequestMapping("/ads")
 @Tag(name = "Ad Search", description = "API for searching ads across multiple sources")
 class AdSearchController(
     private val adSearchUseCase: AdSearchUseCase,
