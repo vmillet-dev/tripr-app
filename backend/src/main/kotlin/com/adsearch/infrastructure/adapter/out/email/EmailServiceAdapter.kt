@@ -14,12 +14,12 @@ import org.thymeleaf.context.Context
  * Implementation of EmailServicePort using Spring Mail
  */
 @Service
-class EmailService(
+class EmailServiceAdapter(
     private val mailSender: JavaMailSender,
     private val templateEngine: TemplateEngine
 ) : EmailServicePort {
 
-    private val logger = LoggerFactory.getLogger(EmailService::class.java)
+    private val logger = LoggerFactory.getLogger(EmailServiceAdapter::class.java)
 
     override suspend fun sendPasswordResetEmail(to: String, resetLink: String) {
         withContext(Dispatchers.IO) {

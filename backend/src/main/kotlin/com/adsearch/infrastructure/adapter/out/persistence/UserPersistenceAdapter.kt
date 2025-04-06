@@ -20,8 +20,8 @@ class UserPersistenceAdapter(private val userRepository: UserRepository) : UserP
         userRepository.findById(id).orElse(null)?.toDomain()
     }
 
-    override suspend fun findByUsername(username: String): User? = withContext(Dispatchers.IO) {
-        userRepository.findByUsername(username)?.toDomain()
+    override fun findByUsername(username: String): User? {
+        return userRepository.findByUsername(username)?.toDomain()
     }
 
     override suspend fun findAll(): List<User> = withContext(Dispatchers.IO) {

@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Profile
  */
 @Configuration
 @Profile("dev")
-class DevOpenApiConfig {
-    
+class OpenApiConfig {
+
     @Bean
     fun devOpenAPI(): OpenAPI {
         return OpenAPI()

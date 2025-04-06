@@ -10,7 +10,7 @@ interface UserPersistencePort {
     /**
      * Find a user by username
      */
-    suspend fun findByUsername(username: String): User?
+    fun findByUsername(username: String): User?
 
     /**
      * Find a user by ID

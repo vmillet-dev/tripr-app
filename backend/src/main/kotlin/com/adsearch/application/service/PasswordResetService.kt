@@ -20,8 +20,8 @@ import java.time.Instant
 @Service
 class PasswordResetService(
     private val userPersistencePort: UserPersistencePort,
-    private val tokenPersistencePort: PasswordResetTokenPersistencePort,
-    private val emailService: EmailServicePort,
+    private val passwordResetTokenPersistencePort: PasswordResetTokenPersistencePort,
+    private val emailServicePort: EmailServicePort,
     private val passwordEncoder: PasswordEncoder,
 
     @Value("\${password-reset.token-expiration}")
@@ -43,7 +43,7 @@ class PasswordResetService(
         logger.debug("Processing password reset request for user: ${user.username}")
 
         // Delete any existing tokens for this user
-        tokenPersistencePort.deleteByUserId(user.id)
+        passwordResetTokenPersistencePort.deleteByUserId(user.id)
 
         // Create a new token
         val token = java.util.UUID.randomUUID().toString()
@@ -54,14 +54,14 @@ class PasswordResetService(
             expiryDate = Instant.now().plusMillis(tokenExpiration)
         )
 
-        tokenPersistencePort.save(resetToken)
+        passwordResetTokenPersistencePort.save(resetToken)
         logger.debug("Created password reset token: {}", resetToken)
 
         // Generate reset link
         val resetLink = "$baseUrl?token=$token"
 
         // Send email
-        emailService.sendPasswordResetEmail(username, resetLink)
+        emailServicePort.sendPasswordResetEmail(username, resetLink)
         logger.info("Password reset email sent to: $username")
     }
 
@@ -69,14 +69,14 @@ class PasswordResetService(
      * Reset a user's password using a token
      */
     override suspend fun resetPassword(token: String, newPassword: String) {
-        val resetToken = tokenPersistencePort.findByToken(token)
+        val resetToken = passwordResetTokenPersistencePort.findByToken(token)
             ?: throw InvalidTokenException("Invalid password reset token")
 
         logger.debug("Processing password reset with token: {}", resetToken)
 
         // Check if token is expired
         if (resetToken.expiryDate.isBefore(Instant.now())) {
-            tokenPersistencePort.deleteById(resetToken.id)
+            passwordResetTokenPersistencePort.deleteById(resetToken.id)
             throw TokenExpiredException("Password reset token has expired")
         }
 
@@ -99,21 +99,21 @@ class PasswordResetService(
 
         // Mark token as used
         val usedToken = resetToken.copy(used = true)
-        tokenPersistencePort.save(usedToken)
+        passwordResetTokenPersistencePort.save(usedToken)
 
         // Delete all tokens for this user
-        tokenPersistencePort.deleteByUserId(user.id)
+        passwordResetTokenPersistencePort.deleteByUserId(user.id)
     }
 
     /**
      * Validate a password reset token
      */
     override suspend fun validateToken(token: String): Boolean {
-        val resetToken = tokenPersistencePort.findByToken(token) ?: return false
+        val resetToken = passwordResetTokenPersistencePort.findByToken(token) ?: return false
 
         // Check if token is expired
         if (resetToken.expiryDate.isBefore(Instant.now())) {
-            tokenPersistencePort.deleteById(resetToken.id)
+            passwordResetTokenPersistencePort.deleteById(resetToken.id)
             return false
         }
 
