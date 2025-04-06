@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:17.3
+    environment:
+      - POSTGRES_DB=tripr
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=P4ssword!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - mynet
+
+  mailpit:
+    image: axllent/mailpit:v1.23
+    ports:
+      - "1026:1025"  # SMTP server port (changed from 1025 to avoid conflict)
+      - "8026:8025"  # Web UI port (changed from 8025 to avoid conflict)
+    restart: unless-stopped
+    networks:
+      - mynet
+
+  app:
+      profiles: [fullstack]
+      build:
+          context: ../
+          dockerfile: devops/Dockerfile
+      environment:
+          DB_HOST: host.docker.internal
+          DB_PORT: 5433
+          DB_NAME: tripr
+          DB_USERNAME: postgres
+          DB_PASSWORD: P4ssword!
+          MAIL_HOST: localhost
+          MAIL_PORT: 1026
+          MAIL_USERNAME: ""
+          MAIL_PASSWORD: ""
+          JWT_SECRET: verySecretKeyThatShouldBeAtLeast32CharactersLong
+          BASE_URL: host.docker.internal:8081
+      ports:
+          - "8080:8081"
+      depends_on:
+          - postgres
+          - mailpit
+
+volumes:
+  postgres_data:
+networks:
+  mynet:
+    driver: bridge
