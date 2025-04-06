@@ -1,5 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.security
 
+import com.adsearch.common.exception.InvalidCredentialsException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.RefreshToken
@@ -11,6 +12,7 @@ import com.adsearch.infrastructure.security.JwtUserDetailsService
 import com.adsearch.infrastructure.security.JwtAccessTokenService
 import com.adsearch.infrastructure.security.JwtRefreshTokenService
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
@@ -27,7 +29,12 @@ class AuthenticationAdapter(
 ) : AuthenticationPort {
 
     override suspend fun authenticate(username: String, password: String): AuthResponse {
-        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+        try {
+            authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
+        } catch (ex: BadCredentialsException) {
+            throw InvalidCredentialsException()
+        }
+
         val userDetails = jwtUserDetailsService.loadUserByUsername(username)
         val refreshToken: RefreshToken = jwtRefreshTokenService.createRefreshToken(userDetails)
         val accessToken: String = jwtAccessTokenService.generateAccessToken(userDetails)

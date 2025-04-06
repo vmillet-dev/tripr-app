@@ -1,7 +1,6 @@
 package com.adsearch.application.service
 
 import com.adsearch.application.usecase.AuthenticationUseCase
-import com.adsearch.common.exception.InvalidCredentialsException
 import com.adsearch.common.exception.InvalidTokenException
 import com.adsearch.common.exception.UserAlreadyExistsException
 import com.adsearch.domain.model.AuthRequest
@@ -10,7 +9,6 @@ import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.domain.port.UserPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 
 /**
@@ -30,11 +28,7 @@ class AuthenticationService(
      * Authenticate a user with username and password
      */
     override suspend fun login(authRequest: AuthRequest): AuthResponse {
-        try {
-            return authenticationPort.authenticate(authRequest.username, authRequest.password)
-        } catch (ex: BadCredentialsException) {
-            throw InvalidCredentialsException()
-        }
+        return authenticationPort.authenticate(authRequest.username, authRequest.password)
     }
 
     /**
