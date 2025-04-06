@@ -33,9 +33,6 @@ import org.junit.jupiter.api.Nested
 @DisplayName("Auth Controller Integration Tests")
 class AuthControllerIT : BaseIT() {
 
-    @Autowired
-    private lateinit var restTemplate: TestRestTemplate
-
     private lateinit var testUser: User
     private val testUsername = "testuser"
     private val testPassword = "password"

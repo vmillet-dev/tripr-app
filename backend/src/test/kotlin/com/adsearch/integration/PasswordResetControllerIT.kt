@@ -33,9 +33,6 @@ import java.util.UUID
 @DisplayName("Password Reset Controller Integration Tests")
 class PasswordResetControllerIT : BaseIT() {
 
-    @Autowired
-    private lateinit var restTemplate: TestRestTemplate
-
     private lateinit var testUser: User
     private val testUsername = "testuser"
     private val testPassword = "password"

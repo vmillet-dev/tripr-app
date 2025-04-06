@@ -1,5 +1,4 @@
 spring:
-  mvc.log-resolved-exception: false
   mail:
     host: localhost
     port: 1026
@@ -16,14 +15,15 @@ spring:
     username: postgres
     password: P4ssword!
     driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
   docker:
     compose:
       file: backend/compose.yaml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
 
 logging:
   level:
@@ -32,12 +32,6 @@ logging:
     org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
-api:
-  endpoints:
-    classifieds: https://api.mockclassifieds.example.com/v1
-    marketplace: https://api.mockmarketplace.example.com/v2
-    auction: https://api.mockauction.example.com/v1
 
 jwt:
   secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
@@ -49,4 +43,4 @@ jwt:
 
 password-reset:
   token-expiration: 86400000  # 24 hours in milliseconds
-  base-url: http://localhost:4200/reset-password
+  base-url: http://localhost:4200/password-reset

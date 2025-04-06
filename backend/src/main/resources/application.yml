@@ -24,13 +24,11 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
-  docker:
-    compose:
-      file: compose.yaml
 
 springdoc:
   swagger-ui:
@@ -69,4 +67,4 @@ jwt:
 # Password reset configuration
 password-reset:
   token-expiration: 86400000  # 24 hours in milliseconds
-  base-url: ${BASE_URL}/reset-password
+  base-url: ${BASE_URL}/password-reset
