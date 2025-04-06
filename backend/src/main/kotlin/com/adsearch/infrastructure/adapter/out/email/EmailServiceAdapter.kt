@@ -4,6 +4,7 @@ import com.adsearch.domain.port.EmailServicePort
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -16,12 +17,13 @@ import org.thymeleaf.context.Context
 @Service
 class EmailServiceAdapter(
     private val mailSender: JavaMailSender,
-    private val templateEngine: TemplateEngine
+    private val templateEngine: TemplateEngine,
+    @Value("\${password-reset.base-url}") private val baseUrl: String
 ) : EmailServicePort {
 
     private val logger = LoggerFactory.getLogger(EmailServiceAdapter::class.java)
 
-    override suspend fun sendPasswordResetEmail(to: String, resetLink: String) {
+    override suspend fun sendPasswordResetEmail(to: String, token: String) {
         withContext(Dispatchers.IO) {
             try {
                 val message = mailSender.createMimeMessage()
@@ -31,7 +33,7 @@ class EmailServiceAdapter(
                 helper.setSubject("Password Reset Request")
 
                 val context = Context()
-                context.setVariable("resetLink", resetLink)
+                context.setVariable("resetLink", "$baseUrl?token=$token")
 
                 val htmlContent = templateEngine.process("email/password-reset-email", context)
                 helper.setText(htmlContent, true)

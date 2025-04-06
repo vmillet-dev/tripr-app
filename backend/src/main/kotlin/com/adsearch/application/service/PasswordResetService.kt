@@ -26,9 +26,6 @@ class PasswordResetService(
 
     @Value("\${password-reset.token-expiration}")
     private val tokenExpiration: Long,
-
-    @Value("\${password-reset.base-url}")
-    private val baseUrl: String
 ) : PasswordResetUseCase {
 
     private val logger = LoggerFactory.getLogger(PasswordResetService::class.java)
@@ -57,11 +54,8 @@ class PasswordResetService(
         passwordResetTokenPersistencePort.save(resetToken)
         logger.debug("Created password reset token: {}", resetToken)
 
-        // Generate reset link
-        val resetLink = "$baseUrl?token=$token"
-
         // Send email
-        emailServicePort.sendPasswordResetEmail(username, resetLink)
+        emailServicePort.sendPasswordResetEmail(username, token)
         logger.info("Password reset email sent to: $username")
     }
 

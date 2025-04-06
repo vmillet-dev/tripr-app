@@ -8,5 +8,5 @@ interface EmailServicePort {
     /**
      * Send a password reset email
      */
-    suspend fun sendPasswordResetEmail(to: String, resetLink: String)
+    suspend fun sendPasswordResetEmail(to: String, token: String)
 }
