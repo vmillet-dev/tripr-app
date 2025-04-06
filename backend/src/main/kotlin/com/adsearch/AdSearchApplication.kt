@@ -5,7 +5,7 @@ import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = ["com.adsearch.infrastructure.repository.jpa"])
+@EnableJpaRepositories(basePackages = ["com.adsearch.infrastructure.adapter.out.persistence.jpa"])
 class AdSearchApplication
 
 fun main(args: Array<String>) {

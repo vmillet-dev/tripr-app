@@ -1,9 +1,9 @@
 package com.adsearch.application.service
 
-import com.adsearch.domain.exception.TokenExpiredException
+import com.adsearch.common.exception.TokenExpiredException
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.RefreshTokenRepositoryPort
+import com.adsearch.domain.port.RefreshTokenPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -15,7 +15,7 @@ import java.time.Instant
  */
 @Service
 class RefreshTokenService(
-    private val refreshTokenRepository: RefreshTokenRepositoryPort,
+    private val refreshTokenRepository: RefreshTokenPersistencePort,
     @Value("\${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long
 ) {
 

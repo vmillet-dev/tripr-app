@@ -1,5 +1,7 @@
 package com.adsearch.domain.model
 
+import com.adsearch.domain.enum.SortOptionEnum
+
 /**
  * Value object representing search criteria for ads
  */
@@ -9,15 +11,8 @@ data class SearchCriteria(
     val minPrice: Double? = null,
     val maxPrice: Double? = null,
     val location: String? = null,
-    val sortBy: SortOption = SortOption.RELEVANCE,
+    val sortBy: SortOptionEnum = SortOptionEnum.RELEVANCE,
     val limit: Int = 20,
     val offset: Int = 0
 )
 
-enum class SortOption {
-    RELEVANCE,
-    PRICE_ASC,
-    PRICE_DESC,
-    DATE_DESC,
-    DATE_ASC
-}

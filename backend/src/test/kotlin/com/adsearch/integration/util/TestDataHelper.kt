@@ -1,8 +1,8 @@
 package com.adsearch.integration.util
 
 import com.adsearch.domain.model.User
-import com.adsearch.infrastructure.repository.entity.PasswordResetTokenEntity
-import com.adsearch.infrastructure.repository.entity.UserEntity
+import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetTokenEntity
+import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ class TestDataHelper(
     @Autowired private val entityManager: EntityManager,
     @Autowired private val passwordEncoder: PasswordEncoder
 ) {
-    
+
     /**
      * Create a test user in the database
      */
@@ -31,20 +31,20 @@ class TestDataHelper(
         roles: List<String> = listOf("USER")
     ): User {
         val encodedPassword = passwordEncoder.encode(password)
-        
+
         // Create and persist user entity
         val userEntity = UserEntity(
             username = username,
             password = encodedPassword,
             roles = roles.toMutableList()
         )
-        
+
         entityManager.persist(userEntity)
         entityManager.flush()
-        
+
         return userEntity.toDomain()
     }
-    
+
     /**
      * Create a password reset token for a user
      */
@@ -61,13 +61,13 @@ class TestDataHelper(
             expiryDate = expiryDate,
             used = false
         )
-        
+
         entityManager.persist(passwordResetToken)
         entityManager.flush()
-        
+
         return token
     }
-    
+
     /**
      * Clean up test data
      */

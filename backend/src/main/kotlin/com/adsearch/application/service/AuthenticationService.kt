@@ -1,13 +1,13 @@
 package com.adsearch.application.service
 
-import com.adsearch.application.port.AuthenticationUseCase
-import com.adsearch.domain.exception.InvalidCredentialsException
-import com.adsearch.domain.exception.InvalidTokenException
-import com.adsearch.domain.exception.UserAlreadyExistsException
+import com.adsearch.application.usecase.AuthenticationUseCase
+import com.adsearch.common.exception.InvalidCredentialsException
+import com.adsearch.common.exception.InvalidTokenException
+import com.adsearch.common.exception.UserAlreadyExistsException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.UserPersistencePort
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AuthenticationService(
-    private val userRepository: UserRepositoryPort,
+    private val userRepository: UserPersistencePort,
     private val jwtService: JwtService,
     private val refreshTokenService: RefreshTokenService,
     private val passwordEncoder: PasswordEncoder,

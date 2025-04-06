@@ -1,13 +1,13 @@
 package com.adsearch.application.service
 
-import com.adsearch.application.port.PasswordResetUseCase
-import com.adsearch.domain.exception.InvalidTokenException
-import com.adsearch.domain.exception.TokenExpiredException
-import com.adsearch.domain.exception.UserNotFoundException
+import com.adsearch.application.usecase.PasswordResetUseCase
+import com.adsearch.common.exception.InvalidTokenException
+import com.adsearch.common.exception.TokenExpiredException
+import com.adsearch.common.exception.UserNotFoundException
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.port.EmailServicePort
-import com.adsearch.domain.port.PasswordResetTokenRepositoryPort
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.PasswordResetTokenPersistencePort
+import com.adsearch.domain.port.UserPersistencePort
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -19,8 +19,8 @@ import java.time.Instant
  */
 @Service
 class PasswordResetService(
-    private val userRepository: UserRepositoryPort,
-    private val tokenRepository: PasswordResetTokenRepositoryPort,
+    private val userRepository: UserPersistencePort,
+    private val tokenRepository: PasswordResetTokenPersistencePort,
     private val emailService: EmailServicePort,
     private val passwordEncoder: PasswordEncoder,
 

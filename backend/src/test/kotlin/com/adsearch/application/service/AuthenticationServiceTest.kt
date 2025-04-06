@@ -1,12 +1,12 @@
 package com.adsearch.application.service
 
-import com.adsearch.domain.exception.InvalidCredentialsException
-import com.adsearch.domain.exception.InvalidTokenException
-import com.adsearch.domain.exception.UserNotFoundException
+import com.adsearch.common.exception.InvalidCredentialsException
+import com.adsearch.common.exception.InvalidTokenException
+import com.adsearch.common.exception.UserNotFoundException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.UserPersistencePort
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -28,7 +28,7 @@ import java.time.Instant
 class AuthenticationServiceTest {
 
     private lateinit var authenticationService: AuthenticationService
-    private lateinit var userRepository: UserRepositoryPort
+    private lateinit var userRepository: UserPersistencePort
     private lateinit var jwtService: JwtService
     private lateinit var refreshTokenService: RefreshTokenService
     private lateinit var passwordEncoder: PasswordEncoder

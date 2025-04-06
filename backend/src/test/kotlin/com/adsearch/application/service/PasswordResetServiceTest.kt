@@ -1,13 +1,13 @@
 package com.adsearch.application.service
 
-import com.adsearch.domain.exception.InvalidTokenException
-import com.adsearch.domain.exception.TokenExpiredException
-import com.adsearch.domain.exception.UserNotFoundException
+import com.adsearch.common.exception.InvalidTokenException
+import com.adsearch.common.exception.TokenExpiredException
+import com.adsearch.common.exception.UserNotFoundException
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.User
 import com.adsearch.domain.port.EmailServicePort
-import com.adsearch.domain.port.PasswordResetTokenRepositoryPort
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.PasswordResetTokenPersistencePort
+import com.adsearch.domain.port.UserPersistencePort
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
@@ -24,8 +24,8 @@ import java.time.Instant
 class PasswordResetServiceTest {
 
     private lateinit var passwordResetService: PasswordResetService
-    private lateinit var userRepository: UserRepositoryPort
-    private lateinit var tokenRepository: PasswordResetTokenRepositoryPort
+    private lateinit var userRepository: UserPersistencePort
+    private lateinit var tokenRepository: PasswordResetTokenPersistencePort
     private lateinit var emailService: EmailServicePort
     private lateinit var passwordEncoder: PasswordEncoder
 

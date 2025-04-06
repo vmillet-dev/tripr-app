@@ -1,8 +1,8 @@
 package com.adsearch.integration
 
 import com.adsearch.domain.model.User
-import com.adsearch.infrastructure.web.dto.AuthRequestDto
-import com.adsearch.infrastructure.web.dto.RegisterRequestDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.RegisterRequestDto
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate

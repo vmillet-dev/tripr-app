@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.config
 
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.UserRepositoryPort
+import com.adsearch.domain.port.UserPersistencePort
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
@@ -11,12 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 class DataInitializationConfig {
-    
+
     private val logger = LoggerFactory.getLogger(DataInitializationConfig::class.java)
-    
+
     @Bean
     fun dataInitializer(
-        userRepository: UserRepositoryPort,
+        userRepository: UserPersistencePort,
         passwordEncoder: PasswordEncoder
     ): CommandLineRunner {
         return CommandLineRunner {
@@ -32,7 +32,7 @@ class DataInitializationConfig {
                     userRepository.save(user)
                     logger.info("Created test user: ${user.username}")
                 }
-                
+
                 // Create an admin user if it doesn't exist
                 if (userRepository.findByUsername("admin") == null) {
                     val admin = User(

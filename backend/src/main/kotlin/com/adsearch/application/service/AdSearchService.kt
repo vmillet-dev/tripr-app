@@ -1,6 +1,6 @@
 package com.adsearch.application.service
 
-import com.adsearch.application.port.AdSearchUseCase
+import com.adsearch.application.usecase.AdSearchUseCase
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.domain.model.SearchResult
 import com.adsearch.domain.port.AdSearchPort

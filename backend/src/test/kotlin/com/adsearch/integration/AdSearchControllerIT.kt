@@ -1,7 +1,7 @@
 package com.adsearch.integration
 
 import com.adsearch.domain.model.User
-import com.adsearch.infrastructure.web.dto.SearchRequestDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.SearchRequestDto
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
