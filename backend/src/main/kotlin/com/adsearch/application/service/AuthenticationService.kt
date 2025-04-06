@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AuthenticationService(
-    private val userRepository: UserPersistencePort,
+    private val userPersistencePort: UserPersistencePort,
     private val jwtService: JwtService,
     private val refreshTokenService: RefreshTokenService,
     private val passwordEncoder: PasswordEncoder,
@@ -42,7 +42,7 @@ class AuthenticationService(
      * Authenticate a user with username and password
      */
     override suspend fun authenticate(authRequest: AuthRequest): AuthResponse {
-        val user = userRepository.findByUsername(authRequest.username) ?: throw InvalidCredentialsException()
+        val user = userPersistencePort.findByUsername(authRequest.username) ?: throw InvalidCredentialsException()
 
         LOG.debug("Found user for authentication: {} with ID: {}", user.username, user.id)
 
@@ -53,7 +53,7 @@ class AuthenticationService(
         val accessToken = jwtService.generateToken(user)
 
         // Save the user to ensure it's available for refresh token
-        userRepository.save(user)
+        userPersistencePort.save(user)
 
         return AuthResponse(
             accessToken = accessToken,
@@ -87,10 +87,10 @@ class AuthenticationService(
 
         // Log all users in the repository for debugging
         LOG.debug("All users in repository:")
-        val allUsers = userRepository.findAll()
+        val allUsers = userPersistencePort.findAll()
         allUsers.forEach { LOG.debug("User: {} with ID: {}", it, it.id) }
 
-        val user = userRepository.findById(verifiedToken.userId)
+        val user = userPersistencePort.findById(verifiedToken.userId)
         LOG.debug("Found user: {} with ID: {}", user, verifiedToken.userId)
 
         if (user == null) {
@@ -152,7 +152,7 @@ class AuthenticationService(
         }
 
         val userId = jwtService.getUserIdFromToken(token)
-        return userRepository.findById(userId)
+        return userPersistencePort.findById(userId)
     }
 
     /**
@@ -166,7 +166,7 @@ class AuthenticationService(
      * Register a new user
      */
     override suspend fun register(authRequest: AuthRequest, email: String) {
-        val existingUser = userRepository.findByUsername(authRequest.username)
+        val existingUser = userPersistencePort.findByUsername(authRequest.username)
         if (existingUser != null) {
             throw UserAlreadyExistsException("Username already exists")
         }
@@ -177,7 +177,7 @@ class AuthenticationService(
             roles = mutableListOf("USER")
         )
 
-        userRepository.save(user)
+        userPersistencePort.save(user)
     }
 
     /**

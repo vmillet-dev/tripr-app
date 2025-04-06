@@ -40,8 +40,8 @@ class PasswordResetServiceTest {
         passwordEncoder = mockk()
 
         passwordResetService = PasswordResetService(
-            userRepository = userRepository,
-            tokenRepository = tokenRepository,
+            userPersistencePort = userRepository,
+            tokenPersistencePort = tokenRepository,
             emailService = emailService,
             passwordEncoder = passwordEncoder,
             tokenExpiration = tokenExpiration,

@@ -15,7 +15,7 @@ import java.time.Instant
  */
 @Service
 class RefreshTokenService(
-    private val refreshTokenRepository: RefreshTokenPersistencePort,
+    private val refreshTokenPersistencePort: RefreshTokenPersistencePort,
     @Value("\${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long
 ) {
 
@@ -37,7 +37,7 @@ class RefreshTokenService(
         }
 
         // Delete any existing tokens for this user
-        refreshTokenRepository.deleteByUserId(userId)
+        refreshTokenPersistencePort.deleteByUserId(userId)
 
         val refreshToken = RefreshToken(
             userId = userId,
@@ -45,7 +45,7 @@ class RefreshTokenService(
             expiryDate = Instant.now().plusMillis(refreshTokenExpiration)
         )
 
-        val savedToken = refreshTokenRepository.save(refreshToken)
+        val savedToken = refreshTokenPersistencePort.save(refreshToken)
         LOG.debug("Saved refresh token: {}", savedToken)
 
         return savedToken
@@ -56,7 +56,7 @@ class RefreshTokenService(
      */
     suspend fun verifyExpiration(token: RefreshToken): RefreshToken {
         if (token.expiryDate.isBefore(Instant.now()) || token.revoked) {
-            refreshTokenRepository.deleteById(token.id)
+            refreshTokenPersistencePort.deleteById(token.id)
             throw TokenExpiredException("Refresh token was expired. Please make a new sign in request")
         }
 
@@ -67,13 +67,13 @@ class RefreshTokenService(
      * Find a refresh token by token string
      */
     suspend fun findByToken(token: String): RefreshToken? {
-        return refreshTokenRepository.findByToken(token)
+        return refreshTokenPersistencePort.findByToken(token)
     }
 
     /**
      * Delete all refresh tokens for a user
      */
     suspend fun deleteByUserId(userId: Long) {
-        refreshTokenRepository.deleteByUserId(userId)
+        refreshTokenPersistencePort.deleteByUserId(userId)
     }
 }
