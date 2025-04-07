@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component
 @Component
 class SearchResponseDtoMapper(
     private val adDtoMapper: AdDtoMapper
-) : DtoMapper<SearchResponseDto, SearchResult> {
+) {
     
-    override fun toDto(domainModel: SearchResult): SearchResponseDto {
+    fun toDto(domainModel: SearchResult): SearchResponseDto {
         // Default implementation without pagination info
         return toDto(domainModel, 20, 0)
     }
@@ -31,7 +31,7 @@ class SearchResponseDtoMapper(
         )
     }
     
-    override fun toDomain(dto: SearchResponseDto): SearchResult {
+    fun toDomain(dto: SearchResponseDto): SearchResult {
         // This is a one-way mapper primarily, but we'll implement a basic conversion
         return SearchResult(
             ads = adDtoMapper.toDomainList(dto.ads),

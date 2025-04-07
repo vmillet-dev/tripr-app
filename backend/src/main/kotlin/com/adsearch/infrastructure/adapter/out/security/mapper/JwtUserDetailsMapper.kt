@@ -16,7 +16,12 @@ class JwtUserDetailsMapper {
      */
     fun toJwtUserDetails(user: User): JwtUserDetails {
         val authorities = user.roles.map { SimpleGrantedAuthority(it) }
-        return JwtUserDetails(user.id, user.username, user.password, authorities)
+        return JwtUserDetails(
+            id = user.id,
+            username = user.username,
+            hash = user.password,
+            authorities = authorities
+        )
     }
     
     /**
@@ -27,7 +32,8 @@ class JwtUserDetailsMapper {
             id = userDetails.id,
             username = userDetails.username,
             password = userDetails.password,
-            roles = userDetails.authorities.map { it.authority }.toMutableList()
+            roles = userDetails.authorities.map { it.authority }.toMutableList(),
+            enabled = true
         )
     }
 }

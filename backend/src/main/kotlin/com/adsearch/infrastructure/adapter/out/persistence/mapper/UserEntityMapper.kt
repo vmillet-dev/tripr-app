@@ -8,23 +8,21 @@ import org.springframework.stereotype.Component
  * Mapper for converting between User domain model and UserEntity
  */
 @Component
-class UserEntityMapper : EntityMapper<UserEntity, User> {
+class UserEntityMapper {
     
-    override fun toEntity(domainModel: User): UserEntity {
-        return UserEntity(
-            id = domainModel.id,
-            username = domainModel.username,
-            password = domainModel.password,
-            roles = domainModel.roles.toMutableList()
-        )
+    fun toEntity(domainModel: User): UserEntity {
+        return UserEntity.fromDomain(domainModel)
     }
     
-    override fun toDomain(entity: UserEntity): User {
-        return User(
-            id = entity.id,
-            username = entity.username,
-            password = entity.password,
-            roles = entity.roles
-        )
+    fun toDomain(entity: UserEntity): User {
+        return entity.toDomain()
+    }
+    
+    fun toEntityList(domainModels: List<User>): List<UserEntity> {
+        return domainModels.map { toEntity(it) }
+    }
+    
+    fun toDomainList(entities: List<UserEntity>): List<User> {
+        return entities.map { toDomain(it) }
     }
 }

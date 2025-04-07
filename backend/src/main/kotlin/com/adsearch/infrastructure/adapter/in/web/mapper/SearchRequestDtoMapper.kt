@@ -3,12 +3,10 @@ package com.adsearch.infrastructure.adapter.`in`.web.mapper
 import com.adsearch.domain.enum.SortOptionEnum
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.infrastructure.adapter.`in`.web.dto.SearchRequestDto
-import org.mapstruct.Mapper
-import org.mapstruct.Named
 import org.springframework.stereotype.Component
 
 /**
- * MapStruct mapper for converting between SearchCriteria domain model and SearchRequestDto
+ * Mapper for converting between SearchCriteria domain model and SearchRequestDto
  */
 @Component
 class SearchRequestDtoMapper {
@@ -19,10 +17,10 @@ class SearchRequestDtoMapper {
     fun toDto(domainModel: SearchCriteria): SearchRequestDto {
         return SearchRequestDto(
             query = domainModel.query,
-            category = domainModel.category,
             minPrice = domainModel.minPrice,
             maxPrice = domainModel.maxPrice,
             location = domainModel.location,
+            category = domainModel.category,
             sortBy = domainModel.sortBy.name,
             limit = domainModel.limit,
             offset = domainModel.offset
@@ -35,10 +33,10 @@ class SearchRequestDtoMapper {
     fun toDomain(dto: SearchRequestDto): SearchCriteria {
         return SearchCriteria(
             query = dto.query,
-            category = dto.category,
             minPrice = dto.minPrice,
             maxPrice = dto.maxPrice,
             location = dto.location,
+            category = dto.category,
             sortBy = stringToSortBy(dto.sortBy),
             limit = dto.limit,
             offset = dto.offset

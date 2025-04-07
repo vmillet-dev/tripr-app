@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component
  * Mapper for converting between Ad domain model and AdDto
  */
 @Component
-class AdDtoMapper : DtoMapper<AdDto, Ad> {
+class AdDtoMapper {
     
-    override fun toDto(domainModel: Ad): AdDto {
+    fun toDto(domainModel: Ad): AdDto {
         return AdDto(
             id = domainModel.id,
             title = domainModel.title,
@@ -28,7 +28,7 @@ class AdDtoMapper : DtoMapper<AdDto, Ad> {
         )
     }
     
-    override fun toDomain(dto: AdDto): Ad {
+    fun toDomain(dto: AdDto): Ad {
         return Ad(
             id = dto.id,
             title = dto.title,
@@ -44,5 +44,13 @@ class AdDtoMapper : DtoMapper<AdDto, Ad> {
             location = dto.location,
             tags = dto.tags
         )
+    }
+    
+    fun toDtoList(domainModels: List<Ad>): List<AdDto> {
+        return domainModels.map { toDto(it) }
+    }
+    
+    fun toDomainList(dtos: List<AdDto>): List<Ad> {
+        return dtos.map { toDomain(it) }
     }
 }
