@@ -14,7 +14,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [TestConfig::class])
 @ActiveProfiles("test")
 @Testcontainers
 abstract class BaseIT {

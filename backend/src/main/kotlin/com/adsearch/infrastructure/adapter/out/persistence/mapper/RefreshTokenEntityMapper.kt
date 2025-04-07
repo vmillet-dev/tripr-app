@@ -1,31 +1,31 @@
 package com.adsearch.infrastructure.adapter.out.persistence.mapper
 
+import com.adsearch.common.mapper.mapTo
+import com.adsearch.common.mapper.mapToList
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.infrastructure.adapter.out.persistence.entity.RefreshTokenEntity
 import org.springframework.stereotype.Component
 
 /**
  * Mapper for converting between RefreshToken domain model and RefreshTokenEntity
- * 
- * Note: Uses the entity's built-in toDomain() and fromDomain() methods
- * to maintain compatibility with existing code
+ * using dynamic mapper
  */
 @Component
 class RefreshTokenEntityMapper {
     
     fun toEntity(domainModel: RefreshToken): RefreshTokenEntity {
-        return RefreshTokenEntity.fromDomain(domainModel)
+        return domainModel.mapTo<RefreshTokenEntity>()
     }
     
     fun toDomain(entity: RefreshTokenEntity): RefreshToken {
-        return entity.toDomain()
+        return entity.mapTo<RefreshToken>()
     }
     
     fun toEntityList(domainModels: List<RefreshToken>): List<RefreshTokenEntity> {
-        return domainModels.map { toEntity(it) }
+        return domainModels.mapToList<RefreshTokenEntity>()
     }
     
     fun toDomainList(entities: List<RefreshTokenEntity>): List<RefreshToken> {
-        return entities.map { toDomain(it) }
+        return entities.mapToList<RefreshToken>()
     }
 }

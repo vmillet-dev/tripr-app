@@ -27,26 +27,4 @@ class RefreshTokenEntity(
 
     @Column(nullable = false)
     val revoked: Boolean = false
-) {
-    fun toDomain(): RefreshToken {
-        return RefreshToken(
-            id = id,
-            userId = userId,
-            token = token,
-            expiryDate = expiryDate,
-            revoked = revoked
-        )
-    }
-
-    companion object {
-        fun fromDomain(refreshToken: RefreshToken): RefreshTokenEntity {
-            return RefreshTokenEntity(
-                id = refreshToken.id,
-                userId = refreshToken.userId,
-                token = refreshToken.token,
-                expiryDate = refreshToken.expiryDate,
-                revoked = refreshToken.revoked
-            )
-        }
-    }
-}
+)

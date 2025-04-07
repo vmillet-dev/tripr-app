@@ -42,7 +42,14 @@ class TestDataHelper(
         entityManager.persist(userEntity)
         entityManager.flush()
 
-        return userEntity.toDomain()
+        // Convert entity to domain model
+        return User(
+            id = userEntity.id,
+            username = userEntity.username,
+            password = userEntity.password,
+            roles = userEntity.roles,
+            enabled = true
+        )
     }
 
     /**
