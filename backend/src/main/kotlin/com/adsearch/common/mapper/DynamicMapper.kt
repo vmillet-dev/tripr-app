@@ -1,9 +1,11 @@
 package com.adsearch.common.mapper
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * A utility class for dynamically mapping between data classes using Kotlin reflection.
@@ -25,8 +27,11 @@ object DynamicMapper {
             val constructor = targetClass.primaryConstructor
                 ?: throw IllegalArgumentException("Target class ${targetClass.simpleName} must have a primary constructor")
             
+            // Make constructor accessible
+            constructor.isAccessible = true
+            
             // Prepare the arguments for the constructor
-            val arguments = mutableMapOf<String, Any?>()
+            val arguments = mutableMapOf<KParameter, Any?>()
             
             // Get all properties of the source object
             val sourceProps = source::class.memberProperties
@@ -39,19 +44,24 @@ object DynamicMapper {
                 val sourceProp = sourceProps.find { it.name == paramName }
                 
                 if (sourceProp != null) {
+                    // Make property accessible
+                    sourceProp.isAccessible = true
+                    
                     // Get the value from the source object
                     @Suppress("UNCHECKED_CAST")
                     val value = (sourceProp as KProperty1<T, Any?>).get(source)
-                    arguments[paramName] = value
+                    
+                    // Only add non-null values or if parameter is nullable
+                    if (value != null || parameter.type.isMarkedNullable) {
+                        arguments[parameter] = value
+                    }
                 }
             }
             
             // Create a new instance of the target class with the mapped properties
-            return constructor.callBy(constructor.parameters.associateWith { param ->
-                arguments[param.name]
-            })
+            return constructor.callBy(arguments)
         } catch (e: Exception) {
-            throw IllegalArgumentException("Failed to map ${source::class.simpleName} to ${targetClass.simpleName}", e)
+            throw IllegalArgumentException("Failed to map ${source::class.simpleName} to ${targetClass.simpleName}: ${e.message}", e)
         }
     }
     
@@ -93,8 +103,11 @@ object DynamicMapper {
             val constructor = targetClass.primaryConstructor
                 ?: throw IllegalArgumentException("Target class ${targetClass.simpleName} must have a primary constructor")
             
+            // Make constructor accessible
+            constructor.isAccessible = true
+            
             // Prepare the arguments for the constructor
-            val arguments = mutableMapOf<String, Any?>()
+            val arguments = mutableMapOf<KParameter, Any?>()
             
             // Get all properties of the source object
             val sourceProps = source::class.memberProperties
@@ -106,25 +119,34 @@ object DynamicMapper {
                 // Check if there's a custom mapping for this parameter
                 val customMapping = propertyMap[paramName]
                 if (customMapping != null) {
-                    arguments[paramName] = customMapping(source)
+                    val value = customMapping(source)
+                    // Only add non-null values or if parameter is nullable
+                    if (value != null || parameter.type.isMarkedNullable) {
+                        arguments[parameter] = value
+                    }
                 } else {
                     // Find a matching property in the source object
                     val sourceProp = sourceProps.find { it.name == paramName }
                     if (sourceProp != null) {
+                        // Make property accessible
+                        sourceProp.isAccessible = true
+                        
                         // Get the value from the source object
                         @Suppress("UNCHECKED_CAST")
                         val value = (sourceProp as KProperty1<T, Any?>).get(source)
-                        arguments[paramName] = value
+                        
+                        // Only add non-null values or if parameter is nullable
+                        if (value != null || parameter.type.isMarkedNullable) {
+                            arguments[parameter] = value
+                        }
                     }
                 }
             }
             
             // Create a new instance of the target class with the mapped properties
-            return constructor.callBy(constructor.parameters.associateWith { param ->
-                arguments[param.name]
-            })
+            return constructor.callBy(arguments)
         } catch (e: Exception) {
-            throw IllegalArgumentException("Failed to map ${source::class.simpleName} to ${targetClass.simpleName} with custom mappings", e)
+            throw IllegalArgumentException("Failed to map ${source::class.simpleName} to ${targetClass.simpleName} with custom mappings: ${e.message}", e)
         }
     }
     
