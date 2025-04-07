@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class AuthenticationAdapter(
     private val authenticationManager: AuthenticationManager,
-    private val tokenGenerationPort: TokenGenerationPort,
+    @org.springframework.context.annotation.Lazy private val tokenGenerationPort: TokenGenerationPort,
     private val userDetailsPort: UserDetailsPort
 ) : AuthenticationPort {
     

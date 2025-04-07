@@ -1,8 +1,6 @@
 package com.adsearch.infrastructure.security.service
 
 import com.adsearch.domain.model.RefreshToken
-import com.adsearch.domain.port.TokenGenerationPort
-import com.adsearch.domain.port.TokenValidationPort
 import com.adsearch.infrastructure.security.model.JwtUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -10,12 +8,11 @@ import org.springframework.stereotype.Service
 
 /**
  * Service for refresh token operations
- * This service is now a thin wrapper that delegates to domain ports
  */
 @Service
 class JwtRefreshTokenService(
-    private val tokenGenerationPort: TokenGenerationPort,
-    private val tokenValidationPort: TokenValidationPort
+    private val tokenGenerationAdapter: com.adsearch.infrastructure.adapter.out.security.TokenGenerationAdapter,
+    private val tokenValidationAdapter: com.adsearch.infrastructure.adapter.out.security.TokenValidationAdapter
 ) {
 
     companion object {
@@ -35,10 +32,10 @@ class JwtRefreshTokenService(
             else -> user.id
         }
 
-        return tokenGenerationPort.createRefreshToken(userId, user.username)
+        return tokenGenerationAdapter.createRefreshToken(userId, user.username)
     }
 
     suspend fun validateRefreshTokenAndGetUserId(givenToken: String): Long {
-        return tokenValidationPort.validateRefreshTokenAndGetUserId(givenToken)
+        return tokenValidationAdapter.validateRefreshTokenAndGetUserId(givenToken)
     }
 }

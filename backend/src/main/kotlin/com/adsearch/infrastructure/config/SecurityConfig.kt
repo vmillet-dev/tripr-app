@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.config
 
-import com.adsearch.domain.service.TokenService
+
 import com.adsearch.infrastructure.security.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -69,8 +69,4 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration):
         AuthenticationManager = authenticationConfiguration.authenticationManager
         
-    @Bean
-    fun tokenService(): TokenService {
-        return TokenService()
-    }
 }
