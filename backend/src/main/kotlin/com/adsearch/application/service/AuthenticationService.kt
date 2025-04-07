@@ -6,7 +6,6 @@ import com.adsearch.common.exception.UserAlreadyExistsException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.port.AuthenticationPort
-import com.adsearch.domain.port.UserPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -16,8 +15,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AuthenticationService(
-    private val authenticationPort: AuthenticationPort,
-    private val userPersistencePort: UserPersistencePort,
+    private val authenticationPort: AuthenticationPort
 ) : AuthenticationUseCase {
 
     companion object {
@@ -56,7 +54,7 @@ class AuthenticationService(
      * Register a new user
      */
     override suspend fun register(authRequest: AuthRequest, email: String) {
-        val existingUser = userPersistencePort.findByUsername(authRequest.username)
+        val existingUser = authenticationPort.loadUserByUsername(authRequest.username)
         if (existingUser != null) {
             throw UserAlreadyExistsException("Username already exists")
         }

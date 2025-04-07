@@ -27,26 +27,4 @@ class PasswordResetTokenEntity(
 
     @Column(nullable = false)
     val used: Boolean = false
-) {
-    fun toDomain(): PasswordResetToken {
-        return PasswordResetToken(
-            id = id,
-            userId = userId,
-            token = token,
-            expiryDate = expiryDate,
-            used = used
-        )
-    }
-
-    companion object {
-        fun fromDomain(passwordResetToken: PasswordResetToken): PasswordResetTokenEntity {
-            return PasswordResetTokenEntity(
-                id = passwordResetToken.id,
-                userId = passwordResetToken.userId,
-                token = passwordResetToken.token,
-                expiryDate = passwordResetToken.expiryDate,
-                used = passwordResetToken.used
-            )
-        }
-    }
-}
+)
