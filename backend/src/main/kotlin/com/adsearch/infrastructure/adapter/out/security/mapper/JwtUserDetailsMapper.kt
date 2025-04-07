@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component
 
 /**
  * Mapper for converting between domain User and infrastructure JwtUserDetails
+ * 
+ * Note: This mapper uses explicit mapping instead of dynamic mapper due to 
+ * JwtUserDetails extending Spring Security's User class which requires special handling
  */
 @Component
 class JwtUserDetailsMapper {

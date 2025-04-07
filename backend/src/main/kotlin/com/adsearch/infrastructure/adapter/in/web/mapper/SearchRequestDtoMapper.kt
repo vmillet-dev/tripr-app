@@ -1,5 +1,8 @@
 package com.adsearch.infrastructure.adapter.`in`.web.mapper
 
+import com.adsearch.common.mapper.mapTo
+import com.adsearch.common.mapper.mapToList
+import com.adsearch.common.mapper.mapToWithCustomMappings
 import com.adsearch.domain.enum.SortOptionEnum
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.infrastructure.adapter.`in`.web.dto.SearchRequestDto
@@ -15,15 +18,10 @@ class SearchRequestDtoMapper {
      * Convert a domain SearchCriteria to a SearchRequestDto
      */
     fun toDto(domainModel: SearchCriteria): SearchRequestDto {
-        return SearchRequestDto(
-            query = domainModel.query,
-            minPrice = domainModel.minPrice,
-            maxPrice = domainModel.maxPrice,
-            location = domainModel.location,
-            category = domainModel.category,
-            sortBy = domainModel.sortBy.name,
-            limit = domainModel.limit,
-            offset = domainModel.offset
+        return domainModel.mapToWithCustomMappings<SearchCriteria, SearchRequestDto>(
+            mapOf(
+                "sortBy" to { source: SearchCriteria -> source.sortBy.name }
+            )
         )
     }
     
@@ -31,15 +29,10 @@ class SearchRequestDtoMapper {
      * Convert a SearchRequestDto to a domain SearchCriteria
      */
     fun toDomain(dto: SearchRequestDto): SearchCriteria {
-        return SearchCriteria(
-            query = dto.query,
-            minPrice = dto.minPrice,
-            maxPrice = dto.maxPrice,
-            location = dto.location,
-            category = dto.category,
-            sortBy = stringToSortBy(dto.sortBy),
-            limit = dto.limit,
-            offset = dto.offset
+        return dto.mapToWithCustomMappings<SearchRequestDto, SearchCriteria>(
+            mapOf(
+                "sortBy" to { source: SearchRequestDto -> stringToSortBy(source.sortBy) }
+            )
         )
     }
     

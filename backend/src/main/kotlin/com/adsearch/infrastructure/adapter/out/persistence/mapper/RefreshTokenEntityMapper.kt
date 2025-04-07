@@ -3,32 +3,22 @@ package com.adsearch.infrastructure.adapter.out.persistence.mapper
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.infrastructure.adapter.out.persistence.entity.RefreshTokenEntity
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 /**
  * Mapper for converting between RefreshToken domain model and RefreshTokenEntity
+ * 
+ * Note: Uses the entity's built-in toDomain() and fromDomain() methods
+ * to maintain compatibility with existing code
  */
 @Component
 class RefreshTokenEntityMapper {
     
     fun toEntity(domainModel: RefreshToken): RefreshTokenEntity {
-        return RefreshTokenEntity(
-            id = domainModel.id,
-            userId = domainModel.userId,
-            token = domainModel.token,
-            expiryDate = domainModel.expiryDate,
-            revoked = domainModel.revoked
-        )
+        return RefreshTokenEntity.fromDomain(domainModel)
     }
     
     fun toDomain(entity: RefreshTokenEntity): RefreshToken {
-        return RefreshToken(
-            id = entity.id,
-            userId = entity.userId,
-            token = entity.token,
-            expiryDate = entity.expiryDate,
-            revoked = entity.revoked
-        )
+        return entity.toDomain()
     }
     
     fun toEntityList(domainModels: List<RefreshToken>): List<RefreshTokenEntity> {

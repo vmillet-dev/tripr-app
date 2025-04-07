@@ -1,5 +1,7 @@
 package com.adsearch.infrastructure.adapter.`in`.web.mapper
 
+import com.adsearch.common.mapper.mapTo
+import com.adsearch.common.mapper.mapToList
 import com.adsearch.domain.model.Ad
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AdDto
 import org.springframework.stereotype.Component
@@ -11,46 +13,18 @@ import org.springframework.stereotype.Component
 class AdDtoMapper {
     
     fun toDto(domainModel: Ad): AdDto {
-        return AdDto(
-            id = domainModel.id,
-            title = domainModel.title,
-            description = domainModel.description,
-            price = domainModel.price,
-            currency = domainModel.currency,
-            imageUrl = domainModel.imageUrl,
-            sourceId = domainModel.sourceId,
-            sourceName = domainModel.sourceName,
-            externalUrl = domainModel.externalUrl,
-            createdAt = domainModel.createdAt,
-            category = domainModel.category,
-            location = domainModel.location,
-            tags = domainModel.tags
-        )
+        return domainModel.mapTo<AdDto>()
     }
     
     fun toDomain(dto: AdDto): Ad {
-        return Ad(
-            id = dto.id,
-            title = dto.title,
-            description = dto.description,
-            price = dto.price,
-            currency = dto.currency,
-            imageUrl = dto.imageUrl,
-            sourceId = dto.sourceId,
-            sourceName = dto.sourceName,
-            externalUrl = dto.externalUrl,
-            createdAt = dto.createdAt,
-            category = dto.category,
-            location = dto.location,
-            tags = dto.tags
-        )
+        return dto.mapTo<Ad>()
     }
     
     fun toDtoList(domainModels: List<Ad>): List<AdDto> {
-        return domainModels.map { toDto(it) }
+        return domainModels.mapToList<AdDto>()
     }
     
     fun toDomainList(dtos: List<AdDto>): List<Ad> {
-        return dtos.map { toDomain(it) }
+        return dtos.mapToList<Ad>()
     }
 }

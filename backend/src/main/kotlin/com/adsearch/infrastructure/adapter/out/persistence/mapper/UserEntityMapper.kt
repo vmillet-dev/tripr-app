@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component
 
 /**
  * Mapper for converting between User domain model and UserEntity
+ * 
+ * Note: Uses the entity's built-in toDomain() and fromDomain() methods
+ * to maintain compatibility with existing code
  */
 @Component
 class UserEntityMapper {

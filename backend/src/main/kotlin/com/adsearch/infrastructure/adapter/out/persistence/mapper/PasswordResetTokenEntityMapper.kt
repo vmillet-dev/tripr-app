@@ -3,30 +3,22 @@ package com.adsearch.infrastructure.adapter.out.persistence.mapper
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetTokenEntity
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 /**
  * Mapper for converting between PasswordResetToken domain model and PasswordResetTokenEntity
+ * 
+ * Note: Uses the entity's built-in toDomain() and fromDomain() methods
+ * to maintain compatibility with existing code
  */
 @Component
 class PasswordResetTokenEntityMapper {
     
     fun toEntity(domainModel: PasswordResetToken): PasswordResetTokenEntity {
-        return PasswordResetTokenEntity(
-            id = domainModel.id,
-            userId = domainModel.userId,
-            token = domainModel.token,
-            expiryDate = domainModel.expiryDate
-        )
+        return PasswordResetTokenEntity.fromDomain(domainModel)
     }
     
     fun toDomain(entity: PasswordResetTokenEntity): PasswordResetToken {
-        return PasswordResetToken(
-            id = entity.id,
-            userId = entity.userId,
-            token = entity.token,
-            expiryDate = entity.expiryDate
-        )
+        return entity.toDomain()
     }
     
     fun toEntityList(domainModels: List<PasswordResetToken>): List<PasswordResetTokenEntity> {
