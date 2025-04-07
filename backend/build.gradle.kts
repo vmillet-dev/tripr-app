@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.kotlin.jpa)
     alias(libs.plugins.kotlin.noarg)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.version.catalog.update)
@@ -35,6 +36,10 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.auth0.java.jwt)
+    
+    // MapStruct
+    kapt("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
 
     testImplementation(libs.springboot.starter.test)
     testImplementation(libs.kotlin.test.junit5)

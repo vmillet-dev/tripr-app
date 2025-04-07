@@ -3,15 +3,20 @@ package com.adsearch.infrastructure.adapter.`in`.web.mapper
 import com.adsearch.domain.enum.SortOptionEnum
 import com.adsearch.domain.model.SearchCriteria
 import com.adsearch.infrastructure.adapter.`in`.web.dto.SearchRequestDto
+import org.mapstruct.Mapper
+import org.mapstruct.Named
 import org.springframework.stereotype.Component
 
 /**
- * Mapper for converting between SearchCriteria domain model and SearchRequestDto
+ * MapStruct mapper for converting between SearchCriteria domain model and SearchRequestDto
  */
 @Component
-class SearchRequestDtoMapper : DtoMapper<SearchRequestDto, SearchCriteria> {
+class SearchRequestDtoMapper {
     
-    override fun toDto(domainModel: SearchCriteria): SearchRequestDto {
+    /**
+     * Convert a domain SearchCriteria to a SearchRequestDto
+     */
+    fun toDto(domainModel: SearchCriteria): SearchRequestDto {
         return SearchRequestDto(
             query = domainModel.query,
             category = domainModel.category,
@@ -24,20 +29,37 @@ class SearchRequestDtoMapper : DtoMapper<SearchRequestDto, SearchCriteria> {
         )
     }
     
-    override fun toDomain(dto: SearchRequestDto): SearchCriteria {
+    /**
+     * Convert a SearchRequestDto to a domain SearchCriteria
+     */
+    fun toDomain(dto: SearchRequestDto): SearchCriteria {
         return SearchCriteria(
             query = dto.query,
             category = dto.category,
             minPrice = dto.minPrice,
             maxPrice = dto.maxPrice,
             location = dto.location,
-            sortBy = parseSortOption(dto.sortBy),
+            sortBy = stringToSortBy(dto.sortBy),
             limit = dto.limit,
             offset = dto.offset
         )
     }
     
-    private fun parseSortOption(sortBy: String?): SortOptionEnum {
+    /**
+     * Convert a list of domain SearchCriteria to SearchRequestDtos
+     */
+    fun toDtoList(domainModels: List<SearchCriteria>): List<SearchRequestDto> {
+        return domainModels.map { toDto(it) }
+    }
+    
+    /**
+     * Convert a list of SearchRequestDtos to domain SearchCriteria
+     */
+    fun toDomainList(dtos: List<SearchRequestDto>): List<SearchCriteria> {
+        return dtos.map { toDomain(it) }
+    }
+    
+    private fun stringToSortBy(sortBy: String?): SortOptionEnum {
         return when (sortBy?.uppercase()) {
             "PRICE_ASC" -> SortOptionEnum.PRICE_ASC
             "PRICE_DESC" -> SortOptionEnum.PRICE_DESC
