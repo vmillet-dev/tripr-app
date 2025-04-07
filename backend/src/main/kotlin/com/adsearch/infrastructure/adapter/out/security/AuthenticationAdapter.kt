@@ -10,6 +10,7 @@ import com.adsearch.domain.model.User
 import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.domain.port.RefreshTokenPersistencePort
 import com.adsearch.domain.port.UserPersistencePort
+import com.adsearch.infrastructure.adapter.out.security.mapper.JwtUserDetailsMapper
 import com.adsearch.infrastructure.security.model.JwtUserDetails
 import com.adsearch.infrastructure.security.service.JwtAccessTokenService
 import org.springframework.beans.factory.annotation.Value
@@ -29,6 +30,7 @@ class AuthenticationAdapter(
     private val passwordEncoder: PasswordEncoder,
     private val userPersistencePort: UserPersistencePort,
     private val refreshTokenPersistencePort: RefreshTokenPersistencePort,
+    private val jwtUserDetailsMapper: JwtUserDetailsMapper,
     @Value("\${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long
 ) : AuthenticationPort {
     
@@ -98,8 +100,8 @@ class AuthenticationAdapter(
     }
     
     override fun generateAccessToken(userId: Long, username: String, roles: List<String>): String {
-        val authorities = roles.map { SimpleGrantedAuthority(it) }
-        val userDetails = JwtUserDetails(userId, username, "", authorities)
+        val user = User(id = userId, username = username, password = "", roles = roles.toMutableList())
+        val userDetails = jwtUserDetailsMapper.toJwtUserDetails(user)
         return jwtAccessTokenService.generateAccessToken(userDetails)
     }
     
