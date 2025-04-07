@@ -1,7 +1,6 @@
 package com.adsearch.infrastructure.security
 
-import com.adsearch.domain.port.TokenValidationPort
-import com.adsearch.domain.port.UserDetailsPort
+import com.adsearch.domain.port.AuthenticationPort
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -21,8 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 @Component
 class JwtAuthenticationFilter(
-    private val tokenValidationPort: TokenValidationPort,
-    private val userDetailsPort: UserDetailsPort
+    @org.springframework.context.annotation.Lazy private val authenticationPort: AuthenticationPort
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -43,7 +41,7 @@ class JwtAuthenticationFilter(
         val jwt = authHeader.substring(7)
         LOG.debug("Processing JWT token")
 
-        val username: String? = tokenValidationPort.validateTokenAndGetUsername(jwt)
+        val username: String? = authenticationPort.validateTokenAndGetUsername(jwt)
         if (username == null) {
             // validation failed or token expired
             filterChain.doFilter(request, response)
@@ -51,7 +49,7 @@ class JwtAuthenticationFilter(
         }
 
         try {
-            val user = userDetailsPort.loadUserByUsername(username)
+            val user = authenticationPort.loadUserByUsername(username)
             if (user == null) {
                 filterChain.doFilter(request, response)
                 return

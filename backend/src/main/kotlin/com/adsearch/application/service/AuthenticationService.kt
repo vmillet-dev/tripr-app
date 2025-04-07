@@ -6,9 +6,6 @@ import com.adsearch.common.exception.UserAlreadyExistsException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.port.AuthenticationPort
-import com.adsearch.domain.port.TokenManagementPort
-import com.adsearch.domain.port.UserDetailsPort
-import com.adsearch.domain.port.UserRegistrationPort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -18,10 +15,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AuthenticationService(
-    private val authenticationPort: AuthenticationPort,
-    private val userRegistrationPort: UserRegistrationPort,
-    private val tokenManagementPort: TokenManagementPort,
-    private val userDetailsPort: UserDetailsPort
+    private val authenticationPort: AuthenticationPort
 ) : AuthenticationUseCase {
 
     companion object {
@@ -44,7 +38,7 @@ class AuthenticationService(
             throw InvalidTokenException(message = "Refresh token is missing")
         }
 
-        return tokenManagementPort.refreshAccessToken(refreshToken)
+        return authenticationPort.refreshAccessToken(refreshToken)
     }
 
     /**
@@ -52,7 +46,7 @@ class AuthenticationService(
      */
     override suspend fun logout(refreshToken: String?) {
         if (refreshToken != null) {
-            tokenManagementPort.logout(refreshToken)
+            authenticationPort.logout(refreshToken)
         }
     }
 
@@ -60,11 +54,11 @@ class AuthenticationService(
      * Register a new user
      */
     override suspend fun register(authRequest: AuthRequest, email: String) {
-        val existingUser = userDetailsPort.loadUserByUsername(authRequest.username)
+        val existingUser = authenticationPort.loadUserByUsername(authRequest.username)
         if (existingUser != null) {
             throw UserAlreadyExistsException("Username already exists")
         }
 
-        userRegistrationPort.register(authRequest)
+        authenticationPort.register(authRequest)
     }
 }
