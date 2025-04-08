@@ -1,7 +1,7 @@
 [versions]
 archunit = "1.4.0"
 auth0-jwt = "4.5.0"
-coroutines = "1.10.1"
+coroutines = "1.10.2"
 httpclient5 = "5.4.3"
 jackson-kotlin = "2.18.3"
 kotlin = "2.1.20"
