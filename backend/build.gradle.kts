@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.version.catalog.update)
+    id("org.openrewrite.rewrite") version "6.10.0"
 }
 
 group = "com.adsearch"
@@ -68,5 +69,13 @@ tasks.withType<Test> {
 tasks.bootRun {
     environment["SPRING_PROFILES_ACTIVE"] = environment["SPRING_PROFILES_ACTIVE"] ?: "dev"
     workingDir = project.rootDir.resolve("./../")
+}
+
+// OpenRewrite configuration
+rewrite {
+    activeRecipe("org.openrewrite.java.format.AutoFormat")
+    
+    // Add more recipes as needed
+    // activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0")
 }
 
