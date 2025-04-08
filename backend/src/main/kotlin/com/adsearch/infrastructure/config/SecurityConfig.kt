@@ -1,5 +1,6 @@
 package com.adsearch.infrastructure.config
 
+
 import com.adsearch.infrastructure.security.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -67,5 +68,5 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
     @Throws(Exception::class)
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration):
         AuthenticationManager = authenticationConfiguration.authenticationManager
-
+        
 }

@@ -3,6 +3,8 @@ package com.adsearch.infrastructure.adapter.`in`.web.controller
 import com.adsearch.application.usecase.AdSearchUseCase
 import com.adsearch.infrastructure.adapter.`in`.web.dto.SearchRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.SearchResponseDto
+import com.adsearch.infrastructure.adapter.`in`.web.mapper.SearchRequestDtoMapper
+import com.adsearch.infrastructure.adapter.`in`.web.mapper.SearchResponseDtoMapper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -22,7 +24,9 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Ad Search", description = "API for searching ads across multiple sources")
 class AdSearchController(
     private val adSearchUseCase: AdSearchUseCase,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val searchRequestDtoMapper: SearchRequestDtoMapper,
+    private val searchResponseDtoMapper: SearchResponseDtoMapper
 ) {
     private val logger = LoggerFactory.getLogger(AdSearchController::class.java)
 
@@ -36,13 +40,13 @@ class AdSearchController(
         logger.info("Received search request: $searchRequest")
 
         return withContext(ioDispatcher) {
-            val criteria = searchRequest.toDomain()
+            val criteria = searchRequestDtoMapper.toDomain(searchRequest)
             val result = adSearchUseCase.searchAdsAcrossSources(criteria)
 
-            val response = SearchResponseDto.fromDomain(
-                result = result,
-                limit = searchRequest.limit,
-                offset = searchRequest.offset
+            val response = searchResponseDtoMapper.toDto(
+                result,
+                searchRequest.limit,
+                searchRequest.offset
             )
 
             logger.info("Returning ${response.ads.size} ads from ${response.sources.size} sources")
