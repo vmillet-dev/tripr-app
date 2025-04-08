@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "rangeStrategy": "pin",
+  "rangeStrategy": "bump",
   "extends": [
     "config:recommended"
   ]
