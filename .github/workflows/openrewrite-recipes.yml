@@ -52,18 +52,29 @@ jobs:
             recipe_name=$(echo "$recipe" | tr -d '[:space:]')
             echo "Checking recipe: $recipe_name"
             
+            # Skip certain recipes that are not applicable or too broad
+            if [[ "$recipe_name" == "org.openrewrite.DeleteSourceFiles" || 
+                  "$recipe_name" == "org.openrewrite.FindSourceFiles" || 
+                  "$recipe_name" == "org.openrewrite.FindParseFailures" ]]; then
+              echo "Skipping system recipe: $recipe_name"
+              continue
+            fi
+            
             # Create a branch for this recipe
             git checkout -b openrewrite/backend-$recipe_name
             
-            # Run the recipe in dry-run mode to see if it would make changes
-            ./gradlew rewriteRun --recipe $recipe_name --dryRun > recipe-results/$recipe_name.txt
+            # Add the recipe to the build.gradle.kts file temporarily
+            sed -i "/rewrite {/a\\    activeRecipe(\"$recipe_name\")" build.gradle.kts
+            
+            # Run the recipe to see if it would make changes
+            ./gradlew rewriteDryRun > recipe-results/$recipe_name.txt 2>&1 || true
             
             # Check if the recipe would make changes
-            if grep -q "Changes made by recipe" recipe-results/$recipe_name.txt; then
+            if grep -q "changes have been made" recipe-results/$recipe_name.txt; then
               echo "Recipe $recipe_name would make changes"
               
               # Apply the recipe
-              ./gradlew rewriteRun --recipe $recipe_name
+              ./gradlew rewriteRun
               
               # Commit and push changes
               git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -87,6 +98,9 @@ jobs:
               git checkout main
               git branch -D openrewrite/backend-$recipe_name
             fi
+            
+            # Reset the build.gradle.kts file to remove the temporary recipe
+            git checkout -- build.gradle.kts
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -109,93 +123,80 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # Note: OpenRewrite doesn't have official JavaScript/TypeScript support yet
-      # This is a placeholder for when it becomes available
-      # For now, we'll use a simple check for potential upgrades using npm-check-updates
-      
-      - name: Install npm-check-updates
-        run: npm install -g npm-check-updates
+      - name: Setup Java for OpenRewrite
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Check for dependency updates
-        working-directory: frontend
-        id: check-frontend-updates
+      # OpenRewrite has limited support for JavaScript/TypeScript
+      # We'll use the available recipes that work with these languages
+      
+      - name: Install OpenRewrite CLI
         run: |
-          # Check for updates and save to a file
-          ncu --jsonUpgraded > frontend-updates.json
+          mkdir -p ~/openrewrite
+          cd ~/openrewrite
+          curl -L https://github.com/openrewrite/rewrite/releases/latest/download/rewrite-cli.jar -o rewrite-cli.jar
+          chmod +x rewrite-cli.jar
+          echo "OpenRewrite CLI installed at ~/openrewrite/rewrite-cli.jar"
+
+      - name: Check for applicable recipes for frontend
+        working-directory: frontend
+        id: check-frontend-recipes
+        run: |
+          # Create a temporary directory for recipe results
+          mkdir -p recipe-results
           
-          # Parse the JSON and create PRs for each update
-          if [ -s frontend-updates.json ]; then
-            echo "Updates available"
+          # List of OpenRewrite recipes that work with JavaScript/TypeScript
+          # These are limited but we'll use what's available
+          RECIPES=(
+            "org.openrewrite.javascript.format.TabsAndIndents"
+            "org.openrewrite.javascript.format.Spaces"
+            "org.openrewrite.javascript.format.AutoFormat"
+            "org.openrewrite.json.format.AutoFormat"
+            "org.openrewrite.typescript.format.TabsAndIndents"
+            "org.openrewrite.typescript.format.Spaces"
+            "org.openrewrite.typescript.format.AutoFormat"
+          )
+          
+          for recipe in "${RECIPES[@]}"; do
+            echo "Checking recipe: $recipe"
             
-            # Use jq to parse the JSON if it's installed
-            if command -v jq &> /dev/null; then
-              jq -r 'to_entries | .[] | .key + ":" + .value' frontend-updates.json | while read -r update; do
-                package=$(echo "$update" | cut -d':' -f1)
-                version=$(echo "$update" | cut -d':' -f2)
-                
-                # Create a branch for this update
-                git checkout -b openrewrite/frontend-update-$package
-                
-                # Update just this package
-                cd frontend
-                npm install $package@$version --save
-                
-                # Commit and push changes
-                git config --local user.email "github-actions[bot]@users.noreply.github.com"
-                git config --local user.name "GitHub Actions"
-                git add .
-                git commit -m "Update frontend dependency: $package to $version"
-                
-                # Create PR with detailed description
-                pr_body="# Frontend Dependency Update: $package\n\n"
-                pr_body+="## Update Details\n"
-                pr_body+="- Package: $package\n"
-                pr_body+="- New Version: $version\n\n"
-                pr_body+="This PR was automatically generated by the OpenRewrite Recipe Check workflow."
-                
-                echo "$pr_body" > pr-body.txt
-                gh pr create --title "Frontend: Update dependency $package to $version" --body-file pr-body.txt
-                
-                # Return to main branch for next update
-                git checkout main
-              done
+            # Create a branch for this recipe
+            git checkout -b openrewrite/frontend-$recipe
+            
+            # Run the recipe to see if it would make changes
+            java -jar ~/openrewrite/rewrite-cli.jar --recipe $recipe --dry-run . > recipe-results/$(echo $recipe | tr '.' '-').txt 2>&1 || true
+            
+            # Check if the recipe would make changes
+            if grep -q "changes have been made" recipe-results/$(echo $recipe | tr '.' '-').txt; then
+              echo "Recipe $recipe would make changes"
+              
+              # Apply the recipe
+              java -jar ~/openrewrite/rewrite-cli.jar --recipe $recipe .
+              
+              # Commit and push changes
+              git config --local user.email "github-actions[bot]@users.noreply.github.com"
+              git config --local user.name "GitHub Actions"
+              git add .
+              git commit -m "Apply OpenRewrite recipe: $recipe"
+              
+              # Create PR with detailed description
+              pr_body="# OpenRewrite Recipe: $recipe\n\n"
+              pr_body+="## Description\n"
+              pr_body+="This recipe applies code formatting and style improvements to the frontend codebase.\n\n"
+              pr_body+="This PR was automatically generated by the OpenRewrite Recipe Check workflow."
+              
+              echo "$pr_body" > pr-body.txt
+              gh pr create --title "Frontend: Apply OpenRewrite recipe $recipe" --body-file pr-body.txt
+              
+              # Return to main branch for next recipe
+              git checkout main
             else
-              echo "jq not available, using basic parsing"
-              # Fallback parsing if jq is not available
-              # This is a simplified version and may not handle all cases correctly
-              grep -o '"[^"]*":"[^"]*"' frontend-updates.json | while read -r update; do
-                package=$(echo "$update" | cut -d':' -f1 | tr -d '"')
-                version=$(echo "$update" | cut -d':' -f2 | tr -d '"')
-                
-                # Create a branch for this update
-                git checkout -b openrewrite/frontend-update-$package
-                
-                # Update just this package
-                cd frontend
-                npm install $package@$version --save
-                
-                # Commit and push changes
-                git config --local user.email "github-actions[bot]@users.noreply.github.com"
-                git config --local user.name "GitHub Actions"
-                git add .
-                git commit -m "Update frontend dependency: $package to $version"
-                
-                # Create PR with detailed description
-                pr_body="# Frontend Dependency Update: $package\n\n"
-                pr_body+="## Update Details\n"
-                pr_body+="- Package: $package\n"
-                pr_body+="- New Version: $version\n\n"
-                pr_body+="This PR was automatically generated by the OpenRewrite Recipe Check workflow."
-                
-                echo "$pr_body" > pr-body.txt
-                gh pr create --title "Frontend: Update dependency $package to $version" --body-file pr-body.txt
-                
-                # Return to main branch for next update
-                git checkout main
-              done
+              echo "Recipe $recipe would not make changes"
+              git checkout main
+              git branch -D openrewrite/frontend-$recipe
             fi
-          else
-            echo "No updates available"
-          fi
+          done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

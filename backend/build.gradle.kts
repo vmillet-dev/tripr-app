@@ -74,6 +74,8 @@ tasks.bootRun {
 // OpenRewrite configuration
 rewrite {
     activeRecipe("org.openrewrite.java.format.AutoFormat")
+    activeRecipe("org.openrewrite.java.RemoveUnusedImports")
+    activeRecipe("org.openrewrite.java.OrderImports")
     
     // Add more recipes as needed
     // activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0")
