@@ -73,11 +73,29 @@ tasks.bootRun {
 
 // OpenRewrite configuration
 rewrite {
+    // Code formatting and cleanup recipes
     activeRecipe("org.openrewrite.java.format.AutoFormat")
     activeRecipe("org.openrewrite.java.RemoveUnusedImports")
     activeRecipe("org.openrewrite.java.OrderImports")
+    activeRecipe("org.openrewrite.kotlin.format.AutoFormat")
+    activeRecipe("org.openrewrite.kotlin.cleanup.EqualsMethodUsage")
+    activeRecipe("org.openrewrite.kotlin.cleanup.ImplicitParameterInLambda")
+    activeRecipe("org.openrewrite.kotlin.cleanup.RemoveTrailingComma")
+    activeRecipe("org.openrewrite.kotlin.cleanup.RemoveTrailingSemicolon")
+    activeRecipe("org.openrewrite.kotlin.cleanup.ReplaceCharToIntWithCode")
+    activeRecipe("org.openrewrite.kotlin.cleanup.UnnecessaryTypeParentheses")
     
-    // Add more recipes as needed
-    // activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0")
+    // Spring-related recipes
+    activeRecipe("org.openrewrite.java.spring.NoRequestMappingAnnotation")
+    activeRecipe("org.openrewrite.java.spring.ImplicitWebAnnotationNames")
+    activeRecipe("org.openrewrite.java.spring.boot3.SpringBoot3BestPractices")
+    
+    // Security-related recipes
+    activeRecipe("org.openrewrite.java.security.SecureRandom")
+    activeRecipe("org.openrewrite.java.security.JavaSecurityBestPractices")
+    
+    // Gradle-related recipes
+    activeRecipe("org.openrewrite.gradle.UpdateGradleWrapper")
+    activeRecipe("org.openrewrite.gradle.UpdateJavaCompatibility")
 }
 

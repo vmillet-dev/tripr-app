@@ -32,7 +32,30 @@ jobs:
             sed -i '/plugins {/a\\    id("org.openrewrite.rewrite") version "6.10.0"' build.gradle.kts
             echo "// OpenRewrite configuration" >> build.gradle.kts
             echo "rewrite {" >> build.gradle.kts
+            echo '    // Code formatting and cleanup recipes' >> build.gradle.kts
             echo '    activeRecipe("org.openrewrite.java.format.AutoFormat")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.RemoveUnusedImports")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.OrderImports")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.format.AutoFormat")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.cleanup.EqualsMethodUsage")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.cleanup.ImplicitParameterInLambda")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.cleanup.RemoveTrailingComma")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.cleanup.RemoveTrailingSemicolon")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.cleanup.ReplaceCharToIntWithCode")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.kotlin.cleanup.UnnecessaryTypeParentheses")' >> build.gradle.kts
+            echo '' >> build.gradle.kts
+            echo '    // Spring-related recipes' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.spring.NoRequestMappingAnnotation")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.spring.ImplicitWebAnnotationNames")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.spring.boot3.SpringBoot3BestPractices")' >> build.gradle.kts
+            echo '' >> build.gradle.kts
+            echo '    // Security-related recipes' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.security.SecureRandom")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.security.JavaSecurityBestPractices")' >> build.gradle.kts
+            echo '' >> build.gradle.kts
+            echo '    // Gradle-related recipes' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.gradle.UpdateGradleWrapper")' >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.gradle.UpdateJavaCompatibility")' >> build.gradle.kts
             echo "}" >> build.gradle.kts
           fi
           
