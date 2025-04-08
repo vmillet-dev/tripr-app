@@ -25,6 +25,17 @@ jobs:
         working-directory: backend
         run: chmod +x gradlew
 
+      - name: Add OpenRewrite plugin if not present
+        working-directory: backend
+        run: |
+          if ! grep -q "org.openrewrite.rewrite" build.gradle.kts; then
+            sed -i '/plugins {/a\\    id("org.openrewrite.rewrite") version "6.10.0"' build.gradle.kts
+            echo "// OpenRewrite configuration" >> build.gradle.kts
+            echo "rewrite {" >> build.gradle.kts
+            echo '    activeRecipe("org.openrewrite.java.format.AutoFormat")' >> build.gradle.kts
+            echo "}" >> build.gradle.kts
+          fi
+          
       - name: List available OpenRewrite recipes
         working-directory: backend
         run: ./gradlew rewriteDiscover > backend-recipes.txt
@@ -110,7 +121,7 @@ jobs:
         id: check-frontend-updates
         run: |
           # Check for updates and save to a file
-          ncu --format json > frontend-updates.json
+          ncu --jsonUpgraded > frontend-updates.json
           
           # Parse the JSON and create PRs for each update
           if [ -s frontend-updates.json ]; then
