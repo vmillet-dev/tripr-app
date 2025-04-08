@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 class AdSearchApplication
 
 fun main(args: Array<String>) {
-    runApplication<AdSearchApplication>(*args)
+    runApplication<AdSearchApplication>(*args);
 }
