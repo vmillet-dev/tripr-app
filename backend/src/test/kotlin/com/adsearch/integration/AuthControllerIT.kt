@@ -6,8 +6,6 @@ import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.RegisterRequestDto
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -19,7 +17,7 @@ import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
-import java.util.*
+import java.util.UUID
 
 /**
  * Integration tests for the Auth Controller
@@ -206,7 +204,7 @@ class AuthControllerIT : BaseIT() {
                 )
 
                 // If we get here, the login was successful
-                assertThat(loginResponse.statusCode.is2xxSuccessful())
+                assertThat(loginResponse.statusCode.is2xxSuccessful)
                     .withFailMessage("Login with new user should succeed with 2xx status code")
                     .isTrue()
             } catch (e: Exception) {
@@ -298,7 +296,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(refreshResponse).withFailMessage("Response should not be null").isNotNull()
 
             // If successful, verify token information
-            if (refreshResponse.statusCode.is2xxSuccessful() && refreshResponse.body != null) {
+            if (refreshResponse.statusCode.is2xxSuccessful && refreshResponse.body != null) {
                 assertThat(refreshResponse.body!!).withFailMessage("Response body should contain data").isNotEmpty()
 
                 // Check for token in different possible formats
@@ -347,7 +345,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(refreshResponse).withFailMessage("Response should not be null").isNotNull()
 
             // If we got a 2xx response with an error message, verify the message
-            if (refreshResponse.statusCode.is2xxSuccessful() &&
+            if (refreshResponse.statusCode.is2xxSuccessful &&
                 refreshResponse.body != null &&
                 (refreshResponse.body!!.containsKey("error") || refreshResponse.body!!.containsKey("message"))) {
 
@@ -446,7 +444,7 @@ class AuthControllerIT : BaseIT() {
             )
 
             // Then
-            assertThat(response.statusCode.is2xxSuccessful())
+            assertThat(response.statusCode.is2xxSuccessful)
                 .withFailMessage("Response should have a 2xx status code")
                 .isTrue()
 
@@ -546,7 +544,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(response).withFailMessage("Response should not be null").isNotNull()
 
             // Skip login verification if password reset failed
-            if (!response.statusCode.is2xxSuccessful()) {
+            if (!response.statusCode.is2xxSuccessful) {
                 return
             }
 
@@ -605,9 +603,9 @@ class AuthControllerIT : BaseIT() {
             // This could be 4xx error or 2xx with error message
             assertThat(
                 // Either a 4xx client error
-                response.statusCode.isError() ||
+                response.statusCode.isError ||
                     // Or a 2xx with error message
-                    (response.statusCode.is2xxSuccessful() &&
+                    (response.statusCode.is2xxSuccessful &&
                         response.body != null &&
                         (response.body!!.containsKey("error") ||
                             (response.body!!.containsKey("message") &&
@@ -615,7 +613,7 @@ class AuthControllerIT : BaseIT() {
             ).withFailMessage("Response should indicate token validation failure").isTrue()
 
             // If we got a 2xx response with an error message, verify the message
-            if (response.statusCode.is2xxSuccessful() &&
+            if (response.statusCode.is2xxSuccessful &&
                 response.body != null) {
 
                 if (response.body!!.containsKey("error")) {
@@ -653,7 +651,7 @@ class AuthControllerIT : BaseIT() {
             )
 
             // Then
-            assertThat(response.statusCode.is2xxSuccessful())
+            assertThat(response.statusCode.is2xxSuccessful)
                 .withFailMessage("Response should have a 2xx status code")
                 .isTrue()
 
@@ -702,7 +700,7 @@ class AuthControllerIT : BaseIT() {
             // This could be 2xx with valid=false or 4xx error
             assertThat(
                 // Either a 2xx success with valid=false
-                (response.statusCode.is2xxSuccessful() &&
+                (response.statusCode.is2xxSuccessful &&
                     response.body != null &&
                     ((response.body!!.containsKey("valid") &&
                         ((response.body!!["valid"] is Boolean && !(response.body!!["valid"] as Boolean)) ||
@@ -711,11 +709,11 @@ class AuthControllerIT : BaseIT() {
                             (response.body!!.containsKey("message") &&
                                 response.body!!["message"].toString().contains("invalid"))))) ||
                     // Or a 4xx client error
-                    response.statusCode.is4xxClientError()
+                    response.statusCode.is4xxClientError
             ).withFailMessage("Response should indicate token is invalid").isTrue()
 
             // If we got a 2xx response, verify the response details
-            if (response.statusCode.is2xxSuccessful() && response.body != null) {
+            if (response.statusCode.is2xxSuccessful && response.body != null) {
                 assertThat(response.body!!).withFailMessage("Response body should contain data").isNotEmpty()
 
                 // Check for valid field if present

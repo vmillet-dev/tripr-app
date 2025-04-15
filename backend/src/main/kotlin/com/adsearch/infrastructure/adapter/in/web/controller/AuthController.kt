@@ -3,7 +3,11 @@ package com.adsearch.infrastructure.adapter.`in`.web.controller
 import com.adsearch.application.usecase.AuthenticationUseCase
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
-import com.adsearch.infrastructure.adapter.`in`.web.dto.*
+import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthResponseDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetRequestDto
+import com.adsearch.infrastructure.adapter.`in`.web.dto.RegisterRequestDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.Cookie
@@ -13,8 +17,14 @@ import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Controller for authentication endpoints
@@ -37,14 +47,18 @@ class AuthController(
      */
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
-    suspend fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
+    suspend fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse, environment: Environment): ResponseEntity<AuthResponseDto> {
         val authResponse: AuthResponse = authenticationUseCase.login(request.username, request.password)
 
         val cookie = Cookie(cookieName, authResponse.refreshToken!!.token)
         cookie.maxAge =  cookieMaxAge
         cookie.path = "/"
         cookie.isHttpOnly = true
-        //TODO enable only in prod mode `cookie.secure = true`
+
+        if (environment.activeProfiles.isEmpty()) {
+            cookie.secure = true
+        }
+
         response.addCookie(cookie)
 
         return ResponseEntity.ok(
@@ -101,7 +115,8 @@ class AuthController(
     @Operation(summary = "Logout user", description = "Invalidates the refresh token and clears the refresh token cookie")
     suspend fun logout(
         request: HttpServletRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
+        environment: Environment
     ): ResponseEntity<Map<String, String>> {
         val cookies: String? = request.cookies?.find { it.name == cookieName }?.value
 
@@ -111,8 +126,10 @@ class AuthController(
         cookie.maxAge = 0
         cookie.path = "/"
         cookie.isHttpOnly = true
-        //TODO enable only in prod mode `cookie.secure = true`
-        response.addCookie(cookie)
+
+        if (environment.activeProfiles.isEmpty()) {
+            cookie.secure = true
+        }
         return ResponseEntity.ok(mapOf("message" to "Logged out successfully"))
     }
 
