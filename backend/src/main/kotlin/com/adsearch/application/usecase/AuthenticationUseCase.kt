@@ -11,7 +11,7 @@ interface AuthenticationUseCase {
     /**
      * Authenticate a user with username and password
      */
-    suspend fun login(authRequest: AuthRequest): AuthResponse
+    suspend fun login(username: String, password: String): AuthResponse
 
     /**
      * Register a new user
@@ -27,4 +27,18 @@ interface AuthenticationUseCase {
      * Logout a user by invalidating their refresh tokens
      */
     suspend fun logout(refreshToken: String?)
-}
+
+    /**
+     * Request a password reset for a user
+     */
+    suspend fun requestPasswordReset(username: String)
+
+    /**
+     * Reset a user's password using a token
+     */
+    suspend fun resetPassword(token: String, newPassword: String)
+
+    /**
+     * Validate a password reset token
+     */
+    suspend fun validateToken(token: String): Boolean}

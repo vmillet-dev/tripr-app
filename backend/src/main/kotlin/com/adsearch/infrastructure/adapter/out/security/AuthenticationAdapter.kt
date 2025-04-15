@@ -1,21 +1,20 @@
 package com.adsearch.infrastructure.adapter.out.security
 
 import com.adsearch.common.exception.InvalidCredentialsException
-import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
+import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken
-import com.adsearch.domain.model.User
 import com.adsearch.domain.port.AuthenticationPort
-import com.adsearch.domain.port.RefreshTokenPersistencePort
-import com.adsearch.domain.port.UserPersistencePort
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import com.adsearch.infrastructure.security.service.JwtAccessTokenService
 import com.adsearch.infrastructure.security.service.JwtRefreshTokenService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class AuthenticationAdapter(
@@ -24,8 +23,7 @@ class AuthenticationAdapter(
     private val jwtRefreshTokenService: JwtRefreshTokenService,
     private val jwtAccessTokenService: JwtAccessTokenService,
     private val passwordEncoder: PasswordEncoder,
-    private val userPersistencePort: UserPersistencePort,
-    private val refreshTokenPersistencePort: RefreshTokenPersistencePort
+    @Value("\${password-reset.token-expiration}") private val tokenExpiration: Long,
 ) : AuthenticationPort {
 
     override suspend fun authenticate(username: String, password: String): AuthResponse {
@@ -47,16 +45,6 @@ class AuthenticationAdapter(
         )
     }
 
-    override suspend fun register(authRequest: AuthRequest) {
-        val user = User(
-            username = authRequest.username,
-            password = passwordEncoder.encode(authRequest.password),
-            roles = mutableListOf("USER")
-        )
-
-        userPersistencePort.save(user)
-    }
-
     override suspend fun refreshAccessToken(refreshToken: String): AuthResponse {
 
         val userId = jwtRefreshTokenService.validateRefreshTokenAndGetUserId(refreshToken)
@@ -71,11 +59,15 @@ class AuthenticationAdapter(
         )
     }
 
-    override suspend fun logout(refreshToken: String) {
-        val storedToken = refreshTokenPersistencePort.findByToken(refreshToken)
+    override suspend fun generateHashedPassword(password: String): String {
+       return passwordEncoder.encode(password)
+    }
 
-        if (storedToken != null) {
-            refreshTokenPersistencePort.deleteByUserId(storedToken.userId)
-        }
+    override suspend fun generatePasswordToken(userId: Long): PasswordResetToken {
+        return PasswordResetToken(
+            userId = userId,
+            token = java.util.UUID.randomUUID().toString(),
+            expiryDate = Instant.now().plusMillis(tokenExpiration)
+        )
     }
 }
