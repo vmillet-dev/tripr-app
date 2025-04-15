@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.version.catalog.update)
-    id("org.openrewrite.rewrite") version "6.10.0"
 }
 
 group = "com.adsearch"
@@ -69,33 +68,5 @@ tasks.withType<Test> {
 tasks.bootRun {
     environment["SPRING_PROFILES_ACTIVE"] = environment["SPRING_PROFILES_ACTIVE"] ?: "dev"
     workingDir = project.rootDir.resolve("./../")
-}
-
-// OpenRewrite configuration
-rewrite {
-    // Code formatting and cleanup recipes
-    activeRecipe("org.openrewrite.java.format.AutoFormat")
-    activeRecipe("org.openrewrite.java.RemoveUnusedImports")
-    activeRecipe("org.openrewrite.java.OrderImports")
-    activeRecipe("org.openrewrite.kotlin.format.AutoFormat")
-    activeRecipe("org.openrewrite.kotlin.cleanup.EqualsMethodUsage")
-    activeRecipe("org.openrewrite.kotlin.cleanup.ImplicitParameterInLambda")
-    activeRecipe("org.openrewrite.kotlin.cleanup.RemoveTrailingComma")
-    activeRecipe("org.openrewrite.kotlin.cleanup.RemoveTrailingSemicolon")
-    activeRecipe("org.openrewrite.kotlin.cleanup.ReplaceCharToIntWithCode")
-    activeRecipe("org.openrewrite.kotlin.cleanup.UnnecessaryTypeParentheses")
-    
-    // Spring-related recipes
-    activeRecipe("org.openrewrite.java.spring.NoRequestMappingAnnotation")
-    activeRecipe("org.openrewrite.java.spring.ImplicitWebAnnotationNames")
-    activeRecipe("org.openrewrite.java.spring.boot3.SpringBoot3BestPractices")
-    
-    // Security-related recipes
-    activeRecipe("org.openrewrite.java.security.SecureRandom")
-    activeRecipe("org.openrewrite.java.security.JavaSecurityBestPractices")
-    
-    // Gradle-related recipes
-    activeRecipe("org.openrewrite.gradle.UpdateGradleWrapper")
-    activeRecipe("org.openrewrite.gradle.UpdateJavaCompatibility")
 }
 

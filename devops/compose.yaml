@@ -37,7 +37,7 @@ services:
           MAIL_USERNAME: ""
           MAIL_PASSWORD: ""
           JWT_SECRET: verySecretKeyThatShouldBeAtLeast32CharactersLong
-          BASE_URL: host.docker.internal:8081
+          BASE_URL: localhost:8080
       ports:
           - "8080:8081"
       depends_on:
