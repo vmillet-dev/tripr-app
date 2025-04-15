@@ -6,8 +6,7 @@ import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
-import com.adsearch.infrastructure.security.service.JwtAccessTokenService
-import com.adsearch.infrastructure.security.service.JwtRefreshTokenService
+import com.adsearch.infrastructure.security.service.JwtTokenService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
@@ -20,8 +19,7 @@ import java.time.Instant
 class AuthenticationAdapter(
     private val authenticationManager: AuthenticationManager,
     private val jwtUserDetailsService: JwtUserDetailsService,
-    private val jwtRefreshTokenService: JwtRefreshTokenService,
-    private val jwtAccessTokenService: JwtAccessTokenService,
+    private val jwtTokenService: JwtTokenService,
     private val passwordEncoder: PasswordEncoder,
     @Value("\${password-reset.token-expiration}") private val tokenExpiration: Long,
 ) : AuthenticationPort {
@@ -34,8 +32,8 @@ class AuthenticationAdapter(
         }
 
         val userDetails = jwtUserDetailsService.loadUserByUsername(username)
-        val refreshToken: RefreshToken = jwtRefreshTokenService.createRefreshToken(userDetails)
-        val accessToken: String = jwtAccessTokenService.generateAccessToken(userDetails)
+        val refreshToken: RefreshToken = jwtTokenService.createRefreshToken(userDetails)
+        val accessToken: String = jwtTokenService.createAccessToken(userDetails)
 
         return AuthResponse(
             accessToken = accessToken,
@@ -47,9 +45,9 @@ class AuthenticationAdapter(
 
     override suspend fun refreshAccessToken(refreshToken: String): AuthResponse {
 
-        val userId = jwtRefreshTokenService.validateRefreshTokenAndGetUserId(refreshToken)
-        val userDetails = jwtUserDetailsService.loadUserByUserId(userId)
-        val accessToken = jwtAccessTokenService.generateAccessToken(userDetails)
+        val username = jwtTokenService.validateRefreshTokenAndGetUsername(refreshToken)
+        val userDetails = jwtUserDetailsService.loadUserByUsername(username)
+        val accessToken = jwtTokenService.createAccessToken(userDetails)
 
         return AuthResponse(
             accessToken = accessToken,

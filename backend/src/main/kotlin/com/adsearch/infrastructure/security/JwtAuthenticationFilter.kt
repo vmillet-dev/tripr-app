@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.security
 
-import com.adsearch.infrastructure.security.service.JwtAccessTokenService
+import com.adsearch.infrastructure.security.service.JwtTokenService
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 @Component
 class JwtAuthenticationFilter(
-    private val jwtAccessTokenService: JwtAccessTokenService,
+    private val jwtTokenService: JwtTokenService,
     private val jwtUserDetailsService: JwtUserDetailsService
 ) : OncePerRequestFilter() {
 
@@ -43,7 +43,7 @@ class JwtAuthenticationFilter(
         val jwt = authHeader.substring(7)
         LOG.debug("Processing JWT token")
 
-        val username: String? = jwtAccessTokenService.validateTokenAndGetUsername(jwt)
+        val username: String? = jwtTokenService.validateAccessTokenAndGetUsername(jwt)
         if (username == null) {
             // validation failed or token expired
             filterChain.doFilter(request, response)

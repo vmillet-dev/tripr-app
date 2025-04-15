@@ -29,14 +29,4 @@ class JwtUserDetailsService(
         val authorities = user.roles.flatMap { listOf(SimpleGrantedAuthority(it)) }
         return JwtUserDetails(user.id, username, user.password, authorities)
     }
-
-    suspend fun loadUserByUserId(userId: Long): JwtUserDetails {
-        val user = userPersistencePort.findById(userId)
-        if (user == null) {
-            LOG.warn("user id not found: {}", userId)
-            throw UsernameNotFoundException("User $userId not found")
-        }
-        val authorities = user.roles.flatMap { listOf(SimpleGrantedAuthority(it)) }
-        return JwtUserDetails(user.id, user.username, user.password, authorities)
-    }
 }
