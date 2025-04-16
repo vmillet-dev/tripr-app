@@ -1,6 +1,5 @@
 package com.adsearch.infrastructure.adapter.out.persistence.entity
 
-import com.adsearch.domain.model.RefreshToken
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -27,26 +26,4 @@ class RefreshTokenEntity(
 
     @Column(nullable = false)
     val revoked: Boolean = false
-) {
-    fun toDomain(): RefreshToken {
-        return RefreshToken(
-            id = id,
-            userId = userId,
-            token = token,
-            expiryDate = expiryDate,
-            revoked = revoked
-        )
-    }
-
-    companion object {
-        fun fromDomain(refreshToken: RefreshToken): RefreshTokenEntity {
-            return RefreshTokenEntity(
-                id = refreshToken.id,
-                userId = refreshToken.userId,
-                token = refreshToken.token,
-                expiryDate = refreshToken.expiryDate,
-                revoked = refreshToken.revoked
-            )
-        }
-    }
-}
+)

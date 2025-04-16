@@ -7,21 +7,18 @@ import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import com.adsearch.infrastructure.security.service.JwtTokenService
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
-import java.time.Instant
 
 @Component
 class AuthenticationAdapter(
     private val authenticationManager: AuthenticationManager,
     private val jwtUserDetailsService: JwtUserDetailsService,
     private val jwtTokenService: JwtTokenService,
-    private val passwordEncoder: PasswordEncoder,
-    @Value("\${password-reset.token-expiration}") private val tokenExpiration: Long,
+    private val passwordEncoder: PasswordEncoder
 ) : AuthenticationPort {
 
     override fun authenticate(username: String, password: String): AuthResponse {
@@ -44,7 +41,6 @@ class AuthenticationAdapter(
     }
 
     override fun refreshAccessToken(refreshToken: String): AuthResponse {
-
         val username = jwtTokenService.validateRefreshTokenAndGetUsername(refreshToken)
         val userDetails = jwtUserDetailsService.loadUserByUsername(username)
         val accessToken = jwtTokenService.createAccessToken(userDetails)
@@ -62,10 +58,6 @@ class AuthenticationAdapter(
     }
 
     override fun generatePasswordToken(userId: Long): PasswordResetToken {
-        return PasswordResetToken(
-            userId = userId,
-            token = java.util.UUID.randomUUID().toString(),
-            expiryDate = Instant.now().plusMillis(tokenExpiration)
-        )
+        return jwtTokenService.generatePasswordResetToken(userId)
     }
 }

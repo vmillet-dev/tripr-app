@@ -57,10 +57,8 @@ class AuthenticationService(
      * Logout a user by invalidating their refresh tokens
      */
     override fun logout(refreshToken: String?) {
-        if (refreshToken != null) {
-            val storedToken = refreshTokenPersistencePort.findByToken(refreshToken)
-
-            if (storedToken != null) {
+        refreshToken?.let { token ->
+            refreshTokenPersistencePort.findByToken(token)?.let { storedToken ->
                 refreshTokenPersistencePort.deleteByUserId(storedToken.userId)
             }
         }
@@ -75,13 +73,15 @@ class AuthenticationService(
             throw UserAlreadyExistsException("Username already exists")
         }
 
-        val user = User(
+        val hashedPassword = authenticationPort.generateHashedPassword(authRequest.password)
+        
+        User(
             username = authRequest.username,
-            password = authenticationPort.generateHashedPassword(authRequest.password),
-            roles = mutableListOf("USER")
-        )
-
-        userPersistencePort.save(user)
+            password = hashedPassword,
+            roles = listOf("USER")
+        ).let { user ->
+            userPersistencePort.save(user)
+        }
     }
 
     /**
@@ -98,7 +98,6 @@ class AuthenticationService(
 
         // Create a new token
         val resetToken = authenticationPort.generatePasswordToken(user.id)
-
         passwordResetTokenPersistencePort.save(resetToken)
         LOG.debug("Created password reset token: {}", resetToken)
 
@@ -135,7 +134,6 @@ class AuthenticationService(
         val updatedUser = user.copy(
             password = authenticationPort.generateHashedPassword(newPassword)
         )
-
         userPersistencePort.save(updatedUser)
         LOG.info("Password reset successful for user: ${user.username}")
 

@@ -3,6 +3,8 @@ package com.adsearch.integration.util
 import com.adsearch.domain.model.User
 import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetTokenEntity
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
+import com.adsearch.infrastructure.adapter.out.persistence.mapper.PasswordResetTokenEntityMapper
+import com.adsearch.infrastructure.adapter.out.persistence.mapper.UserEntityMapper
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +20,9 @@ import java.util.UUID
 @Component
 class TestDataHelper(
     @Autowired private val entityManager: EntityManager,
-    @Autowired private val passwordEncoder: PasswordEncoder
+    @Autowired private val passwordEncoder: PasswordEncoder,
+    @Autowired private val userEntityMapper: UserEntityMapper,
+    @Autowired private val passwordResetTokenEntityMapper: PasswordResetTokenEntityMapper
 ) {
 
     /**
@@ -42,7 +46,7 @@ class TestDataHelper(
         entityManager.persist(userEntity)
         entityManager.flush()
 
-        return userEntity.toDomain()
+        return userEntityMapper.toDomain(userEntity)
     }
 
     /**
