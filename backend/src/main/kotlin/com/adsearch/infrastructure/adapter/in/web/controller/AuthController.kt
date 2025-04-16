@@ -17,7 +17,6 @@ import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,18 +46,14 @@ class AuthController(
      */
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
-    suspend fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse, environment: Environment): ResponseEntity<AuthResponseDto> {
+    suspend fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
         val authResponse: AuthResponse = authenticationUseCase.login(request.username, request.password)
 
         val cookie = Cookie(cookieName, authResponse.refreshToken!!.token)
         cookie.maxAge =  cookieMaxAge
         cookie.path = "/"
         cookie.isHttpOnly = true
-
-        if (environment.activeProfiles.isEmpty()) {
-            cookie.secure = true
-        }
-
+        //TODO enable only in prod mode `cookie.secure = true`
         response.addCookie(cookie)
 
         return ResponseEntity.ok(
@@ -115,8 +110,7 @@ class AuthController(
     @Operation(summary = "Logout user", description = "Invalidates the refresh token and clears the refresh token cookie")
     suspend fun logout(
         request: HttpServletRequest,
-        response: HttpServletResponse,
-        environment: Environment
+        response: HttpServletResponse
     ): ResponseEntity<Map<String, String>> {
         val cookies: String? = request.cookies?.find { it.name == cookieName }?.value
 
@@ -126,10 +120,7 @@ class AuthController(
         cookie.maxAge = 0
         cookie.path = "/"
         cookie.isHttpOnly = true
-
-        if (environment.activeProfiles.isEmpty()) {
-            cookie.secure = true
-        }
+        //TODO enable only in prod mode `cookie.secure = true`
         return ResponseEntity.ok(mapOf("message" to "Logged out successfully"))
     }
 
