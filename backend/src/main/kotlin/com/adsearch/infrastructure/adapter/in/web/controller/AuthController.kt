@@ -49,12 +49,15 @@ class AuthController(
     fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
         val authResponse: AuthResponse = authenticationUseCase.login(request.username, request.password)
 
-        val cookie = Cookie(cookieName, authResponse.refreshToken!!.token)
-        cookie.maxAge =  cookieMaxAge
-        cookie.path = "/"
-        cookie.isHttpOnly = true
-        //TODO enable only in prod mode `cookie.secure = true`
-        response.addCookie(cookie)
+        authResponse.refreshToken?.let { token ->
+            Cookie(cookieName, token.token).apply {
+                maxAge = cookieMaxAge
+                path = "/"
+                isHttpOnly = true
+                //TODO enable only in prod mode `secure = true`
+                response.addCookie(this)
+            }
+        }
 
         return ResponseEntity.ok(
             AuthResponseDto(
@@ -149,11 +152,28 @@ class AuthController(
     fun resetPassword(@Valid @RequestBody request: PasswordResetDto): ResponseEntity<Map<String, String>> {
         LOG.info("Received password reset with token")
 
-        authenticationUseCase.resetPassword(request.token, request.newPassword)
-
-        return ResponseEntity.ok(mapOf(
-            "message" to "Password has been reset successfully"
-        ))
+        val result = authenticationUseCase.resetPassword(request.token, request.newPassword)
+        
+        return when (result) {
+            is com.adsearch.domain.model.PasswordResetResult.Success -> {
+                ResponseEntity.ok(mapOf("message" to "Password has been reset successfully"))
+            }
+            is com.adsearch.domain.model.PasswordResetResult.TokenValidation.Invalid -> {
+                ResponseEntity.badRequest().body(mapOf("error" to "Invalid password reset token"))
+            }
+            is com.adsearch.domain.model.PasswordResetResult.TokenValidation.Expired -> {
+                ResponseEntity.badRequest().body(mapOf("error" to "Password reset token has expired"))
+            }
+            is com.adsearch.domain.model.PasswordResetResult.TokenValidation.Used -> {
+                ResponseEntity.badRequest().body(mapOf("error" to "Password reset token has already been used"))
+            }
+            is com.adsearch.domain.model.PasswordResetResult.UserNotFound -> {
+                ResponseEntity.badRequest().body(mapOf("error" to "User not found for password reset token"))
+            }
+            else -> {
+                ResponseEntity.badRequest().body(mapOf("error" to "Failed to reset password"))
+            }
+        }
     }
 
     /**
@@ -164,7 +184,8 @@ class AuthController(
     fun validateToken(@RequestParam token: String): ResponseEntity<Map<String, Boolean>> {
         LOG.info("Validating password reset token")
 
-        val isValid = authenticationUseCase.validateToken(token)
+        val validation = authenticationUseCase.validateToken(token)
+        val isValid = validation == com.adsearch.domain.model.PasswordResetResult.TokenValidation.Valid
 
         return ResponseEntity.ok(mapOf(
             "valid" to isValid

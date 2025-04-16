@@ -5,8 +5,11 @@ import com.adsearch.common.exception.InvalidTokenException
 import com.adsearch.common.exception.TokenExpiredException
 import com.adsearch.common.exception.UserAlreadyExistsException
 import com.adsearch.common.exception.UserNotFoundException
+import com.adsearch.domain.event.DomainEventPublisher
+import com.adsearch.domain.event.auth.AuthenticationEvent
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
+import com.adsearch.domain.model.PasswordResetResult
 import com.adsearch.domain.model.User
 import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.domain.port.EmailServicePort
@@ -27,7 +30,8 @@ class AuthenticationService(
     private val userPersistencePort: UserPersistencePort,
     private val passwordResetTokenPersistencePort: PasswordResetTokenPersistencePort,
     private val refreshTokenPersistencePort: RefreshTokenPersistencePort,
-    private val emailServicePort: EmailServicePort
+    private val emailServicePort: EmailServicePort,
+    private val eventPublisher: DomainEventPublisher
 ) : AuthenticationUseCase {
 
     companion object {
@@ -38,7 +42,9 @@ class AuthenticationService(
      * Authenticate a user with username and password
      */
     override fun login(username: String, password: String): AuthResponse {
-        return authenticationPort.authenticate(username, password)
+        val response = authenticationPort.authenticate(username, password)
+        eventPublisher.publish(AuthenticationEvent.UserLoggedIn(username))
+        return response
     }
 
     /**
@@ -57,11 +63,12 @@ class AuthenticationService(
      * Logout a user by invalidating their refresh tokens
      */
     override fun logout(refreshToken: String?) {
-        if (refreshToken != null) {
-            val storedToken = refreshTokenPersistencePort.findByToken(refreshToken)
-
-            if (storedToken != null) {
-                refreshTokenPersistencePort.deleteByUserId(storedToken.userId)
+        refreshToken?.let { token ->
+            refreshTokenPersistencePort.findByToken(token)?.let { storedToken ->
+                userPersistencePort.findById(storedToken.userId)?.let { user ->
+                    refreshTokenPersistencePort.deleteByUserId(storedToken.userId)
+                    eventPublisher.publish(AuthenticationEvent.UserLoggedOut(user.username))
+                }
             }
         }
     }
@@ -75,95 +82,99 @@ class AuthenticationService(
             throw UserAlreadyExistsException("Username already exists")
         }
 
-        val user = User(
+        val hashedPassword = authenticationPort.generateHashedPassword(authRequest.password)
+        
+        User(
             username = authRequest.username,
-            password = authenticationPort.generateHashedPassword(authRequest.password),
+            password = hashedPassword,
             roles = mutableListOf("USER")
-        )
-
-        userPersistencePort.save(user)
+        ).let { user ->
+            userPersistencePort.save(user)
+            eventPublisher.publish(AuthenticationEvent.UserRegistered(user.username))
+        }
     }
 
     /**
      * Request a password reset for a user
      */
-    override fun requestPasswordReset(username: String) {
-        val user = userPersistencePort.findByUsername(username)
-            ?: throw UserNotFoundException("User not found with username: $username")
+    override fun requestPasswordReset(username: String): PasswordResetResult {
+        return userPersistencePort.findByUsername(username)?.let { user ->
+            LOG.debug("Processing password reset request for user: ${user.username}")
 
-        LOG.debug("Processing password reset request for user: ${user.username}")
+            // Delete any existing tokens for this user
+            passwordResetTokenPersistencePort.deleteByUserId(user.id)
 
-        // Delete any existing tokens for this user
-        passwordResetTokenPersistencePort.deleteByUserId(user.id)
+            // Create a new token
+            val resetToken = authenticationPort.generatePasswordToken(user.id)
+            passwordResetTokenPersistencePort.save(resetToken)
+            LOG.debug("Created password reset token: {}", resetToken)
 
-        // Create a new token
-        val resetToken = authenticationPort.generatePasswordToken(user.id)
-
-        passwordResetTokenPersistencePort.save(resetToken)
-        LOG.debug("Created password reset token: {}", resetToken)
-
-        // Send email
-        emailServicePort.sendPasswordResetEmail(username, resetToken.token)
-        LOG.info("Password reset email sent to: $username")
+            // Send email
+            emailServicePort.sendPasswordResetEmail(username, resetToken.token)
+            LOG.info("Password reset email sent to: $username")
+            
+            eventPublisher.publish(AuthenticationEvent.PasswordResetRequested(username))
+            PasswordResetResult.EmailSent
+        } ?: PasswordResetResult.UserNotFound(username)
     }
 
     /**
      * Reset a user's password using a token
      */
-    override fun resetPassword(token: String, newPassword: String) {
-        val resetToken = passwordResetTokenPersistencePort.findByToken(token)
-            ?: throw InvalidTokenException("Invalid password reset token")
+    override fun resetPassword(token: String, newPassword: String): PasswordResetResult {
+        return passwordResetTokenPersistencePort.findByToken(token)?.let { resetToken ->
+            LOG.debug("Processing password reset with token: {}", resetToken)
 
-        LOG.debug("Processing password reset with token: {}", resetToken)
+            // Check if token is expired
+            if (resetToken.expiryDate.isBefore(Instant.now())) {
+                passwordResetTokenPersistencePort.deleteById(resetToken.id)
+                return PasswordResetResult.TokenValidation.Expired
+            }
 
-        // Check if token is expired
-        if (resetToken.expiryDate.isBefore(Instant.now())) {
-            passwordResetTokenPersistencePort.deleteById(resetToken.id)
-            throw TokenExpiredException("Password reset token has expired")
-        }
+            // Check if token has been used
+            if (resetToken.used) {
+                return PasswordResetResult.TokenValidation.Used
+            }
 
-        // Check if token has been used
-        if (resetToken.used) {
-            throw InvalidTokenException("Password reset token has already been used")
-        }
+            // Find the user
+            return userPersistencePort.findById(resetToken.userId)?.let { user ->
+                // Update the password
+                val updatedUser = user.copy(
+                    password = authenticationPort.generateHashedPassword(newPassword)
+                )
+                userPersistencePort.save(updatedUser)
+                LOG.info("Password reset successful for user: ${user.username}")
 
-        // Find the user
-        val user = userPersistencePort.findById(resetToken.userId)
-            ?: throw UserNotFoundException("User not found for password reset token")
+                // Mark token as used
+                val usedToken = resetToken.copy(used = true)
+                passwordResetTokenPersistencePort.save(usedToken)
 
-        // Update the password
-        val updatedUser = user.copy(
-            password = authenticationPort.generateHashedPassword(newPassword)
-        )
-
-        userPersistencePort.save(updatedUser)
-        LOG.info("Password reset successful for user: ${user.username}")
-
-        // Mark token as used
-        val usedToken = resetToken.copy(used = true)
-        passwordResetTokenPersistencePort.save(usedToken)
-
-        // Delete all tokens for this user
-        passwordResetTokenPersistencePort.deleteByUserId(user.id)
+                // Delete all tokens for this user
+                passwordResetTokenPersistencePort.deleteByUserId(user.id)
+                
+                eventPublisher.publish(AuthenticationEvent.PasswordReset(user.username))
+                PasswordResetResult.Success
+            } ?: PasswordResetResult.UserNotFound("User not found for password reset token")
+        } ?: PasswordResetResult.TokenValidation.Invalid
     }
 
     /**
      * Validate a password reset token
      */
-    override fun validateToken(token: String): Boolean {
-        val resetToken = passwordResetTokenPersistencePort.findByToken(token) ?: return false
+    override fun validateToken(token: String): PasswordResetResult.TokenValidation {
+        return passwordResetTokenPersistencePort.findByToken(token)?.let { resetToken ->
+            // Check if token is expired
+            if (resetToken.expiryDate.isBefore(Instant.now())) {
+                passwordResetTokenPersistencePort.deleteById(resetToken.id)
+                return PasswordResetResult.TokenValidation.Expired
+            }
 
-        // Check if token is expired
-        if (resetToken.expiryDate.isBefore(Instant.now())) {
-            passwordResetTokenPersistencePort.deleteById(resetToken.id)
-            return false
-        }
+            // Check if token has been used
+            if (resetToken.used) {
+                return PasswordResetResult.TokenValidation.Used
+            }
 
-        // Check if token has been used
-        if (resetToken.used) {
-            return false
-        }
-
-        return true
+            PasswordResetResult.TokenValidation.Valid
+        } ?: PasswordResetResult.TokenValidation.Invalid
     }
 }

@@ -9,20 +9,15 @@ import org.springframework.stereotype.Component
 @Component
 class UserPersistenceAdapter(private val userRepository: UserRepository) : UserPersistencePort {
 
-    override fun save(user: User): User {
-        val entity = userRepository.save(UserEntity.fromDomain(user))
-        return entity.toDomain()
-    }
+    override fun save(user: User): User = 
+        userRepository.save(UserEntity.fromDomain(user)).toDomain()
 
-    override fun findById(id: Long): User? {
-        return userRepository.findById(id).orElse(null)?.toDomain()
-    }
+    override fun findById(id: Long): User? =
+        userRepository.findById(id).orElse(null)?.toDomain()
 
-    override fun findByUsername(username: String): User? {
-        return userRepository.findByUsername(username)?.toDomain()
-    }
+    override fun findByUsername(username: String): User? =
+        userRepository.findByUsername(username)?.toDomain()
 
-    override fun findAll(): List<User> {
-        return userRepository.findAll().map { it.toDomain() }
-    }
+    override fun findAll(): List<User> =
+        userRepository.findAll().map { it.toDomain() }
 }

@@ -91,7 +91,8 @@ class JwtTokenService(
         }
         
         verifyExpiration(refreshToken)
-        return userPersistencePort.findById(refreshToken.userId)!!.username
+        return userPersistencePort.findById(refreshToken.userId)?.username
+            ?: throw InvalidTokenException("User not found for refresh token")
     }
 
     /**
