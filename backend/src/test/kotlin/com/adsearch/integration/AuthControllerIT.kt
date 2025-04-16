@@ -506,7 +506,7 @@ class AuthControllerIT : BaseIT() {
 
         @Test
         @DisplayName("Should reset password with valid token")
-        @Sql(scripts = ["classpath:db/testdata/02-password-reset-tokens.sql"])
+        @Sql(scripts = ["classpath:db/testdata/02-password-reset-tokens.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
         fun shouldResetPasswordWithValidToken() {
             // Given
             val token = validResetToken
@@ -630,7 +630,7 @@ class AuthControllerIT : BaseIT() {
 
         @Test
         @DisplayName("Should validate valid token")
-        @Sql(scripts = ["classpath:db/testdata/02-password-reset-tokens.sql"])
+        @Sql(scripts = ["classpath:db/testdata/02-password-reset-tokens.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
         fun shouldValidateValidToken() {
             // Given
             val token = validResetToken

@@ -19,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Sql(
     scripts = ["classpath:db/testdata/01-insert-test-users.sql"],
     config = SqlConfig(encoding = "UTF-8"),
-    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS
 )
 abstract class BaseIT {
 
