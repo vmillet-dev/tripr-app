@@ -14,9 +14,9 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
 
 /**
@@ -34,19 +34,17 @@ import java.util.UUID
 @DisplayName("Auth Controller Integration Tests")
 class AuthControllerIT : BaseIT() {
 
-    private lateinit var testUser: User
+    // Test user constants - matching the SQL script
+    private val testUserId: Long = 1
+    private val adminUserId: Long = 2
     private val testUsername = "testuser"
+    private val adminUsername = "adminuser"
     private val testPassword = "password"
 
-    @BeforeEach
-    fun setupUser() {
-        // Create a test user for authentication tests
-        testUser = testDataHelper.createTestUser(
-            username = testUsername,
-            password = testPassword,
-            roles = listOf("USER")
-        )
-    }
+    // Predefined tokens from SQL script
+    private val validResetToken = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    private val expiredResetToken = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+    private val usedResetToken = "cccccccc-cccc-cccc-cccc-cccccccccccc"
 
     @Nested
     @DisplayName("Login Tests")
@@ -76,24 +74,15 @@ class AuthControllerIT : BaseIT() {
             // Then
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull()
-
+            
             // Verify token information is present
             assertThat(response.body!!["accessToken"]).isNotNull()
-
-            // Verify token information is present
-            assertThat(response.body!!["accessToken"]).isNotNull()
-            assertThat(response.body!!["username"]).isNotNull()
-
-            // Verify username matches the test user
-            assertThat(response.body!!["username"].toString())
-                .withFailMessage("Username should not be empty")
-                .isNotEmpty()
-
+            assertThat(response.body!!["username"]).isEqualTo(testUsername)
+            
             // Verify roles are returned correctly
             @Suppress("UNCHECKED_CAST")
             val roles = response.body!!["roles"] as List<String>
-            assertThat(roles).hasSize(1)
-            assertThat(roles[0]).isEqualTo("USER")
+            assertThat(roles).containsExactly("USER")
         }
 
         @Test
@@ -517,9 +506,10 @@ class AuthControllerIT : BaseIT() {
 
         @Test
         @DisplayName("Should reset password with valid token")
+        @Sql(scripts = ["classpath:db/testdata/02-password-reset-tokens.sql"])
         fun shouldResetPasswordWithValidToken() {
             // Given
-            val token = testDataHelper.createPasswordResetToken(testUser.id)
+            val token = validResetToken
 
             val headers = HttpHeaders()
             headers.contentType = MediaType.APPLICATION_JSON
@@ -640,9 +630,10 @@ class AuthControllerIT : BaseIT() {
 
         @Test
         @DisplayName("Should validate valid token")
+        @Sql(scripts = ["classpath:db/testdata/02-password-reset-tokens.sql"])
         fun shouldValidateValidToken() {
             // Given
-            val token = testDataHelper.createPasswordResetToken(testUser.id)
+            val token = validResetToken
 
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.getForEntity(
@@ -696,21 +687,12 @@ class AuthControllerIT : BaseIT() {
             )
 
             // Then
-            // Accept any response that indicates token is invalid
-            // This could be 2xx with valid=false or 4xx error
-            assertThat(
-                // Either a 2xx success with valid=false
-                (response.statusCode.is2xxSuccessful &&
-                    response.body != null &&
-                    ((response.body!!.containsKey("valid") &&
-                        ((response.body!!["valid"] is Boolean && !(response.body!!["valid"] as Boolean)) ||
-                            response.body!!["valid"].toString() == "false")) ||
-                        (response.body!!.containsKey("error") ||
-                            (response.body!!.containsKey("message") &&
-                                response.body!!["message"].toString().contains("invalid"))))) ||
-                    // Or a 4xx client error
-                    response.statusCode.is4xxClientError
-            ).withFailMessage("Response should indicate token is invalid").isTrue()
+            assertThat(response.statusCode.is4xxClientError || 
+                       (response.statusCode.is2xxSuccessful && 
+                        response.body != null && 
+                        response.body!!["valid"] == false))
+                .withFailMessage("Response should indicate token is invalid")
+                .isTrue()
 
             // If we got a 2xx response, verify the response details
             if (response.statusCode.is2xxSuccessful && response.body != null) {

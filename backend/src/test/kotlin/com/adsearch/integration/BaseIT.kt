@@ -1,8 +1,5 @@
 package com.adsearch.integration
 
-import com.adsearch.integration.util.TestDataHelper
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -10,6 +7,8 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.jdbc.SqlConfig
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -17,13 +16,15 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers
+@Sql(
+    scripts = ["classpath:db/testdata/01-insert-test-users.sql"],
+    config = SqlConfig(encoding = "UTF-8"),
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
 abstract class BaseIT {
 
     @LocalServerPort
     protected var port: Int = 0
-
-    @Autowired
-    protected lateinit var testDataHelper: TestDataHelper
 
     @Autowired
     protected lateinit var restTemplate: TestRestTemplate
@@ -52,13 +53,4 @@ abstract class BaseIT {
         }
     }
 
-    @BeforeEach
-    fun setUp() {
-        // Common setup for all integration tests
-    }
-
-    @AfterEach
-    fun tearDown() {
-        testDataHelper.cleanupTestData()
-    }
 }
