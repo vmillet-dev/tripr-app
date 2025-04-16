@@ -5,8 +5,8 @@ import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.AuthenticationPort
-import com.adsearch.infrastructure.security.service.JwtUserDetailsService
-import com.adsearch.infrastructure.security.service.JwtTokenService
+import com.adsearch.infrastructure.security.port.JwtUserDetailsServicePort
+import com.adsearch.infrastructure.security.port.JwtTokenServicePort
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
@@ -18,8 +18,8 @@ import java.time.Instant
 @Component
 class AuthenticationAdapter(
     private val authenticationManager: AuthenticationManager,
-    private val jwtUserDetailsService: JwtUserDetailsService,
-    private val jwtTokenService: JwtTokenService,
+    private val jwtUserDetailsService: JwtUserDetailsServicePort,
+    private val jwtTokenService: JwtTokenServicePort,
     private val passwordEncoder: PasswordEncoder,
     @Value("\${password-reset.token-expiration}") private val tokenExpiration: Long,
 ) : AuthenticationPort {

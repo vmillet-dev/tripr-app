@@ -6,6 +6,7 @@ import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.RefreshTokenPersistencePort
 import com.adsearch.domain.port.UserPersistencePort
 import com.adsearch.infrastructure.security.model.JwtUserDetails
+import com.adsearch.infrastructure.security.port.JwtTokenServicePort
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -29,7 +30,7 @@ class JwtTokenService(
 
     private val refreshTokenPersistencePort: RefreshTokenPersistencePort,
     private val userPersistencePort: UserPersistencePort
-) {
+) : JwtTokenServicePort {
 
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(this::class.java)
@@ -41,7 +42,7 @@ class JwtTokenService(
     /**
      * Generate a JWT token for a user
      */
-    fun createAccessToken(user: JwtUserDetails): String {
+    override fun createAccessToken(user: JwtUserDetails): String {
         return JWT.create()
             .withSubject(user.id.toString())
             .withClaim("username", user.username)
@@ -55,7 +56,7 @@ class JwtTokenService(
     /**
      * Create a refresh token for a user
      */
-    suspend fun createRefreshToken(user: JwtUserDetails): RefreshToken {
+    override suspend fun createRefreshToken(user: JwtUserDetails): RefreshToken {
         LOG.debug("Creating refresh token for user: ${user.username} with ID: ${user.id}")
 
         // Delete any existing tokens for this user
@@ -76,13 +77,13 @@ class JwtTokenService(
     /**
      * Validate a JWT token
      */
-    fun validateAccessTokenAndGetUsername(token: String): String? = try {
+    override fun validateAccessTokenAndGetUsername(token: String): String? = try {
         verifier.verify(token).subject
     } catch (verificationEx: JWTVerificationException) {
         null
     }
 
-    suspend fun validateRefreshTokenAndGetUsername(givenToken: String): String {
+    override suspend fun validateRefreshTokenAndGetUsername(givenToken: String): String {
         val refreshToken: RefreshToken? = refreshTokenPersistencePort.findByToken(givenToken)
 
         if (refreshToken == null) {
