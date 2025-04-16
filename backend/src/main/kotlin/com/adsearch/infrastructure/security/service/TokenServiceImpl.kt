@@ -5,7 +5,7 @@ import com.adsearch.common.exception.TokenExpiredException
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.RefreshTokenPersistencePort
-import com.adsearch.domain.port.TokenService
+import com.adsearch.domain.port.TokenServicePort
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -19,7 +19,7 @@ import java.util.Date
 import java.util.UUID
 
 /**
- * Implementation of TokenService
+ * Implementation of TokenServicePort
  */
 @Service
 class TokenServiceImpl(
@@ -29,7 +29,7 @@ class TokenServiceImpl(
     @Value("\${jwt.issuer}") private val issuer: String,
     @Value("\${password-reset.token-expiration}") private val passwordResetTokenExpiration: Long,
     private val refreshTokenPersistencePort: RefreshTokenPersistencePort
-) : TokenService {
+) : TokenServicePort {
 
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(TokenServiceImpl::class.java)

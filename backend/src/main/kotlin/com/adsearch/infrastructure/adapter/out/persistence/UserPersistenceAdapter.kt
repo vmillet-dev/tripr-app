@@ -14,7 +14,7 @@ class UserPersistenceAdapter(
 ) : UserPersistencePort {
 
     override fun save(user: User): User = 
-        userRepository.save(userEntityMapper.toEntity(user)).let(userEntityMapper::toDomain)
+        userRepository.save(userEntityMapper.fromDomain(user)).let(userEntityMapper::toDomain)
 
     override fun findById(id: Long): User? =
         userRepository.findById(id).orElse(null)?.let(userEntityMapper::toDomain)

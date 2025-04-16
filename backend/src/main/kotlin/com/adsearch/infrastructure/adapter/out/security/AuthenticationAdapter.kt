@@ -5,7 +5,7 @@ import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.AuthenticationPort
-import com.adsearch.domain.port.TokenService
+import com.adsearch.domain.port.TokenServicePort
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import com.adsearch.infrastructure.security.service.JwtTokenService
 import org.springframework.security.authentication.AuthenticationManager
@@ -19,7 +19,7 @@ class AuthenticationAdapter(
     private val authenticationManager: AuthenticationManager,
     private val jwtUserDetailsService: JwtUserDetailsService,
     private val jwtTokenService: JwtTokenService,
-    private val tokenService: TokenService,
+    private val tokenService: TokenServicePort,
     private val passwordEncoder: PasswordEncoder
 ) : AuthenticationPort {
 

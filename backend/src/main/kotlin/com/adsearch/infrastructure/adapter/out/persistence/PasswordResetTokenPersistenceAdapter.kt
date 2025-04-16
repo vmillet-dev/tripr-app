@@ -14,7 +14,7 @@ class PasswordResetTokenPersistenceAdapter(
 ) : PasswordResetTokenPersistencePort {
 
     override fun save(token: PasswordResetToken): PasswordResetToken {
-        val entity = passwordResetTokenEntityMapper.toEntity(token)
+        val entity = passwordResetTokenEntityMapper.fromDomain(token)
         return passwordResetTokenEntityMapper.toDomain(passwordResetTokenRepository.save(entity))
     }
 

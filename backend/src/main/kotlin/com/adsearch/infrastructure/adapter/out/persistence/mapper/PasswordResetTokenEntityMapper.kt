@@ -18,7 +18,7 @@ class PasswordResetTokenEntityMapper : EntityMapper<PasswordResetTokenEntity, Pa
         used = entity.used
     )
     
-    override fun toEntity(domain: PasswordResetToken): PasswordResetTokenEntity = PasswordResetTokenEntity(
+    override fun fromDomain(domain: PasswordResetToken): PasswordResetTokenEntity = PasswordResetTokenEntity(
         id = domain.id,
         userId = domain.userId,
         token = domain.token,

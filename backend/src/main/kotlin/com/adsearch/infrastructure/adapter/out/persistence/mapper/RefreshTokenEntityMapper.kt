@@ -18,7 +18,7 @@ class RefreshTokenEntityMapper : EntityMapper<RefreshTokenEntity, RefreshToken> 
         revoked = entity.revoked
     )
     
-    override fun toEntity(domain: RefreshToken): RefreshTokenEntity = RefreshTokenEntity(
+    override fun fromDomain(domain: RefreshToken): RefreshTokenEntity = RefreshTokenEntity(
         id = domain.id,
         userId = domain.userId,
         token = domain.token,

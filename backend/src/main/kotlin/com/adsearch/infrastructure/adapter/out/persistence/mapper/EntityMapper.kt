@@ -12,5 +12,5 @@ interface EntityMapper<E, D> {
     /**
      * Map domain model to entity
      */
-    fun toEntity(domain: D): E
+    fun fromDomain(domain: D): E
 }

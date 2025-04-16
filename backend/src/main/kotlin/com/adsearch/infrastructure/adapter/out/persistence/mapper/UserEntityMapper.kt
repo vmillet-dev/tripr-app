@@ -17,7 +17,7 @@ class UserEntityMapper : EntityMapper<UserEntity, User> {
         roles = entity.roles.toList()
     )
     
-    override fun toEntity(domain: User): UserEntity = UserEntity(
+    override fun fromDomain(domain: User): UserEntity = UserEntity(
         id = domain.id,
         username = domain.username,
         password = domain.password,

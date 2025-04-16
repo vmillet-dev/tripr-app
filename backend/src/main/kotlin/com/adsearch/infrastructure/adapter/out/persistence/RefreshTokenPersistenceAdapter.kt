@@ -14,7 +14,7 @@ class RefreshTokenPersistenceAdapter(
 ) : RefreshTokenPersistencePort {
 
     override fun save(refreshToken: RefreshToken): RefreshToken {
-        val entity = refreshTokenEntityMapper.toEntity(refreshToken)
+        val entity = refreshTokenEntityMapper.fromDomain(refreshToken)
         return refreshTokenEntityMapper.toDomain(refreshTokenRepository.save(entity))
     }
 

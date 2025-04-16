@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.security.service
 
 import com.adsearch.domain.model.RefreshToken
-import com.adsearch.domain.port.TokenService
+import com.adsearch.domain.port.TokenServicePort
 import com.adsearch.domain.port.UserPersistencePort
 import com.adsearch.infrastructure.security.model.JwtUserDetails
 import org.slf4j.Logger
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class JwtTokenService(
-    private val tokenService: TokenService,
+    private val tokenService: TokenServicePort,
     private val userPersistencePort: UserPersistencePort
 ) {
 
