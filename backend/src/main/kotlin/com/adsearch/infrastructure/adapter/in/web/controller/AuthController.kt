@@ -49,12 +49,15 @@ class AuthController(
     fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
         val authResponse: AuthResponse = authenticationUseCase.login(request.username, request.password)
 
-        val cookie = Cookie(cookieName, authResponse.refreshToken!!.token)
-        cookie.maxAge =  cookieMaxAge
-        cookie.path = "/"
-        cookie.isHttpOnly = true
-        //TODO enable only in prod mode `cookie.secure = true`
-        response.addCookie(cookie)
+        authResponse.refreshToken?.let { token ->
+            Cookie(cookieName, token.token).apply {
+                maxAge = cookieMaxAge
+                path = "/"
+                isHttpOnly = true
+                //TODO enable only in prod mode `secure = true`
+                response.addCookie(this)
+            }
+        }
 
         return ResponseEntity.ok(
             AuthResponseDto(

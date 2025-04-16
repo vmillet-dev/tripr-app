@@ -7,6 +7,6 @@ data class User(
     val id: Long = 0,
     val username: String,
     val password: String,
-    val roles: MutableList<String> = mutableListOf("USER"),
+    val roles: List<String> = listOf("USER"),
     val enabled: Boolean = true
 )
