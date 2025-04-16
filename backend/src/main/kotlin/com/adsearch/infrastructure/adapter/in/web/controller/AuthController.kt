@@ -46,7 +46,7 @@ class AuthController(
      */
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
-    suspend fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
+    fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
         val authResponse: AuthResponse = authenticationUseCase.login(request.username, request.password)
 
         val cookie = Cookie(cookieName, authResponse.refreshToken!!.token)
@@ -70,7 +70,7 @@ class AuthController(
      */
     @PostMapping("/register")
     @Operation(summary = "Register new user", description = "Registers a new user with username, password, and email")
-    suspend fun register(@Valid @RequestBody request: RegisterRequestDto): ResponseEntity<Map<String, String>> {
+    fun register(@Valid @RequestBody request: RegisterRequestDto): ResponseEntity<Map<String, String>> {
         return try {
             val authRequest = AuthRequest(
                 username = request.username,
@@ -90,7 +90,7 @@ class AuthController(
      */
     @PostMapping("/refresh")
     @Operation(summary = "Refresh access token", description = "Uses the refresh token cookie to generate a new access token")
-    suspend fun refreshToken(request: HttpServletRequest): ResponseEntity<AuthResponseDto> {
+    fun refreshToken(request: HttpServletRequest): ResponseEntity<AuthResponseDto> {
         val cookies: String? = request.cookies?.find { it.name == cookieName }?.value
         val authResponse = authenticationUseCase.refreshAccessToken(cookies)
 
@@ -108,7 +108,7 @@ class AuthController(
      */
     @PostMapping("/logout")
     @Operation(summary = "Logout user", description = "Invalidates the refresh token and clears the refresh token cookie")
-    suspend fun logout(
+    fun logout(
         request: HttpServletRequest,
         response: HttpServletResponse
     ): ResponseEntity<Map<String, String>> {
@@ -129,7 +129,7 @@ class AuthController(
      */
     @PostMapping("/password/reset-request")
     @Operation(summary = "Request password reset", description = "Sends a password reset email to the user if the username exists")
-    suspend fun requestPasswordReset(
+    fun requestPasswordReset(
         @Valid @RequestBody request: PasswordResetRequestDto
     ): ResponseEntity<Map<String, String>> {
         LOG.info("Received password reset request for username: ${request.username}")
@@ -146,7 +146,7 @@ class AuthController(
      */
     @PostMapping("/password/reset")
     @Operation(summary = "Reset password", description = "Resets a user's password using a valid token")
-    suspend fun resetPassword(@Valid @RequestBody request: PasswordResetDto): ResponseEntity<Map<String, String>> {
+    fun resetPassword(@Valid @RequestBody request: PasswordResetDto): ResponseEntity<Map<String, String>> {
         LOG.info("Received password reset with token")
 
         authenticationUseCase.resetPassword(request.token, request.newPassword)
@@ -161,7 +161,7 @@ class AuthController(
      */
     @GetMapping("/password/validate-token")
     @Operation(summary = "Validate token", description = "Checks if a password reset token is valid and not expired")
-    suspend fun validateToken(@RequestParam token: String): ResponseEntity<Map<String, Boolean>> {
+    fun validateToken(@RequestParam token: String): ResponseEntity<Map<String, Boolean>> {
         LOG.info("Validating password reset token")
 
         val isValid = authenticationUseCase.validateToken(token)

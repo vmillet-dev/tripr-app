@@ -24,7 +24,7 @@ class AuthenticationAdapter(
     @Value("\${password-reset.token-expiration}") private val tokenExpiration: Long,
 ) : AuthenticationPort {
 
-    override suspend fun authenticate(username: String, password: String): AuthResponse {
+    override fun authenticate(username: String, password: String): AuthResponse {
         try {
             authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
         } catch (ex: BadCredentialsException) {
@@ -43,7 +43,7 @@ class AuthenticationAdapter(
         )
     }
 
-    override suspend fun refreshAccessToken(refreshToken: String): AuthResponse {
+    override fun refreshAccessToken(refreshToken: String): AuthResponse {
 
         val username = jwtTokenService.validateRefreshTokenAndGetUsername(refreshToken)
         val userDetails = jwtUserDetailsService.loadUserByUsername(username)
@@ -57,11 +57,11 @@ class AuthenticationAdapter(
         )
     }
 
-    override suspend fun generateHashedPassword(password: String): String {
+    override fun generateHashedPassword(password: String): String {
        return passwordEncoder.encode(password)
     }
 
-    override suspend fun generatePasswordToken(userId: Long): PasswordResetToken {
+    override fun generatePasswordToken(userId: Long): PasswordResetToken {
         return PasswordResetToken(
             userId = userId,
             token = java.util.UUID.randomUUID().toString(),

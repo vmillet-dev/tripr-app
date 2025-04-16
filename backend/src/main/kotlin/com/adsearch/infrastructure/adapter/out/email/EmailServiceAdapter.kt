@@ -1,8 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.email
 
 import com.adsearch.domain.port.EmailServicePort
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -23,27 +21,25 @@ class EmailServiceAdapter(
 
     private val logger = LoggerFactory.getLogger(EmailServiceAdapter::class.java)
 
-    override suspend fun sendPasswordResetEmail(to: String, token: String) {
-        withContext(Dispatchers.IO) {
-            try {
-                val message = mailSender.createMimeMessage()
-                val helper = MimeMessageHelper(message, true, "UTF-8")
+    override fun sendPasswordResetEmail(to: String, token: String) {
+        try {
+            val message = mailSender.createMimeMessage()
+            val helper = MimeMessageHelper(message, true, "UTF-8")
 
-                helper.setTo(to)
-                helper.setSubject("Password Reset Request")
+            helper.setTo(to)
+            helper.setSubject("Password Reset Request")
 
-                val context = Context()
-                context.setVariable("resetLink", "$baseUrl?token=$token")
+            val context = Context()
+            context.setVariable("resetLink", "$baseUrl?token=$token")
 
-                val htmlContent = templateEngine.process("email/password-reset-email", context)
-                helper.setText(htmlContent, true)
+            val htmlContent = templateEngine.process("email/password-reset-email", context)
+            helper.setText(htmlContent, true)
 
-                mailSender.send(message)
-                logger.info("Password reset email sent to: $to")
-            } catch (e: Exception) {
-                logger.error("Failed to send password reset email to: $to", e)
-                throw e
-            }
+            mailSender.send(message)
+            logger.info("Password reset email sent to: $to")
+        } catch (e: Exception) {
+            logger.error("Failed to send password reset email to: $to", e)
+            throw e
         }
     }
 }

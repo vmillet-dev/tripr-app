@@ -37,14 +37,14 @@ class AuthenticationService(
     /**
      * Authenticate a user with username and password
      */
-    override suspend fun login(username: String, password: String): AuthResponse {
+    override fun login(username: String, password: String): AuthResponse {
         return authenticationPort.authenticate(username, password)
     }
 
     /**
      * Refresh an access token using a refresh token
      */
-    override suspend fun refreshAccessToken(refreshToken: String?): AuthResponse {
+    override fun refreshAccessToken(refreshToken: String?): AuthResponse {
         if (refreshToken == null) {
             LOG.error("Refresh token is missing in cookies")
             throw InvalidTokenException(message = "Refresh token is missing")
@@ -56,7 +56,7 @@ class AuthenticationService(
     /**
      * Logout a user by invalidating their refresh tokens
      */
-    override suspend fun logout(refreshToken: String?) {
+    override fun logout(refreshToken: String?) {
         if (refreshToken != null) {
             val storedToken = refreshTokenPersistencePort.findByToken(refreshToken)
 
@@ -69,7 +69,7 @@ class AuthenticationService(
     /**
      * Register a new user
      */
-    override suspend fun register(authRequest: AuthRequest, email: String) {
+    override fun register(authRequest: AuthRequest, email: String) {
         val existingUser = userPersistencePort.findByUsername(authRequest.username)
         if (existingUser != null) {
             throw UserAlreadyExistsException("Username already exists")
@@ -87,7 +87,7 @@ class AuthenticationService(
     /**
      * Request a password reset for a user
      */
-    override suspend fun requestPasswordReset(username: String) {
+    override fun requestPasswordReset(username: String) {
         val user = userPersistencePort.findByUsername(username)
             ?: throw UserNotFoundException("User not found with username: $username")
 
@@ -110,7 +110,7 @@ class AuthenticationService(
     /**
      * Reset a user's password using a token
      */
-    override suspend fun resetPassword(token: String, newPassword: String) {
+    override fun resetPassword(token: String, newPassword: String) {
         val resetToken = passwordResetTokenPersistencePort.findByToken(token)
             ?: throw InvalidTokenException("Invalid password reset token")
 
@@ -150,7 +150,7 @@ class AuthenticationService(
     /**
      * Validate a password reset token
      */
-    override suspend fun validateToken(token: String): Boolean {
+    override fun validateToken(token: String): Boolean {
         val resetToken = passwordResetTokenPersistencePort.findByToken(token) ?: return false
 
         // Check if token is expired

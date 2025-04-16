@@ -15,15 +15,15 @@ interface UserPersistencePort {
     /**
      * Find a user by ID
      */
-    suspend fun findById(id: Long): User?
+    fun findById(id: Long): User?
 
     /**
      * Save a user
      */
-    suspend fun save(user: User): User
+    fun save(user: User): User
 
     /**
      * Find all users
      */
-    suspend fun findAll(): List<User>
+    fun findAll(): List<User>
 }

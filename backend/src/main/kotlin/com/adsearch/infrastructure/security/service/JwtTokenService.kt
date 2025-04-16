@@ -55,7 +55,7 @@ class JwtTokenService(
     /**
      * Create a refresh token for a user
      */
-    suspend fun createRefreshToken(user: JwtUserDetails): RefreshToken {
+    fun createRefreshToken(user: JwtUserDetails): RefreshToken {
         LOG.debug("Creating refresh token for user: ${user.username} with ID: ${user.id}")
 
         // Delete any existing tokens for this user
@@ -82,7 +82,7 @@ class JwtTokenService(
         null
     }
 
-    suspend fun validateRefreshTokenAndGetUsername(givenToken: String): String {
+    fun validateRefreshTokenAndGetUsername(givenToken: String): String {
         val refreshToken: RefreshToken? = refreshTokenPersistencePort.findByToken(givenToken)
 
         if (refreshToken == null) {
@@ -97,7 +97,7 @@ class JwtTokenService(
     /**
      * Verify if a refresh token is valid
      */
-    private suspend fun verifyExpiration(token: RefreshToken) {
+    private fun verifyExpiration(token: RefreshToken) {
         if (token.expiryDate.isBefore(Instant.now()) || token.revoked) {
             refreshTokenPersistencePort.deleteById(token.id)
             throw TokenExpiredException("Refresh token was expired. Please make a new sign in request")
