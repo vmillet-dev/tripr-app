@@ -10,25 +10,25 @@ interface RefreshTokenPersistencePort {
     /**
      * Find a refresh token by token string
      */
-    suspend fun findByToken(token: String): RefreshToken?
+    fun findByToken(token: String): RefreshToken?
 
     /**
      * Find all refresh tokens for a user
      */
-    suspend fun findByUserId(userId: Long): List<RefreshToken>
+    fun findByUserId(userId: Long): List<RefreshToken>
 
     /**
      * Save a refresh token
      */
-    suspend fun save(refreshToken: RefreshToken): RefreshToken
+    fun save(refreshToken: RefreshToken): RefreshToken
 
     /**
      * Delete a refresh token
      */
-    suspend fun deleteById(id: Long)
+    fun deleteById(id: Long)
 
     /**
      * Delete all refresh tokens for a user
      */
-    suspend fun deleteByUserId(userId: Long)
+    fun deleteByUserId(userId: Long)
 }

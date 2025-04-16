@@ -4,27 +4,25 @@ import com.adsearch.domain.model.User
 import com.adsearch.domain.port.UserPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
 
 @Component
 class UserPersistenceAdapter(private val userRepository: UserRepository) : UserPersistencePort {
 
-    override suspend fun save(user: User): User = withContext(Dispatchers.IO) {
+    override fun save(user: User): User {
         val entity = userRepository.save(UserEntity.fromDomain(user))
-        entity.toDomain()
+        return entity.toDomain()
     }
 
-    override suspend fun findById(id: Long): User? = withContext(Dispatchers.IO) {
-        userRepository.findById(id).orElse(null)?.toDomain()
+    override fun findById(id: Long): User? {
+        return userRepository.findById(id).orElse(null)?.toDomain()
     }
 
     override fun findByUsername(username: String): User? {
         return userRepository.findByUsername(username)?.toDomain()
     }
 
-    override suspend fun findAll(): List<User> = withContext(Dispatchers.IO) {
-        userRepository.findAll().map { it.toDomain() }
+    override fun findAll(): List<User> {
+        return userRepository.findAll().map { it.toDomain() }
     }
 }
