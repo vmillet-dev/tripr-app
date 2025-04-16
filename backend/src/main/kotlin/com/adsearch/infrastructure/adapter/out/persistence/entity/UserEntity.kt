@@ -1,6 +1,5 @@
 package com.adsearch.infrastructure.adapter.out.persistence.entity
 
-import com.adsearch.domain.model.User
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
@@ -25,22 +24,4 @@ class UserEntity(
 
     @ElementCollection(fetch = FetchType.EAGER)
     val roles: MutableList<String> = mutableListOf("USER")
-) {
-    fun toDomain(): User = User(
-        id = id,
-        username = username,
-        password = password,
-        roles = roles.toList()
-    )
-
-    companion object {
-        fun fromDomain(user: User): UserEntity = with(user) {
-            UserEntity(
-                id = id,
-                username = username,
-                password = password,
-                roles = roles.toMutableList()
-            )
-        }
-    }
-}
+)

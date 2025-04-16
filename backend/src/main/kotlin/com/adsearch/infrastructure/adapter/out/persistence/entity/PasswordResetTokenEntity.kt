@@ -1,6 +1,5 @@
 package com.adsearch.infrastructure.adapter.out.persistence.entity
 
-import com.adsearch.domain.model.PasswordResetToken
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -27,24 +26,4 @@ class PasswordResetTokenEntity(
 
     @Column(nullable = false)
     val used: Boolean = false
-) {
-    fun toDomain(): PasswordResetToken = PasswordResetToken(
-        id = id,
-        userId = userId,
-        token = token,
-        expiryDate = expiryDate,
-        used = used
-    )
-
-    companion object {
-        fun fromDomain(passwordResetToken: PasswordResetToken): PasswordResetTokenEntity = with(passwordResetToken) {
-            PasswordResetTokenEntity(
-                id = id,
-                userId = userId,
-                token = token,
-                expiryDate = expiryDate,
-                used = used
-            )
-        }
-    }
-}
+)
