@@ -41,5 +41,3 @@ jwt:
 password-reset:
   token-expiration: 86400000
   base-url: http://localhost:8080/reset-password
-
-# SQL script execution configuration has been merged into the main spring section above

@@ -169,10 +169,7 @@ class AuthControllerIT : BaseIT() {
 
             // Verify the response contains a success message
             assertThat(response.body!!["message"]).isNotNull()
-            assertThat(response.body!!["message"].toString().contains("registered") ||
-                       response.body!!["message"].toString().contains("success"))
-                .withFailMessage("Response should indicate successful registration")
-                .isTrue()
+            assertThat(response.body!!["message"].toString()).contains("registered")
 
             // Verify user can login
             val loginHeaders = HttpHeaders()
@@ -281,36 +278,16 @@ class AuthControllerIT : BaseIT() {
             )
 
             // Then
-            // Don't check status code - just verify response exists
-            assertThat(refreshResponse).withFailMessage("Response should not be null").isNotNull()
-
-            // If successful, verify token information
-            if (refreshResponse.statusCode.is2xxSuccessful && refreshResponse.body != null) {
-                assertThat(refreshResponse.body!!).withFailMessage("Response body should contain data").isNotEmpty()
-
-                // Check for token in different possible formats
-                val hasToken = refreshResponse.body!!.containsKey("accessToken") ||
-                              refreshResponse.body!!.containsKey("token") ||
-                              refreshResponse.body!!.containsKey("access_token")
-
-                if (hasToken) {
-                    // Verify token value
-                    val tokenValue = when {
-                        refreshResponse.body!!.containsKey("accessToken") -> refreshResponse.body!!["accessToken"].toString()
-                        refreshResponse.body!!.containsKey("token") -> refreshResponse.body!!["token"].toString()
-                        refreshResponse.body!!.containsKey("access_token") -> refreshResponse.body!!["access_token"].toString()
-                        else -> ""
-                    }
-
-                    assertThat(tokenValue).withFailMessage("Token value should not be empty").isNotEmpty()
-                }
-
-                // Check username if present
-                if (refreshResponse.body!!.containsKey("username")) {
-                    val username = refreshResponse.body!!["username"].toString()
-                    assertThat(username).withFailMessage("Username should not be empty").isNotEmpty()
-                }
-            }
+            assertThat(refreshResponse.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(refreshResponse.body).isNotNull()
+            
+            // Verify token information
+            assertThat(refreshResponse.body).isNotNull()
+            assertThat(refreshResponse.body!!["accessToken"]).isNotNull()
+            assertThat(refreshResponse.body!!["accessToken"].toString()).isNotEmpty()
+            
+            // Verify username is present
+            assertThat(refreshResponse.body!!["username"]).isNotNull()
         }
 
         @Test
@@ -330,22 +307,7 @@ class AuthControllerIT : BaseIT() {
             )
 
             // Then
-            // Don't check status code - just verify response exists
-            assertThat(refreshResponse).withFailMessage("Response should not be null").isNotNull()
-
-            // If we got a 2xx response with an error message, verify the message
-            if (refreshResponse.statusCode.is2xxSuccessful &&
-                refreshResponse.body != null &&
-                (refreshResponse.body!!.containsKey("error") || refreshResponse.body!!.containsKey("message"))) {
-
-                if (refreshResponse.body!!.containsKey("error")) {
-                    val errorMsg = refreshResponse.body!!["error"].toString()
-                    assertThat(errorMsg).withFailMessage("Error message should not be empty").isNotEmpty()
-                } else if (refreshResponse.body!!.containsKey("message")) {
-                    val message = refreshResponse.body!!["message"].toString()
-                    assertThat(message).withFailMessage("Message should not be empty").isNotEmpty()
-                }
-            }
+            assertThat(refreshResponse.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
         }
     }
 
@@ -687,43 +649,13 @@ class AuthControllerIT : BaseIT() {
             )
 
             // Then
+            // Accept any 4xx client error or 2xx with valid=false
             assertThat(response.statusCode.is4xxClientError || 
-                       (response.statusCode.is2xxSuccessful && 
-                        response.body != null && 
-                        response.body!!["valid"] == false))
+                      (response.statusCode.is2xxSuccessful && 
+                       response.body != null && 
+                       response.body!!["valid"] == false))
                 .withFailMessage("Response should indicate token is invalid")
                 .isTrue()
-
-            // If we got a 2xx response, verify the response details
-            if (response.statusCode.is2xxSuccessful && response.body != null) {
-                assertThat(response.body!!).withFailMessage("Response body should contain data").isNotEmpty()
-
-                // Check for valid field if present
-                if (response.body!!.containsKey("valid")) {
-                    val isValid = response.body!!["valid"]
-                    // Could be Boolean or String
-                    assertThat((isValid is Boolean && !isValid) ||
-                        (isValid.toString() == "false"))
-                        .withFailMessage("Valid field should be false for invalid token")
-                        .isTrue()
-                }
-
-                // Check for error message if present
-                if (response.body!!.containsKey("error")) {
-                    val errorMsg = response.body!!["error"].toString()
-                    assertThat(errorMsg.contains("invalid") ||
-                        errorMsg.contains("expired") ||
-                        errorMsg.contains("token"))
-                        .withFailMessage("Error message should indicate token problem")
-                        .isTrue()
-                } else if (response.body!!.containsKey("message")) {
-                    val message = response.body!!["message"].toString()
-                    if (message.contains("invalid") || message.contains("expired") ||
-                        message.contains("token")) {
-                        // This is fine - message indicates token validation failure
-                    }
-                }
-            }
         }
     }
 }
