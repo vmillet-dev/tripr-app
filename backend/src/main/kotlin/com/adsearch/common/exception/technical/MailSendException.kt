@@ -9,5 +9,4 @@ class MailSendException(
     errorCode: String = TechnicalErrorCodeEnum.MAIL_SEND_EXCEPTION.code,
     httpStatusEnum: HttpStatusEnum = HttpStatusEnum.INTERNAL_SERVER_ERROR,
     cause: Throwable? = null
-) : BaseTechnicalException(message, errorCode, httpStatusEnum, cause) {
-}
+) : BaseTechnicalException(message, errorCode, httpStatusEnum, cause)

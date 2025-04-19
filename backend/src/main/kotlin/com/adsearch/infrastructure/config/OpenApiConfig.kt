@@ -18,14 +18,12 @@ class OpenApiConfig {
 
     @Bean
     fun devOpenAPI(): OpenAPI {
-        return OpenAPI()
-            .info(
+        return OpenAPI().info(
                 Info()
-                    .title("Ad Search API (Development)")
+                    .title("Example (Development)")
                     .version("1.0")
-                    .description("API for searching ads across multiple external sources - Development Mode")
+                    .description("An example API for auth workflow - Development Mode")
                     .license(License().name("Apache 2.0").url("http://springdoc.org"))
-            )
-            .components(Components())
+            ).components(Components())
     }
 }

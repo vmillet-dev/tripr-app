@@ -36,8 +36,6 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
                     .requestMatchers("/api/swagger-ui/**", "/api/v3/api-docs/**").permitAll()
                     .requestMatchers("/","/*.html", "/*.js", "/*.css", "/assets/**", "/*.ico", "/static/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/ads/sources").permitAll()
-                    .requestMatchers("/api/ads/search").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
