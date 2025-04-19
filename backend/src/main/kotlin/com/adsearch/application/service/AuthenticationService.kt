@@ -7,11 +7,14 @@ import com.adsearch.common.exception.functional.UserAlreadyExistsException
 import com.adsearch.common.exception.functional.UserNotFoundException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
+import com.adsearch.domain.model.Role
+import com.adsearch.domain.model.RoleType
 import com.adsearch.domain.model.User
 import com.adsearch.domain.port.AuthenticationPort
 import com.adsearch.domain.port.EmailServicePort
 import com.adsearch.domain.port.PasswordResetTokenPersistencePort
 import com.adsearch.domain.port.RefreshTokenPersistencePort
+import com.adsearch.domain.port.RolePersistencePort
 import com.adsearch.domain.port.UserPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -27,6 +30,7 @@ class AuthenticationService(
     private val userPersistencePort: UserPersistencePort,
     private val passwordResetTokenPersistencePort: PasswordResetTokenPersistencePort,
     private val refreshTokenPersistencePort: RefreshTokenPersistencePort,
+    private val rolePersistencePort: RolePersistencePort,
     private val emailServicePort: EmailServicePort
 ) : AuthenticationUseCase {
 
@@ -74,11 +78,13 @@ class AuthenticationService(
         }
 
         val hashedPassword = authenticationPort.generateHashedPassword(authRequest.password)
+        val userRole = rolePersistencePort.findByName(RoleType.USER) 
+            ?: throw RuntimeException("Default USER role not found")
 
         User(
             username = authRequest.username,
             password = hashedPassword,
-            roles = listOf("USER")
+            roles = setOf(userRole)
         ).let { user ->
             userPersistencePort.save(user)
         }

@@ -1,7 +1,9 @@
 package com.adsearch.integration.util
 
+import com.adsearch.domain.model.RoleType
 import com.adsearch.domain.model.User
 import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetTokenEntity
+import com.adsearch.infrastructure.adapter.out.persistence.entity.RoleEntity
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.PasswordResetTokenEntityMapper
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.UserEntityMapper
@@ -36,11 +38,25 @@ class TestDataHelper(
     ): User {
         val encodedPassword = passwordEncoder.encode(password)
 
+        // Create role entities if they don't exist
+        val roleEntities = roles.map { roleName ->
+            val roleType = RoleType.valueOf(roleName)
+            val existingRole = entityManager
+                .createQuery("SELECT r FROM RoleEntity r WHERE r.name = :name", RoleEntity::class.java)
+                .setParameter("name", roleType)
+                .resultList.firstOrNull()
+            
+            existingRole ?: RoleEntity(name = roleType).also {
+                entityManager.persist(it)
+                entityManager.flush()
+            }
+        }.toMutableSet()
+
         // Create and persist user entity
         val userEntity = UserEntity(
             username = username,
             password = encodedPassword,
-            roles = roles.toMutableList()
+            roles = roleEntities
         )
 
         entityManager.persist(userEntity)
@@ -81,7 +97,8 @@ class TestDataHelper(
         // Clean up in reverse order to avoid foreign key constraints
         entityManager.createNativeQuery("DELETE FROM password_reset_tokens").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM refresh_tokens").executeUpdate()
-        entityManager.createNativeQuery("DELETE FROM user_entity_roles").executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM user_roles").executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM roles").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM users").executeUpdate()
     }
 }

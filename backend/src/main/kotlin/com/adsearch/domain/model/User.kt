@@ -7,6 +7,6 @@ data class User(
     val id: Long = 0,
     val username: String,
     val password: String,
-    val roles: List<String> = listOf("USER"),
+    val roles: Set<Role> = setOf(Role(name = RoleType.USER)),
     val enabled: Boolean = true
 )
