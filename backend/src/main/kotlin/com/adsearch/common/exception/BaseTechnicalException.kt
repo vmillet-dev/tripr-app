@@ -1,10 +1,11 @@
 package com.adsearch.common.exception
 
-import org.springframework.http.HttpStatus
+import com.adsearch.common.enum.HttpStatusEnum
+import com.adsearch.common.enum.LogLevelEnum
 
 abstract class BaseTechnicalException(
     message: String,
     errorCode: String,
-    httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+    httpStatusEnum: HttpStatusEnum = HttpStatusEnum.INTERNAL_SERVER_ERROR,
     cause: Throwable? = null
-) : BaseException(message, errorCode, httpStatus, cause)
+) : BaseException(message, errorCode, httpStatusEnum, cause, LogLevelEnum.ERROR)

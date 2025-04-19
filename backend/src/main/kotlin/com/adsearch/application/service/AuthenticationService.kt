@@ -1,10 +1,10 @@
 package com.adsearch.application.service
 
 import com.adsearch.application.usecase.AuthenticationUseCase
-import com.adsearch.common.exception.InvalidTokenException
-import com.adsearch.common.exception.TokenExpiredException
-import com.adsearch.common.exception.UserAlreadyExistsException
-import com.adsearch.common.exception.UserNotFoundException
+import com.adsearch.common.exception.functional.InvalidTokenException
+import com.adsearch.common.exception.functional.TokenExpiredException
+import com.adsearch.common.exception.functional.UserAlreadyExistsException
+import com.adsearch.common.exception.functional.UserNotFoundException
 import com.adsearch.domain.model.AuthRequest
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.User
@@ -74,7 +74,7 @@ class AuthenticationService(
         }
 
         val hashedPassword = authenticationPort.generateHashedPassword(authRequest.password)
-        
+
         User(
             username = authRequest.username,
             password = hashedPassword,

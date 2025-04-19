@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.security
 
-import com.adsearch.common.exception.InvalidCredentialsException
+import com.adsearch.common.exception.functional.InvalidCredentialsException
 import com.adsearch.domain.model.AuthResponse
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken

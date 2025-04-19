@@ -1,10 +1,11 @@
 package com.adsearch.common.exception
 
-import org.springframework.http.HttpStatus
+import com.adsearch.common.enum.HttpStatusEnum
+import com.adsearch.common.enum.LogLevelEnum
 
 abstract class BaseFunctionalException(
     message: String,
     errorCode: String,
-    httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
+    httpStatusEnum: HttpStatusEnum = HttpStatusEnum.BAD_REQUEST,
     cause: Throwable? = null
-) : BaseException(message, errorCode, httpStatus, cause)
+) : BaseException(message, errorCode, httpStatusEnum, cause, LogLevelEnum.WARN)

@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.security.service
 
-import com.adsearch.common.exception.InvalidTokenException
-import com.adsearch.common.exception.TokenExpiredException
+import com.adsearch.common.exception.functional.InvalidTokenException
+import com.adsearch.common.exception.functional.TokenExpiredException
 import com.adsearch.domain.model.PasswordResetToken
 import com.adsearch.domain.model.RefreshToken
 import com.adsearch.domain.port.RefreshTokenPersistencePort
@@ -105,12 +105,12 @@ class JwtTokenService(
             LOG.warn("Refresh token invalid")
             throw InvalidTokenException()
         }
-        
+
         if (isTokenExpired(refreshToken.expiryDate) || refreshToken.revoked) {
             refreshTokenPersistencePort.deleteById(refreshToken.id)
             throw TokenExpiredException("Refresh token was expired. Please make a new sign in request")
         }
-        
+
         return userPersistencePort.findById(refreshToken.userId)?.username
             ?: throw RuntimeException("User not found for refresh token")
     }

@@ -1,84 +1,84 @@
 package com.adsearch.infrastructure.adapter.`in`.web.error
 
+import com.adsearch.common.enum.HttpStatusEnum
+import com.adsearch.common.enum.LogLevelEnum
 import com.adsearch.common.exception.BaseException
+import com.adsearch.infrastructure.adapter.`in`.web.dto.ErrorResponseDto
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
-import org.springframework.boot.logging.LogLevel
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import java.time.LocalDateTime
 
 /**
  * Global exception handler for REST controllers
  */
 @RestControllerAdvice
 class GlobalExceptionHandler {
-    companion object {
-        val LOG: org.slf4j.Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
-    }
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(BaseException::class)
-    fun handleBaseException(ex: BaseException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+    fun handleBaseException(ex: BaseException, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
         logBaseException(ex)
 
-        val errorResponse = ErrorResponse(
-            status = ex.httpStatus.value(),
+        return createErrorResponse(
+            status = ex.httpStatusEnum.toSpringHttpStatus(),
             error = ex.errorCode,
             message = ex.message,
             path = request.requestURI
         )
-        return ResponseEntity(errorResponse, ex.httpStatus)
     }
 
-    // Spring's built-in exceptions
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidationExceptions(ex: MethodArgumentNotValidException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+    fun handleValidationExceptions(ex: MethodArgumentNotValidException, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
         val errors = ex.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
-        val errorResponse = ErrorResponse(
-            status = HttpStatus.BAD_REQUEST.value(),
+
+        return createErrorResponse(
+            status = HttpStatus.BAD_REQUEST,
             error = HttpStatus.BAD_REQUEST.reasonPhrase,
             message = "Validation failed: $errors",
             path = request.requestURI
         )
-        return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
     }
 
-    /**
-     * Handle all other exceptions
-     */
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
-        val errorResponse = ErrorResponse(
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+    fun handleGenericException(ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
+        val errorResponse = createErrorResponse(
+            status = HttpStatus.INTERNAL_SERVER_ERROR,
             error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase,
             message = "An unexpected error occurred: ${ex.message}",
             path = request.requestURI
         )
-        LOG.error("Error occurred: ${errorResponse.message}", ex)
 
-        return ResponseEntity(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR)
+        log.error("Error occurred: ${errorResponse.body?.message}", ex)
+        return errorResponse
     }
 
     private fun logBaseException(exception: BaseException) {
-        when (exception.logLevel) {
-            LogLevel.ERROR -> LOG.error("Exception occurred: ${exception.message}", exception)
-            LogLevel.WARN -> LOG.warn("Exception occurred: ${exception.message}", exception)
-            else -> LOG.info("Exception occurred: ${exception.message}", exception)
+        val logMessage = "Exception occurred: ${exception.message}"
+        when (exception.logLevelEnum) {
+            LogLevelEnum.ERROR -> log.error(logMessage, exception)
+            LogLevelEnum.WARN -> log.warn(logMessage, exception)
         }
     }
 
+    private fun createErrorResponse(status: HttpStatus, error: String, message: String, path: String): ResponseEntity<ErrorResponseDto> {
+        val errorResponseDto = ErrorResponseDto(
+            status = status.value(),
+            error = error,
+            message = message,
+            path = path
+        )
+        return ResponseEntity(errorResponseDto, status)
+    }
+
+    // Extension function to make the conversion more elegant
+    private fun HttpStatusEnum.toSpringHttpStatus(): HttpStatus = when (this) {
+        HttpStatusEnum.BAD_REQUEST -> HttpStatus.BAD_REQUEST
+        HttpStatusEnum.UNAUTHORIZED -> HttpStatus.UNAUTHORIZED
+        HttpStatusEnum.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR
+    }
 }
 
-/**
- * Standard error response format
- */
-data class ErrorResponse(
-    val timestamp: LocalDateTime = LocalDateTime.now(),
-    val status: Int,
-    val error: String,
-    val message: String,
-    val path: String
-)

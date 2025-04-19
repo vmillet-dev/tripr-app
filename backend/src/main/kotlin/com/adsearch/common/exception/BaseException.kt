@@ -1,12 +1,12 @@
 package com.adsearch.common.exception
 
-import org.springframework.boot.logging.LogLevel
-import org.springframework.http.HttpStatus
+import com.adsearch.common.enum.HttpStatusEnum
+import com.adsearch.common.enum.LogLevelEnum
 
 abstract class BaseException(
     override val message: String,
     val errorCode: String,
-    val httpStatus: HttpStatus,
+    val httpStatusEnum: HttpStatusEnum,
     cause: Throwable? = null,
-    val logLevel: LogLevel = LogLevel.WARN,
+    val logLevelEnum: LogLevelEnum,
 ) : Exception(message, cause)

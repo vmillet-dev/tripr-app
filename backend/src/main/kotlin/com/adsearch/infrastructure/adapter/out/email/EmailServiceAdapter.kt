@@ -1,5 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.email
 
+import com.adsearch.common.exception.technical.MailSendException
 import com.adsearch.domain.port.EmailServicePort
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -38,8 +39,7 @@ class EmailServiceAdapter(
             mailSender.send(message)
             logger.info("Password reset email sent to: $to")
         } catch (e: Exception) {
-            logger.error("Failed to send password reset email to: $to", e)
-            throw e
+            throw MailSendException("Failed to send password reset email to: $to", cause = e)
         }
     }
 }
