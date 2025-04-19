@@ -1,7 +1,6 @@
 [versions]
 archunit = "1.4.0"
 auth0-jwt = "4.5.0"
-coroutines = "1.10.1"
 httpclient5 = "5.4.3"
 jackson-kotlin = "2.18.3"
 kotlin = "2.1.20"
@@ -22,10 +21,6 @@ auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "coroutines" }
-kotlinx-coroutines-slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "coroutines" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
