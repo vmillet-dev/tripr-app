@@ -8,3 +8,6 @@ databaseChangeLog:
     - include:
           file: changes/03-create-password-reset-tokens-table.yaml
           relativeToChangelogFile: true
+    - include:
+          file: changes/04-create-roles-table.yaml
+          relativeToChangelogFile: true

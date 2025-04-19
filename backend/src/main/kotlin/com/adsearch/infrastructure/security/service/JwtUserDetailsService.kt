@@ -26,7 +26,7 @@ class JwtUserDetailsService(
             LOG.warn("user not found: {}", username)
             throw UsernameNotFoundException("User $username not found")
         }
-        val authorities = user.roles.flatMap { listOf(SimpleGrantedAuthority(it)) }
+        val authorities = user.roles.map { SimpleGrantedAuthority(it.name.name) }
         return JwtUserDetails(user.id, username, user.password, authorities)
     }
 }
