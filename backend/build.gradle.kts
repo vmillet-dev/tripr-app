@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.version.catalog.update)
+    alias(libs.plugins.ksp)
 }
 
 group = "com.adsearch"
@@ -20,6 +21,9 @@ repositories {
 }
 
 dependencies {
+    ksp(libs.ksp.konvert)
+    ksp(libs.ksp.konvert.spring)
+
     runtimeOnly(libs.postgresql)
 
     developmentOnly(libs.springboot.docker.compose)
@@ -31,6 +35,8 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.auth0.java.jwt)
+    implementation(libs.konvert.api)
+    implementation(libs.konvert.spring)
 
     testImplementation(libs.springboot.starter.test)
     testImplementation(libs.kotlin.test.junit5)
