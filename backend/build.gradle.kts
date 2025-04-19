@@ -29,7 +29,6 @@ dependencies {
     implementation(libs.liquibase.core)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.kotlin.reflect)
-    implementation(libs.logback.classic)
     implementation(libs.jackson.module.kotlin)
     implementation(libs.auth0.java.jwt)
 
@@ -41,14 +40,6 @@ dependencies {
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
 
-}
-
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "ch.qos.logback") {
-            useVersion(libs.versions.logback.get())
-        }
-    }
 }
 
 kotlin {

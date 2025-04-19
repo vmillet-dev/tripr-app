@@ -5,7 +5,6 @@ httpclient5 = "5.4.3"
 jackson-kotlin = "2.18.3"
 kotlin = "2.1.20"
 liquibase = "4.31.1"
-logback = "1.5.18"
 mockk = "1.13.17"
 postgresql = "42.7.5"
 spring-boot = "3.4.4"
@@ -22,7 +21,6 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }

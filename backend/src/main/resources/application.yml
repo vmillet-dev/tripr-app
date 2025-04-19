@@ -46,15 +46,6 @@ logging:
   level:
     root: INFO
 
-# API configuration
-api:
-  # Configuration for external API endpoints
-  # These are not used in the mock implementations
-  endpoints:
-    classifieds: https://api.mockclassifieds.example.com/v1
-    marketplace: https://api.mockmarketplace.example.com/v2
-    auction: https://api.mockauction.example.com/v1
-
 # JWT configuration
 jwt:
   secret: ${JWT_SECRET}
