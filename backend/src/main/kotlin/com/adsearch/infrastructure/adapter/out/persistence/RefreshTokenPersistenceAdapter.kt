@@ -1,8 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
 import com.adsearch.domain.model.RefreshToken
-import com.adsearch.domain.port.RefreshTokenPersistencePort
-import com.adsearch.infrastructure.adapter.out.persistence.entity.RefreshTokenEntity
+import com.adsearch.domain.port.spi.RefreshTokenPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.RefreshTokenRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.RefreshTokenEntityMapper
 import org.springframework.stereotype.Component

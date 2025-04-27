@@ -1,8 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
 import com.adsearch.domain.model.User
-import com.adsearch.domain.port.UserPersistencePort
-import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
+import com.adsearch.domain.port.spi.UserPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.UserEntityMapper
 import org.springframework.stereotype.Component
@@ -13,7 +12,7 @@ class UserPersistenceAdapter(
     private val userEntityMapper: UserEntityMapper
 ) : UserPersistencePort {
 
-    override fun save(user: User): User = 
+    override fun save(user: User): User =
         userRepository.save(userEntityMapper.fromDomain(user)).let(userEntityMapper::toDomain)
 
     override fun findById(id: Long): User? =

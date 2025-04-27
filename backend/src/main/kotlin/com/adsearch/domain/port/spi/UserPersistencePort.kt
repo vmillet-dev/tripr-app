@@ -1,4 +1,4 @@
-package com.adsearch.domain.port
+package com.adsearch.domain.port.spi
 
 import com.adsearch.domain.model.User
 

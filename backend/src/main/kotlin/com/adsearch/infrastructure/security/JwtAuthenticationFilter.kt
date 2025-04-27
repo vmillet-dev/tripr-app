@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.security
 
-import com.adsearch.infrastructure.security.service.JwtTokenService
+import com.adsearch.domain.port.api.JwtTokenServicePort
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 @Component
 class JwtAuthenticationFilter(
-    private val jwtTokenService: JwtTokenService,
+    private val jwtTokenService: JwtTokenServicePort,
     private val jwtUserDetailsService: JwtUserDetailsService
 ) : OncePerRequestFilter() {
 
@@ -53,8 +53,9 @@ class JwtAuthenticationFilter(
         val userDetails: UserDetails
         try {
             userDetails = jwtUserDetailsService.loadUserByUsername(username)
-        } catch (userNotFoundEx: UsernameNotFoundException) {
+        } catch (_: UsernameNotFoundException) {
             // user not found
+            LOG.warn("User $username not found")
             filterChain.doFilter(request, response)
             return
         }

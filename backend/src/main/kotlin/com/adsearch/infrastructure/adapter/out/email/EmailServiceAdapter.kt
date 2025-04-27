@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.email
 
 import com.adsearch.common.exception.technical.MailSendException
-import com.adsearch.domain.port.EmailServicePort
+import com.adsearch.domain.port.api.EmailServicePort
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender

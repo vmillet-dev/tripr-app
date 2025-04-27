@@ -11,4 +11,8 @@ data class RefreshToken(
     val token: String,
     val expiryDate: Instant,
     val revoked: Boolean = false
-)
+) {
+    fun isExpired(): Boolean {
+        return expiryDate.isBefore(Instant.now())
+    }
+}
