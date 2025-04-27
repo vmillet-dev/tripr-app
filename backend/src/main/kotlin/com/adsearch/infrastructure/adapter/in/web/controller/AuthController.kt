@@ -1,8 +1,8 @@
 package com.adsearch.infrastructure.adapter.`in`.web.controller
 
 import com.adsearch.application.usecase.AuthenticationUseCase
-import com.adsearch.domain.model.AuthRequest
-import com.adsearch.domain.model.AuthResponse
+import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthResponseDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
@@ -47,10 +47,10 @@ class AuthController(
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
     fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
-        val authResponse: AuthResponse = authenticationUseCase.login(request.username, request.password)
+        val authResponse: AuthResponseDom = authenticationUseCase.login(request.username, request.password)
 
         authResponse.refreshToken?.let { token ->
-            Cookie(cookieName, token.token).apply {
+            Cookie(cookieName, token).apply {
                 maxAge = cookieMaxAge
                 path = "/"
                 isHttpOnly = true
@@ -62,8 +62,8 @@ class AuthController(
         return ResponseEntity.ok(
             AuthResponseDto(
                 accessToken = authResponse.accessToken,
-                username = authResponse.username,
-                roles = authResponse.roles
+                username = authResponse.user.username,
+                roles = authResponse.user.roles
             )
         )
     }
@@ -75,12 +75,14 @@ class AuthController(
     @Operation(summary = "Register new user", description = "Registers a new user with username, password, and email")
     fun register(@Valid @RequestBody request: RegisterRequestDto): ResponseEntity<Map<String, String>> {
         return try {
-            val authRequest = AuthRequest(
+
+            val user = UserDom(
                 username = request.username,
+                email = request.email,
                 password = request.password
             )
 
-            authenticationUseCase.register(authRequest, request.email)
+            authenticationUseCase.register(user)
 
             ResponseEntity.ok(mapOf("message" to "User registered successfully"))
         } catch (e: Exception) {
@@ -100,8 +102,8 @@ class AuthController(
         return ResponseEntity.ok(
             AuthResponseDto(
                 accessToken = authResponse.accessToken,
-                username = authResponse.username,
-                roles = authResponse.roles
+                username = authResponse.user.username,
+                roles = authResponse.user.roles
             )
         )
     }
@@ -111,19 +113,19 @@ class AuthController(
      */
     @PostMapping("/logout")
     @Operation(summary = "Logout user", description = "Invalidates the refresh token and clears the refresh token cookie")
-    fun logout(
-        request: HttpServletRequest,
-        response: HttpServletResponse
-    ): ResponseEntity<Map<String, String>> {
+    fun logout(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Map<String, String>> {
         val cookies: String? = request.cookies?.find { it.name == cookieName }?.value
 
         authenticationUseCase.logout(cookies)
 
-        val cookie = Cookie(cookieName, "")
-        cookie.maxAge = 0
-        cookie.path = "/"
-        cookie.isHttpOnly = true
-        //TODO enable only in prod mode `cookie.secure = true`
+        Cookie(cookieName, "").apply {
+            maxAge = 0
+            path = "/"
+            isHttpOnly = true
+            //TODO enable only in prod mode `secure = true`
+            response.addCookie(this)
+        }
+
         return ResponseEntity.ok(mapOf("message" to "Logged out successfully"))
     }
 

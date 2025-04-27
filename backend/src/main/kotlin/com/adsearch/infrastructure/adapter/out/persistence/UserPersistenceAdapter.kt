@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
-import com.adsearch.domain.model.User
+import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.spi.UserPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.UserEntityMapper
@@ -12,15 +12,12 @@ class UserPersistenceAdapter(
     private val userEntityMapper: UserEntityMapper
 ) : UserPersistencePort {
 
-    override fun save(user: User): User =
-        userRepository.save(userEntityMapper.fromDomain(user)).let(userEntityMapper::toDomain)
+    override fun save(userDom: UserDom): UserDom =
+        userRepository.save(userEntityMapper.fromDomain(userDom)).let(userEntityMapper::toDomain)
 
-    override fun findById(id: Long): User? =
+    override fun findById(id: Long): UserDom? =
         userRepository.findById(id).orElse(null)?.let(userEntityMapper::toDomain)
 
-    override fun findByUsername(username: String): User? =
+    override fun findByUsername(username: String): UserDom? =
         userRepository.findByUsername(username)?.let(userEntityMapper::toDomain)
-
-    override fun findAll(): List<User> =
-        userRepository.findAll().map(userEntityMapper::toDomain)
 }

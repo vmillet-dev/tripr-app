@@ -1,6 +1,6 @@
 package com.adsearch.integration.util
 
-import com.adsearch.domain.model.User
+import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetTokenEntity
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.PasswordResetTokenEntityMapper
@@ -33,13 +33,14 @@ class TestDataHelper(
         username: String = "testuser",
         password: String = "password",
         roles: List<String> = listOf("USER")
-    ): User {
+    ): UserDom {
         val encodedPassword = passwordEncoder.encode(password)
 
         // Create and persist user entity
         val userEntity = UserEntity(
             username = username,
             password = encodedPassword,
+            email = "address@mail.fr",
             roles = roles.toMutableList()
         )
 

@@ -1,7 +1,7 @@
 package com.adsearch.application.usecase
 
-import com.adsearch.domain.model.AuthRequest
-import com.adsearch.domain.model.AuthResponse
+import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.domain.model.UserDom
 
 /**
  * Use case for authentication operations
@@ -11,17 +11,17 @@ interface AuthenticationUseCase {
     /**
      * Authenticate a user with username and password
      */
-    fun login(username: String, password: String): AuthResponse
+    fun login(username: String, password: String): AuthResponseDom
 
     /**
      * Register a new user
      */
-    fun register(authRequest: AuthRequest, email: String)
+    fun register(user: UserDom)
 
     /**
      * Refresh an access token using a refresh token
      */
-    fun refreshAccessToken(refreshToken: String?): AuthResponse
+    fun refreshAccessToken(refreshToken: String?): AuthResponseDom
 
     /**
      * Logout a user by invalidating their refresh tokens

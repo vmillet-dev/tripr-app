@@ -1,8 +1,8 @@
 package com.adsearch.infrastructure.adapter.out.security.service
 
-import com.adsearch.domain.model.PasswordResetToken
-import com.adsearch.domain.model.RefreshToken
-import com.adsearch.domain.model.User
+import com.adsearch.domain.model.PasswordResetTokenDom
+import com.adsearch.domain.model.RefreshTokenDom
+import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.security.model.JwtUserDetails
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import org.springframework.beans.factory.annotation.Value
@@ -25,12 +25,13 @@ class AuthService(
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
     }
 
-    fun loadAuthenticateUserByUsername(username: String): User {
+    fun loadAuthenticateUserByUsername(username: String): UserDom {
         val userDetails: JwtUserDetails = jwtUserDetailsService.loadUserByUsername(username)
 
-        return User(
+        return UserDom(
             id = userDetails.id,
             username = userDetails.username,
+            email = "",
             roles = userDetails.authorities.map { it.authority },
             password = ""
         )
@@ -40,15 +41,15 @@ class AuthService(
         return passwordEncoder.encode(password)
     }
 
-    fun generatePasswordResetToken(userId: Long): PasswordResetToken =
-        PasswordResetToken(
+    fun generatePasswordResetToken(userId: Long): PasswordResetTokenDom =
+        PasswordResetTokenDom(
             userId = userId,
             token = UUID.randomUUID().toString(),
             expiryDate = Instant.now().plusMillis(passwordResetTokenExpiration)
         )
 
-    fun generateRefreshToken(userId: Long): RefreshToken =
-        RefreshToken(
+    fun generateRefreshToken(userId: Long): RefreshTokenDom =
+        RefreshTokenDom(
             userId = userId,
             token = UUID.randomUUID().toString(),
             expiryDate = Instant.now().plusMillis(refreshTokenExpiration)

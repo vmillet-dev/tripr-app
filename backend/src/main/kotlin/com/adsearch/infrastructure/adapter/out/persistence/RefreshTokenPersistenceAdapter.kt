@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
-import com.adsearch.domain.model.RefreshToken
+import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.port.spi.RefreshTokenPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.RefreshTokenRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.RefreshTokenEntityMapper
@@ -12,20 +12,16 @@ class RefreshTokenPersistenceAdapter(
     private val refreshTokenEntityMapper: RefreshTokenEntityMapper
 ) : RefreshTokenPersistencePort {
 
-    override fun save(refreshToken: RefreshToken): RefreshToken {
-        val entity = refreshTokenEntityMapper.fromDomain(refreshToken)
+    override fun save(refreshTokenDom: RefreshTokenDom): RefreshTokenDom {
+        val entity = refreshTokenEntityMapper.fromDomain(refreshTokenDom)
         return refreshTokenEntityMapper.toDomain(refreshTokenRepository.save(entity))
     }
 
-    override fun findByUserId(userId: Long): List<RefreshToken> {
-        // Since the JPA repository doesn't have a findByUserId method that returns a list,
-        // we'll use findAll and filter the results
-        return refreshTokenRepository.findAll()
-            .filter { it.userId == userId }
-            .map(refreshTokenEntityMapper::toDomain)
+    override fun findByUserId(userId: Long): List<RefreshTokenDom> {
+        return refreshTokenRepository.findByUserId(userId).map(refreshTokenEntityMapper::toDomain)
     }
 
-    override fun findByToken(token: String): RefreshToken? {
+    override fun findByToken(token: String): RefreshTokenDom? {
         return refreshTokenRepository.findByToken(token)?.let(refreshTokenEntityMapper::toDomain)
     }
 

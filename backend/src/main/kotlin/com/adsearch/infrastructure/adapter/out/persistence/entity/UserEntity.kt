@@ -19,6 +19,9 @@ class UserEntity(
     @Column(unique = true, nullable = false)
     val username: String,
 
+    @Column(unique = true, nullable = false)
+    val email: String,
+
     @Column(nullable = false)
     val password: String,
 

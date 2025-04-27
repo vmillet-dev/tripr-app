@@ -3,9 +3,8 @@ package com.adsearch.domain.model
 /**
  * Domain model representing an authentication response
  */
-data class AuthResponse(
+data class AuthResponseDom(
+    val user: UserDom,
     val accessToken: String,
-    val username: String,
-    val roles: List<String>,
-    val refreshToken: RefreshToken?,
+    val refreshToken: String? = null
 )

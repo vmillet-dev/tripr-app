@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.persistence.mapper
 
-import com.adsearch.domain.model.User
+import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import io.mcarle.konvert.api.Konverter
 import io.mcarle.konvert.injector.spring.KComponent
@@ -11,6 +11,6 @@ import io.mcarle.konvert.injector.spring.KComponent
 @Konverter
 @KComponent
 interface UserEntityMapper {
-    fun toDomain(entity: UserEntity): User
-    fun fromDomain(domain: User): UserEntity
+    fun toDomain(entity: UserEntity): UserDom
+    fun fromDomain(domain: UserDom): UserEntity
 }

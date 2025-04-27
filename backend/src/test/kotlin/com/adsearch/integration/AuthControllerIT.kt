@@ -1,6 +1,6 @@
 package com.adsearch.integration
 
-import com.adsearch.domain.model.User
+import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetRequestDto
@@ -34,14 +34,14 @@ import java.util.UUID
 @DisplayName("Auth Controller Integration Tests")
 class AuthControllerIT : BaseIT() {
 
-    private lateinit var testUser: User
+    private lateinit var testUserDom: UserDom
     private val testUsername = "testuser"
     private val testPassword = "password"
 
     @BeforeEach
     fun setupUser() {
         // Create a test user for authentication tests
-        testUser = testDataHelper.createTestUser(
+        testUserDom = testDataHelper.createTestUser(
             username = testUsername,
             password = testPassword,
             roles = listOf("USER")
@@ -519,7 +519,7 @@ class AuthControllerIT : BaseIT() {
         @DisplayName("Should reset password with valid token")
         fun shouldResetPasswordWithValidToken() {
             // Given
-            val token = testDataHelper.createPasswordResetToken(testUser.id)
+            val token = testDataHelper.createPasswordResetToken(testUserDom.id)
 
             val headers = HttpHeaders()
             headers.contentType = MediaType.APPLICATION_JSON
@@ -642,7 +642,7 @@ class AuthControllerIT : BaseIT() {
         @DisplayName("Should validate valid token")
         fun shouldValidateValidToken() {
             // Given
-            val token = testDataHelper.createPasswordResetToken(testUser.id)
+            val token = testDataHelper.createPasswordResetToken(testUserDom.id)
 
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.getForEntity(

@@ -6,10 +6,9 @@ import com.adsearch.common.exception.functional.InvalidTokenException
 import com.adsearch.common.exception.functional.TokenExpiredException
 import com.adsearch.common.exception.functional.UserAlreadyExistsException
 import com.adsearch.common.exception.functional.UserNotFoundException
-import com.adsearch.domain.model.AuthRequest
-import com.adsearch.domain.model.AuthResponse
-import com.adsearch.domain.model.RefreshToken
-import com.adsearch.domain.model.User
+import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.domain.model.RefreshTokenDom
+import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.api.AuthenticationPort
 import com.adsearch.domain.port.api.EmailServicePort
 import com.adsearch.domain.port.api.JwtTokenServicePort
@@ -19,7 +18,6 @@ import com.adsearch.domain.port.spi.UserPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.Instant
 
 /**
  * Service for authentication operations
@@ -41,72 +39,62 @@ class AuthenticationService(
     /**
      * Authenticate a user with username and password
      */
-    override fun login(username: String, password: String): AuthResponse {
+    override fun login(username: String, password: String): AuthResponseDom {
         try {
             authenticationPort.authenticate(username, password)
         } catch (_: Exception) {
             throw InvalidCredentialsException()
         }
 
-        val user: User = authenticationPort.loadAuthenticateUserByUsername(username)
+        val user: UserDom = authenticationPort.loadAuthenticateUserByUsername(username)
 
         refreshTokenPersistence.deleteByUserId(user.id)
-        val refreshToken: RefreshToken = authenticationPort.generateRefreshToken(user.id)
+        val refreshToken: RefreshTokenDom = authenticationPort.generateRefreshToken(user.id)
         refreshTokenPersistence.save(refreshToken)
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
 
-        return AuthResponse(
-            accessToken = accessToken,
-            username = user.username,
-            roles = user.roles,
-            refreshToken = refreshToken
-        )
+        return AuthResponseDom(user, accessToken,refreshToken.token)
     }
 
     /**
      * Register a new user
      */
-    override fun register(authRequest: AuthRequest, email: String) {
-        val existingUser = userPersistence.findByUsername(authRequest.username)
+    override fun register(user: UserDom) {
+        val existingUser = userPersistence.findByUsername(user.username)
         if (existingUser != null) {
             throw UserAlreadyExistsException("Username already exists")
         }
 
-        val hashedPassword = authenticationPort.generateHashedPassword(authRequest.password)
+        val hashedPassword = authenticationPort.generateHashedPassword(user.password)
 
-        User(
-            username = authRequest.username,
-            password = hashedPassword,
-            roles = listOf("USER")
-        ).let { user ->
-            userPersistence.save(user)
-        }
+        user.apply { password = hashedPassword }
+        userPersistence.save(user)
     }
 
     /**
      * Refresh an access token using a refresh token
      */
-    override fun refreshAccessToken(refreshToken: String?): AuthResponse {
+    override fun refreshAccessToken(refreshToken: String?): AuthResponseDom {
         if (refreshToken == null) {
             LOG.error("Refresh token is missing in cookies")
             throw InvalidTokenException(message = "Refresh token is missing")
         }
 
-        val refreshToken: RefreshToken? = refreshTokenPersistence.findByToken(refreshToken)
+        val refreshTokenDom: RefreshTokenDom? = refreshTokenPersistence.findByToken(refreshToken)
 
-        if (refreshToken == null) {
+        if (refreshTokenDom == null) {
             LOG.warn("Refresh token invalid")
             throw InvalidTokenException()
         }
 
-        if (refreshToken.isExpired() || refreshToken.revoked) {
-            refreshTokenPersistence.deleteById(refreshToken.id)
+        if (refreshTokenDom.isExpired() || refreshTokenDom.revoked) {
+            refreshTokenPersistence.deleteById(refreshTokenDom.id)
             throw TokenExpiredException("Refresh token was expired. Please make a new sign in request")
         }
 
-        val user: User = userPersistence.findById(refreshToken.userId)?: throw UserNotFoundException("User not found")
-        val authenticateUser: User = authenticationPort.loadAuthenticateUserByUsername(user.username)
+        val user: UserDom = userPersistence.findById(refreshTokenDom.userId)?: throw UserNotFoundException("User not found")
+        val authenticateUser: UserDom = authenticationPort.loadAuthenticateUserByUsername(user.username)
 
         if (user.id != authenticateUser.id) {
             throw InvalidCredentialsException()
@@ -114,12 +102,7 @@ class AuthenticationService(
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
 
-        return AuthResponse(
-            accessToken = accessToken,
-            username = user.username,
-            roles = user.roles,
-            refreshToken = refreshToken
-        )
+        return AuthResponseDom(authenticateUser, accessToken)
     }
 
     /**
@@ -151,7 +134,7 @@ class AuthenticationService(
         LOG.debug("Created password reset token: {}", resetToken)
 
         // Send email
-        emailService.sendPasswordResetEmail(username, resetToken.token)
+        emailService.sendPasswordResetEmail(user.email, resetToken.token)
         LOG.info("Password reset email sent to: $username")
     }
 
@@ -165,7 +148,7 @@ class AuthenticationService(
         LOG.debug("Processing password reset with token: {}", resetToken)
 
         // Check if token is expired
-        if (resetToken.expiryDate.isBefore(Instant.now())) {
+        if (resetToken.isExpired()) {
             passwordResetTokenPersistence.deleteById(resetToken.id)
             throw TokenExpiredException("Password reset token has expired")
         }
@@ -180,15 +163,11 @@ class AuthenticationService(
             ?: throw UserNotFoundException("User not found for password reset token")
 
         // Update the password
-        val updatedUser = user.copy(
+        user.apply {
             password = authenticationPort.generateHashedPassword(newPassword)
-        )
-        userPersistence.save(updatedUser)
+        }
+        userPersistence.save(user)
         LOG.info("Password reset successful for user: ${user.username}")
-
-        // Mark token as used
-        val usedToken = resetToken.copy(used = true)
-        passwordResetTokenPersistence.save(usedToken)
 
         // Delete all tokens for this user
         passwordResetTokenPersistence.deleteByUserId(user.id)
@@ -201,7 +180,7 @@ class AuthenticationService(
         val resetToken = passwordResetTokenPersistence.findByToken(token) ?: return false
 
         // Check if token is expired
-        if (resetToken.expiryDate.isBefore(Instant.now())) {
+        if (resetToken.isExpired()) {
             passwordResetTokenPersistence.deleteById(resetToken.id)
             return false
         }
