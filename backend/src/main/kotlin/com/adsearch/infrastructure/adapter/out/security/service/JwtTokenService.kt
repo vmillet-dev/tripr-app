@@ -17,17 +17,13 @@ class JwtTokenService(
     private val algorithm: Algorithm = Algorithm.HMAC256(secret)
     private val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()
 
-    fun createAccessToken(
-        userId: String,
-        username: String,
-        roles: List<String>
-    ): String =
-        JWT.create()
+    fun createAccessToken(userId: String, username: String, roles: List<String>): String
+        = JWT.create()
             .withSubject(userId)
             .withClaim("username", username)
             .withArrayClaim("roles", roles.toTypedArray())
             .withIssuedAt(Instant.now())
-            .withExpiresAt( Instant.now().plusMillis(jwtExpiration))
+            .withExpiresAt( Instant.now().plusSeconds(jwtExpiration))
             .withIssuer(issuer)
             .sign(algorithm)
 

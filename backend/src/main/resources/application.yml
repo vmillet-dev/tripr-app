@@ -49,13 +49,13 @@ logging:
 # JWT configuration
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 3600000  # 1 hour in milliseconds
+  expiration: 3600  # 1 hour in secondes
   issuer: spring-ad-search
   refresh-token:
     cookie-name: refresh-token
-    expiration: 604800000  # 7 days in milliseconds
+    expiration: 604800  # 7 days in secondes
 
 # Password reset configuration
 password-reset:
-  token-expiration: 86400000  # 24 hours in milliseconds
+  token-expiration: 86400  # 24 hours in milliseconds
   base-url: ${BASE_URL}/password-reset

@@ -37,12 +37,12 @@ logging:
 
 jwt:
   secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
-  expiration: 3600000  # 1 hour in milliseconds
+  expiration: 3600  # 1 hour in secondes
   issuer: spring-ad-search
   refresh-token:
     cookie-name: refresh-token
-    expiration: 604800000  # 7 days in milliseconds
+    expiration: 604800  # 7 days in secondes
 
 password-reset:
-  token-expiration: 86400000  # 24 hours in milliseconds
+  token-expiration: 86400  # 24 hours in secondes
   base-url: http://localhost:4200/password-reset

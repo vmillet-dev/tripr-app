@@ -29,11 +29,8 @@ class JwtAuthenticationFilter(
         val LOG: Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
     }
 
-    override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        filterChain: FilterChain
-    ) {
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+
         val authHeader: String? = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response)

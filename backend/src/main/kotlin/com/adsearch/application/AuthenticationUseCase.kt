@@ -1,4 +1,4 @@
-package com.adsearch.application.usecase
+package com.adsearch.application
 
 import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.UserDom

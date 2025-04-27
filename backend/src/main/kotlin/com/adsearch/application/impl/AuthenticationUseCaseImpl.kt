@@ -1,6 +1,6 @@
-package com.adsearch.application.service
+package com.adsearch.application.impl
 
-import com.adsearch.application.usecase.AuthenticationUseCase
+import com.adsearch.application.AuthenticationUseCase
 import com.adsearch.common.exception.functional.InvalidCredentialsException
 import com.adsearch.common.exception.functional.InvalidTokenException
 import com.adsearch.common.exception.functional.TokenExpiredException
@@ -9,7 +9,7 @@ import com.adsearch.common.exception.functional.UserNotFoundException
 import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
-import com.adsearch.domain.port.api.AuthenticationPort
+import com.adsearch.domain.port.api.AuthenticationServicePort
 import com.adsearch.domain.port.api.EmailServicePort
 import com.adsearch.domain.port.api.JwtTokenServicePort
 import com.adsearch.domain.port.spi.PasswordResetTokenPersistencePort
@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service
  * Service for authentication operations
  */
 @Service
-class AuthenticationService(
-    private val authenticationPort: AuthenticationPort,
+class AuthenticationUseCaseImpl(
+    private val authenticationService: AuthenticationServicePort,
     private val userPersistence: UserPersistencePort,
     private val passwordResetTokenPersistence: PasswordResetTokenPersistencePort,
     private val refreshTokenPersistence: RefreshTokenPersistencePort,
@@ -41,15 +41,15 @@ class AuthenticationService(
      */
     override fun login(username: String, password: String): AuthResponseDom {
         try {
-            authenticationPort.authenticate(username, password)
+            authenticationService.authenticate(username, password)
         } catch (_: Exception) {
             throw InvalidCredentialsException()
         }
 
-        val user: UserDom = authenticationPort.loadAuthenticateUserByUsername(username)
+        val user: UserDom = authenticationService.loadAuthenticateUserByUsername(username)
 
         refreshTokenPersistence.deleteByUserId(user.id)
-        val refreshToken: RefreshTokenDom = authenticationPort.generateRefreshToken(user.id)
+        val refreshToken: RefreshTokenDom = authenticationService.generateRefreshToken(user.id)
         refreshTokenPersistence.save(refreshToken)
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
@@ -66,7 +66,7 @@ class AuthenticationService(
             throw UserAlreadyExistsException("Username already exists")
         }
 
-        val hashedPassword = authenticationPort.generateHashedPassword(user.password)
+        val hashedPassword = authenticationService.generateHashedPassword(user.password)
 
         user.apply { password = hashedPassword }
         userPersistence.save(user)
@@ -94,7 +94,7 @@ class AuthenticationService(
         }
 
         val user: UserDom = userPersistence.findById(refreshTokenDom.userId)?: throw UserNotFoundException("User not found")
-        val authenticateUser: UserDom = authenticationPort.loadAuthenticateUserByUsername(user.username)
+        val authenticateUser: UserDom = authenticationService.loadAuthenticateUserByUsername(user.username)
 
         if (user.id != authenticateUser.id) {
             throw InvalidCredentialsException()
@@ -129,7 +129,7 @@ class AuthenticationService(
         passwordResetTokenPersistence.deleteByUserId(user.id)
 
         // Create a new token
-        val resetToken = authenticationPort.generatePasswordResetToken(user.id)
+        val resetToken = authenticationService.generatePasswordResetToken(user.id)
         passwordResetTokenPersistence.save(resetToken)
         LOG.debug("Created password reset token: {}", resetToken)
 
@@ -164,7 +164,7 @@ class AuthenticationService(
 
         // Update the password
         user.apply {
-            password = authenticationPort.generateHashedPassword(newPassword)
+            password = authenticationService.generateHashedPassword(newPassword)
         }
         userPersistence.save(user)
         LOG.info("Password reset successful for user: ${user.username}")

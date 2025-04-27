@@ -14,7 +14,7 @@ import java.time.Instant
 import java.util.UUID
 
 @Service
-class AuthService(
+class AuthenticationService(
     private val authenticationManager: AuthenticationManager,
     private val jwtUserDetailsService: JwtUserDetailsService,
     private val passwordEncoder: PasswordEncoder,
@@ -45,13 +45,13 @@ class AuthService(
         PasswordResetTokenDom(
             userId = userId,
             token = UUID.randomUUID().toString(),
-            expiryDate = Instant.now().plusMillis(passwordResetTokenExpiration)
+            expiryDate = Instant.now().plusSeconds(passwordResetTokenExpiration)
         )
 
     fun generateRefreshToken(userId: Long): RefreshTokenDom =
         RefreshTokenDom(
             userId = userId,
             token = UUID.randomUUID().toString(),
-            expiryDate = Instant.now().plusMillis(refreshTokenExpiration)
+            expiryDate = Instant.now().plusSeconds(refreshTokenExpiration)
         )
 }

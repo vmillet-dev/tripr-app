@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.`in`.web.controller
 
-import com.adsearch.application.usecase.AuthenticationUseCase
+import com.adsearch.application.AuthenticationUseCase
 import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
