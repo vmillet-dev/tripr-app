@@ -1,7 +1,9 @@
 package com.adsearch.integration.util
 
+import com.adsearch.domain.enum.UserRoleEnum
 import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetTokenEntity
+import com.adsearch.infrastructure.adapter.out.persistence.entity.RoleEntity
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.PasswordResetTokenEntityMapper
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.UserEntityMapper
@@ -41,7 +43,9 @@ class TestDataHelper(
             username = username,
             password = encodedPassword,
             email = "address@mail.fr",
-            roles = roles.toMutableList()
+            roles = roles.map { it -> UserRoleEnum.valueOf(it) }
+                .map { it -> RoleEntity(it.id, it.type) }
+                .toMutableSet()
         )
 
         entityManager.persist(userEntity)
