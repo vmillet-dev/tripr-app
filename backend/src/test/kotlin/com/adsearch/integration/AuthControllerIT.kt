@@ -1,5 +1,6 @@
 package com.adsearch.integration
 
+import com.adsearch.domain.enum.UserRoleEnum
 import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
@@ -44,7 +45,7 @@ class AuthControllerIT : BaseIT() {
         testUserDom = testDataHelper.createTestUser(
             username = testUsername,
             password = testPassword,
-            roles = listOf("USER")
+            roles = listOf(UserRoleEnum.USER.type)
         )
     }
 
@@ -93,7 +94,7 @@ class AuthControllerIT : BaseIT() {
             @Suppress("UNCHECKED_CAST")
             val roles = response.body!!["roles"] as List<String>
             assertThat(roles).hasSize(1)
-            assertThat(roles[0]).isEqualTo("USER")
+            assertThat(roles[0]).isEqualTo(UserRoleEnum.USER.type)
         }
 
         @Test

@@ -12,13 +12,18 @@ class AuthenticationServiceServiceAdapter(
     private val authenticationService: AuthenticationService,
 ) : AuthenticationServicePort {
 
-    override fun authenticate(username: String, password: String) = authenticationService.authenticate(username, password)
+    override fun authenticate(username: String, password: String) =
+        authenticationService.authenticate(username, password)
 
-    override fun loadAuthenticateUserByUsername(username: String): UserDom = authenticationService.loadAuthenticateUserByUsername(username)
+    override fun loadAuthenticateUserByUsername(username: String): UserDom =
+        authenticationService.loadAuthenticateUserByUsername(username)
 
-    override fun generateHashedPassword(password: String): String = authenticationService.generateHashedPassword(password)
+    override fun generateHashedPassword(password: String): String =
+        authenticationService.generateHashedPassword(password)
 
-    override fun generatePasswordResetToken(userId: Long): PasswordResetTokenDom = authenticationService.generatePasswordResetToken(userId)
+    override fun generatePasswordResetToken(userId: Long): PasswordResetTokenDom =
+        authenticationService.generatePasswordResetToken(userId)
 
-    override fun generateRefreshToken(userId: Long): RefreshTokenDom = authenticationService.generateRefreshToken(userId)
+    override fun generateRefreshToken(userId: Long): RefreshTokenDom =
+        authenticationService.generateRefreshToken(userId)
 }

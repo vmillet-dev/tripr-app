@@ -34,7 +34,7 @@ class TestDataHelper(
     fun createTestUser(
         username: String = "testuser",
         password: String = "password",
-        roles: List<String> = listOf("USER")
+        roles: List<String> = listOf(UserRoleEnum.USER.type)
     ): UserDom {
         val encodedPassword = passwordEncoder.encode(password)
 

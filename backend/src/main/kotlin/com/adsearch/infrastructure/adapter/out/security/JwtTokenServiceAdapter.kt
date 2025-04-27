@@ -9,9 +9,9 @@ class JwtTokenServiceAdapter(
     private val jwtTokenService: JwtTokenService
 ) : JwtTokenServicePort {
 
-    override fun createAccessToken(userId: String, username: String, roles: List<String>): String
-    = jwtTokenService.createAccessToken(userId, username, roles)
+    override fun createAccessToken(userId: String, username: String, roles: List<String>): String =
+        jwtTokenService.createAccessToken(userId, username, roles)
 
-    override fun validateAccessTokenAndGetUsername(token: String): String?
-    = jwtTokenService.validateAccessTokenAndGetUsername(token)
+    override fun validateAccessTokenAndGetUsername(token: String): String? =
+        jwtTokenService.validateAccessTokenAndGetUsername(token)
 }
