@@ -2,14 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { NgClass } from '@angular/common';
+import { NgClass, NgIf, CommonModule } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe]
+  standalone: true,
+  imports: [ReactiveFormsModule, NgClass, NgIf, CommonModule, RouterLink, TranslocoPipe]
 })
 export class RegisterComponent implements OnInit {
   loading = false;

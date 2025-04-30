@@ -1,25 +1,33 @@
-<header class="header">
-  <div class="container">
-    <div class="logo">
-      <a routerLink="/">{{ 'app.title' | transloco }}</a>
+<header class="bg-white shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand fw-bold" routerLink="/">{{ 'app.title' | transloco }}</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              {{ 'app.header.home' | transloco }}
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="isAuthenticated">
+            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <ng-container *ngIf="!isAuthenticated">
+            <a routerLink="/login" class="btn btn-outline-primary me-2">{{ 'app.header.login' | transloco }}</a>
+            <a routerLink="/register" class="btn btn-primary">{{ 'app.header.signup' | transloco }}</a>
+          </ng-container>
+          <ng-container *ngIf="isAuthenticated">
+            <span class="me-3 text-primary fw-semibold" data-cy="user-menu">{{ username }}</span>
+            <button class="btn btn-outline-danger" (click)="logout()">{{ 'app.header.logout' | transloco }}</button>
+          </ng-container>
+        </div>
+      </div>
     </div>
-    <nav class="nav">
-      <ul>
-        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ 'app.header.home' | transloco }}</a></li>
-        @if (isAuthenticated) {
-          <li><a routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a></li>
-        }
-      </ul>
-    </nav>
-    <div class="auth-buttons">
-      @if (!isAuthenticated) {
-        <a routerLink="/login" class="btn btn-outline">{{ 'app.header.login' | transloco }}</a>
-        <a routerLink="/register" class="btn btn-primary">{{ 'app.header.signup' | transloco }}</a>
-      }
-      @if (isAuthenticated) {
-        <span class="username" data-cy="user-menu">{{ username }}</span>
-        <button class="btn btn-outline" (click)="logout()">{{ 'app.header.logout' | transloco }}</button>
-      }
-    </div>
-  </div>
+  </nav>
 </header>
