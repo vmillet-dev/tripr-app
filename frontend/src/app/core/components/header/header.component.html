@@ -13,19 +13,21 @@
               {{ 'app.header.home' | transloco }}
             </a>
           </li>
-          <li class="nav-item" *ngIf="isAuthenticated">
-            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a>
-          </li>
+          @if (isAuthenticated) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">{{ 'app.header.dashboard' | transloco }}</a>
+            </li>
+          }
         </ul>
         <div class="d-flex align-items-center">
-          <ng-container *ngIf="!isAuthenticated">
+          @if (!isAuthenticated) {
             <a routerLink="/login" class="btn btn-outline-primary me-2">{{ 'app.header.login' | transloco }}</a>
             <a routerLink="/register" class="btn btn-primary">{{ 'app.header.signup' | transloco }}</a>
-          </ng-container>
-          <ng-container *ngIf="isAuthenticated">
+          }
+          @if (isAuthenticated) {
             <span class="me-3 text-primary fw-semibold" data-cy="user-menu">{{ username }}</span>
             <button class="btn btn-outline-danger" (click)="logout()">{{ 'app.header.logout' | transloco }}</button>
-          </ng-container>
+          }
         </div>
       </div>
     </div>
