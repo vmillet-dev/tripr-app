@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { NgClass, NgIf, CommonModule } from '@angular/common';
+import { NgClass, CommonModule } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
@@ -10,7 +10,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, NgIf, CommonModule, RouterLink, TranslocoPipe]
+  imports: [ReactiveFormsModule, NgClass, CommonModule, RouterLink, TranslocoPipe]
 })
 export class RegisterComponent implements OnInit {
   loading = false;
