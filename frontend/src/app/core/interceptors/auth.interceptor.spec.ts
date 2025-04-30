@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { authInterceptor } from './auth.interceptor';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 describe('AuthInterceptor', () => {
   let httpClient: HttpClient;
@@ -18,11 +19,7 @@ describe('AuthInterceptor', () => {
       imports: [HttpClientTestingModule],
       providers: [
         { provide: AuthService, useValue: authServiceMock },
-        { 
-          provide: HTTP_INTERCEPTORS, 
-          useValue: authInterceptor, 
-          multi: true 
-        }
+        provideHttpClient(withInterceptors([authInterceptor]))
       ]
     });
 
