@@ -1,15 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NgClass } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe]
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
   loading = false;
@@ -51,7 +53,7 @@ export class LoginComponent implements OnInit {
       next: () => {
         this.router.navigate([this.returnUrl]);
       },
-      error: error => {
+      error: (error: HttpErrorResponse) => {
         this.error = error.error?.message || 'Login failed';
         this.loading = false;
       }

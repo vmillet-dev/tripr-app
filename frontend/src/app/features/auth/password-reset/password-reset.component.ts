@@ -57,7 +57,7 @@ export class PasswordResetComponent implements OnInit {
             this.errorMessage = 'This password reset link has expired or is invalid. Please request a new one.';
           }
         },
-        error: (error) => {
+        error: (_error) => {
           this.isValidatingToken = false;
           this.isTokenValid = false;
           this.errorMessage = 'Failed to validate token. Please request a new password reset link.';
@@ -93,9 +93,9 @@ export class PasswordResetComponent implements OnInit {
             this.router.navigate(['/login'], { queryParams: { resetSuccess: true } });
           }, 3000);
         },
-        error: (error) => {
+        error: (_error) => {
           this.isSubmitting = false;
-          this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+          this.errorMessage = _error.error?.message || 'An error occurred. Please try again.';
         }
       });
   }

@@ -1,15 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { NgClass } from '@angular/common';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe]
+  imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent implements OnInit {
   loading = false;
@@ -32,7 +34,7 @@ export class RegisterComponent implements OnInit {
 
   get f() { return this.registerForm.controls; }
 
-  passwordMatchValidator(formGroup: FormGroup) {
+  passwordMatchValidator(formGroup: FormGroup): null {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
 
@@ -59,9 +61,9 @@ export class RegisterComponent implements OnInit {
       email: this.f['email'].value as string
     }).subscribe({
       next: () => {
-        this.router.navigate(['/login'], { queryParams: { registered: true } });
+        this.router.navigate(['/login'], { queryParams: { registered: 'true' } });
       },
-      error: error => {
+      error: (error: HttpErrorResponse) => {
         this.error = error.error?.message || 'Registration failed';
         this.loading = false;
       }

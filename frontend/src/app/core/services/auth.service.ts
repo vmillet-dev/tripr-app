@@ -5,6 +5,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../../environments/environment';
 import { AuthRequest, AuthResponse, RegisterRequest } from '../models/auth.model';
+import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,21 +13,30 @@ import { AuthRequest, AuthResponse, RegisterRequest } from '../models/auth.model
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private jwtHelper = new JwtHelperService();
-  private currentUserSubject = new BehaviorSubject<any>(null);
+  private currentUserSubject = new BehaviorSubject<{username: string, roles: string[]} | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  
   private http = inject(HttpClient);
+  private tokenStorage = inject(TokenStorageService);
   
   constructor() {
     this.loadToken();
   }
   
   private loadToken(): void {
-    const token = localStorage.getItem('access_token');
+    const token = this.tokenStorage.getToken();
     if (token && !this.jwtHelper.isTokenExpired(token)) {
       const decodedToken = this.jwtHelper.decodeToken(token);
       this.currentUserSubject.next({
         username: decodedToken.username,
         roles: decodedToken.roles
+      });
+    } else {
+      this.refreshToken().subscribe({
+        next: () => {
+        },
+        error: () => {
+        }
       });
     }
   }
@@ -34,14 +44,14 @@ export class AuthService {
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true })
       .pipe(
-        tap(response => {
-          localStorage.setItem('access_token', response.accessToken);
+        tap((response: AuthResponse) => {
+          this.tokenStorage.setToken(response.accessToken);
           this.currentUserSubject.next({
             username: response.username,
             roles: response.roles
           });
         }),
-        catchError(error => {
+        catchError((error: any) => {
           return throwError(() => error);
         })
       );
@@ -50,7 +60,7 @@ export class AuthService {
   register(registerData: RegisterRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, registerData)
       .pipe(
-        catchError(error => {
+        catchError((error: any) => {
           return throwError(() => error);
         })
       );
@@ -59,14 +69,14 @@ export class AuthService {
   refreshToken(): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, {}, { withCredentials: true })
       .pipe(
-        tap(response => {
-          localStorage.setItem('access_token', response.accessToken);
+        tap((response: AuthResponse) => {
+          this.tokenStorage.setToken(response.accessToken);
           this.currentUserSubject.next({
             username: response.username,
             roles: response.roles
           });
         }),
-        catchError(error => {
+        catchError((error: any) => {
           return throwError(() => error);
         })
       );
@@ -76,21 +86,20 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true })
       .pipe(
         tap(() => {
-          localStorage.removeItem('access_token');
+          this.tokenStorage.removeToken();
           this.currentUserSubject.next(null);
         }),
-        catchError(error => {
+        catchError((error: any) => {
           return throwError(() => error);
         })
       );
   }
   
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('access_token');
-    return token !== null && !this.jwtHelper.isTokenExpired(token);
+    return this.tokenStorage.hasValidToken(this.jwtHelper);
   }
   
   getToken(): string | null {
-    return localStorage.getItem('access_token');
+    return this.tokenStorage.getToken();
   }
 }

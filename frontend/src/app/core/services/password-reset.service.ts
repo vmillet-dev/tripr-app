@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -15,7 +15,7 @@ export class PasswordResetService {
   requestPasswordReset(request: PasswordResetRequest): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/reset-request`, request)
       .pipe(
-        catchError(error => {
+        catchError((error: HttpErrorResponse) => {
           return throwError(() => error);
         })
       );
@@ -24,7 +24,7 @@ export class PasswordResetService {
   resetPassword(resetData: PasswordReset): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/reset`, resetData)
       .pipe(
-        catchError(error => {
+        catchError((error: HttpErrorResponse) => {
           return throwError(() => error);
         })
       );
@@ -33,7 +33,7 @@ export class PasswordResetService {
   validateToken(token: string): Observable<TokenValidation> {
     return this.http.get<TokenValidation>(`${this.apiUrl}/validate-token?token=${token}`)
       .pipe(
-        catchError(error => {
+        catchError((error: HttpErrorResponse) => {
           return throwError(() => error);
         })
       );
