@@ -16,15 +16,20 @@ describe('AuthService', () => {
     tokenStorageServiceMock = jasmine.createSpyObj('TokenStorageService', 
       ['getToken', 'setToken', 'removeToken', 'hasValidToken']);
     
+    tokenStorageServiceMock.getToken.and.returnValue('valid-test-token');
+    
     jwtHelperServiceMock = jasmine.createSpyObj('JwtHelperService',
       ['decodeToken', 'isTokenExpired']);
+    
+    jwtHelperServiceMock.isTokenExpired.and.returnValue(Promise.resolve(false));
+    jwtHelperServiceMock.decodeToken.and.returnValue(Promise.resolve({ username: 'testuser', roles: ['USER'] }));
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        AuthService,
         { provide: TokenStorageService, useValue: tokenStorageServiceMock },
-        { provide: JwtHelperService, useValue: jwtHelperServiceMock }
+        { provide: JwtHelperService, useValue: jwtHelperServiceMock },
+        AuthService
       ]
     });
     
