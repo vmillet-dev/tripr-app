@@ -3,9 +3,9 @@ databaseChangeLog:
       id: 02
       author: devin
       preConditions:
-        onFail: MARK_RAN
-        not:
-          tableExists:
+        - onFail: MARK_RAN
+        - not:
+          - tableExists:
             tableName: refresh_tokens
       changes:
         - createTable:

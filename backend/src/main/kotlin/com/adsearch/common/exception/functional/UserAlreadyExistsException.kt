@@ -7,6 +7,6 @@ import com.adsearch.common.exception.BaseFunctionalException
 class UserAlreadyExistsException(
     message: String = FunctionalErrorCodeEnum.USER_ALREADY_EXISTS.defaultMessage,
     errorCode: String = FunctionalErrorCodeEnum.USER_ALREADY_EXISTS.code,
-    httpStatusEnum: HttpStatusEnum = HttpStatusEnum.UNAUTHORIZED,
+    httpStatusEnum: HttpStatusEnum = HttpStatusEnum.BAD_REQUEST,
     cause: Throwable? = null
 ) : BaseFunctionalException(message, errorCode, httpStatusEnum, cause)

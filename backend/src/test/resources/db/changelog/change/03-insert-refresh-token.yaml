@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202505011815-01
+      author: test
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM refresh_tokens WHERE user_id = 3 # john_doe user
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO refresh_tokens (user_id, token, expiry_date, revoked) VALUES (3, 'e42f1f3e-ea56-47be-bc14-3b9bf1e5a58d', '2099-05-08 16:32:36.786274', false);
+
