@@ -1,6 +1,5 @@
 package com.adsearch.integration
 
-import com.adsearch.integration.util.TestDataHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -22,9 +21,6 @@ abstract class BaseIT {
 
     @LocalServerPort
     protected var port: Int = 0
-
-    @Autowired
-    protected lateinit var testDataHelper: TestDataHelper
 
     @Autowired
     protected lateinit var restTemplate: TestRestTemplate
@@ -53,9 +49,13 @@ abstract class BaseIT {
         }
     }
 
-    protected fun buildJsonPayload(payload: Any): HttpEntity<*> {
+    protected fun buildJsonPayload(payload: Any, token: String? = null): HttpEntity<*> {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
+
+        if (token != null) {
+            headers.add("Cookie", "refresh-token=${token}; Max-Age=604800000; Expires=Thu")
+        }
 
         return HttpEntity(payload, headers)
     }

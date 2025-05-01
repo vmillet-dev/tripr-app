@@ -1,14 +1,11 @@
 package com.adsearch.integration
 
-import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.RegisterRequestDto
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -18,7 +15,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.UUID
 
 /**
@@ -36,7 +32,6 @@ import java.util.UUID
 @DisplayName("Auth Controller Integration Tests")
 class AuthControllerIT : BaseIT() {
 
-    private lateinit var testUserDom: UserDom
     private val testUsername = "testuser"
     private val testPassword = "password"
 
@@ -47,11 +42,6 @@ class AuthControllerIT : BaseIT() {
         @Test
         @DisplayName("Should login with valid credentials")
         fun shouldLoginWithValidCredentials() {
-            val encoder = BCryptPasswordEncoder()
-            val rawPassword = "password"
-            val encodedPassword = encoder.encode(rawPassword)
-            println("Use this password hash in liquibase: $encodedPassword")
-
             // Given
             val request = AuthRequestDto(testUsername, testPassword)
 
@@ -178,49 +168,16 @@ class AuthControllerIT : BaseIT() {
     @DisplayName("Refresh Token Tests")
     inner class RefreshTokenTests {
 
-        private lateinit var refreshTokenCookie: String
-
-        @BeforeEach
-        fun setupRefreshToken() {
-            // First login to get a refresh token
-            val loginHeaders = HttpHeaders()
-            loginHeaders.contentType = MediaType.APPLICATION_JSON
-
-            val loginRequest = AuthRequestDto(
-                username = testUsername,
-                password = testPassword
-            )
-
-            val loginEntity = HttpEntity(loginRequest, loginHeaders)
-
-            val loginResponse = restTemplate.postForEntity(
-                "http://localhost:$port/api/auth/login",
-                loginEntity,
-                Map::class.java
-            )
-
-            // Extract cookies from login response
-            val cookies = loginResponse.headers.getValuesAsList("Set-Cookie")
-            assertThat(cookies).isNotEmpty()
-
-            val cookie = cookies.first { it.contains("refresh-token") }
-            assertThat(cookie).isNotNull()
-
-            refreshTokenCookie = cookie
-        }
-
         @Test
-        @DisplayName("Should refresh token with valid refresh token")
-        fun shouldRefreshTokenWithValidRefreshToken() {
+        @DisplayName("Should refresh access token with valid refresh token")
+        fun shouldRefreshAccessTokenWithValidRefreshToken() {
             // Given
-            val refreshHeaders = HttpHeaders()
-            refreshHeaders.add("Cookie", refreshTokenCookie)
+            val token = "e42f1f3e-ea56-47be-bc14-3b9bf1e5a58d"
 
             // When
-            val refreshEntity = HttpEntity<String>(null, refreshHeaders)
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/refresh",
-                refreshEntity,
+                buildJsonPayload("", token),
                 Map::class.java
             )
 
@@ -228,7 +185,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
-            assertThat(response.body).extracting("username").isEqualTo(testUsername)
+            assertThat(response.body).extracting("username").isEqualTo("john_doe")
             assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST).contains("USER")
         }
 
@@ -241,9 +198,8 @@ class AuthControllerIT : BaseIT() {
 
             // When
             val refreshEntity = HttpEntity<String>(null, refreshHeaders)
-            val refreshResponse: ResponseEntity<Map<*, *>> = restTemplate.exchange(
+            val refreshResponse: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/refresh",
-                HttpMethod.POST,
                 refreshEntity,
                 Map::class.java
             )
@@ -257,51 +213,16 @@ class AuthControllerIT : BaseIT() {
     @DisplayName("Logout Tests")
     inner class LogoutTests {
 
-        private lateinit var refreshTokenCookie: String
-
-        @BeforeEach
-        fun setupRefreshToken() {
-            // First login to get a refresh token
-            val loginHeaders = HttpHeaders()
-            loginHeaders.contentType = MediaType.APPLICATION_JSON
-
-            val loginRequest = AuthRequestDto(
-                username = testUsername,
-                password = testPassword
-            )
-
-            val loginEntity = HttpEntity(loginRequest, loginHeaders)
-
-            val loginResponse = restTemplate.exchange(
-                "http://localhost:$port/api/auth/login",
-                HttpMethod.POST,
-                loginEntity,
-                Map::class.java
-            )
-
-            // Extract cookies from login response
-            val cookies = loginResponse.headers.getValuesAsList("Set-Cookie")
-            assertThat(cookies).isNotEmpty()
-
-            val cookie = cookies.first { it.contains("refresh-token") }
-            assertThat(cookie).isNotNull()
-
-            refreshTokenCookie = cookie
-        }
-
         @Test
         @DisplayName("Should logout successfully")
         fun shouldLogoutSuccessfully() {
             // Given
-            val logoutHeaders = HttpHeaders()
-            logoutHeaders.add("Cookie", refreshTokenCookie)
+            val token = "0cb1f58c-ecf9-4501-bfcb-68c527139f4e"
 
             // When
-            val logoutEntity = HttpEntity<String>(null, logoutHeaders)
-            val logoutResponse: ResponseEntity<Map<*, *>> = restTemplate.exchange(
+            val logoutResponse: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/logout",
-                HttpMethod.POST,
-                logoutEntity,
+                buildJsonPayload("", token),
                 Map::class.java
             )
 
@@ -310,14 +231,9 @@ class AuthControllerIT : BaseIT() {
             assertThat(logoutResponse.body).isNotNull()
             assertThat(logoutResponse.body!!["message"]).isEqualTo("Logged out successfully")
 
-            // Verify refresh token no longer works
-            val refreshHeaders = HttpHeaders()
-            refreshHeaders.add("Cookie", refreshTokenCookie)
-            val refreshEntity = HttpEntity<String>(null, refreshHeaders)
-            val refreshResponse: ResponseEntity<Map<*, *>> = restTemplate.exchange(
+            val refreshResponse: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/refresh",
-                HttpMethod.POST,
-                refreshEntity,
+                buildJsonPayload("", token),
                 Map::class.java
             )
 
@@ -327,26 +243,20 @@ class AuthControllerIT : BaseIT() {
 
     @Nested
     @DisplayName("Password Reset Request Tests")
-    @Disabled
     inner class PasswordResetRequestTests {
 
         @Test
         @DisplayName("Should request password reset for existing user")
         fun shouldRequestPasswordResetForExistingUser() {
             // Given
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-
             val request = PasswordResetRequestDto(
                 username = testUsername
             )
 
-            val entity = HttpEntity(request, headers)
-
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset-request",
-                entity,
+                buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -386,30 +296,18 @@ class AuthControllerIT : BaseIT() {
 
     @Nested
     @DisplayName("Password Reset Tests")
-    @Disabled
     inner class PasswordResetTests {
 
         @Test
         @DisplayName("Should reset password with valid token")
         fun shouldResetPasswordWithValidToken() {
             // Given
-            val token = testDataHelper.createPasswordResetToken(testUserDom.id)
-
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-
-            val request = PasswordResetDto(
-                token = token,
-                newPassword = "newpassword"
-            )
-
-            val entity = HttpEntity(request, headers)
+            val request = PasswordResetDto("2503c57c-a5df-43f5-823d-756a223f725f", "newpassword")
 
             // When
-            val response: ResponseEntity<Map<*, *>> = restTemplate.exchange(
+            val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset",
-                HttpMethod.POST,
-                entity,
+                buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -419,19 +317,14 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.body!!["message"]).isEqualTo("Password has been reset successfully")
 
             // Verify login works with new password
-            val loginHeaders = HttpHeaders()
-            loginHeaders.contentType = MediaType.APPLICATION_JSON
-
             val loginRequest = AuthRequestDto(
-                username = testUsername,
+                username = "Bob",
                 password = "newpassword"
             )
 
-            val loginEntity = HttpEntity(loginRequest, loginHeaders)
-            val loginResponse = restTemplate.exchange(
+            val loginResponse = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/login",
-                HttpMethod.POST,
-                loginEntity,
+                buildJsonPayload(loginRequest),
                 Map::class.java
             )
 
@@ -443,51 +336,37 @@ class AuthControllerIT : BaseIT() {
         @DisplayName("Should return error with invalid token")
         fun shouldReturnErrorWithInvalidToken() {
             // Given
-            val invalidToken = UUID.randomUUID().toString()
-
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-
             val request = PasswordResetDto(
-                token = invalidToken,
+                token = UUID.randomUUID().toString(),
                 newPassword = "newpassword"
             )
-
-            val entity = HttpEntity(request, headers)
 
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset",
-                entity,
+                buildJsonPayload(request),
                 Map::class.java
             )
 
             // Then
-            // Accept any response that indicates token validation failure
-            // This could be 4xx error or 2xx with error message
-            assertThat(
-                // Either a 4xx client error
-                response.statusCode.is4xxClientError ||
-                    // Or a 2xx with error message
-                    (response.statusCode.is2xxSuccessful &&
-                        response.body != null &&
-                        (response.body!!.containsKey("error") ||
-                            (response.body!!.containsKey("message") &&
-                                response.body!!["message"].toString().contains("invalid"))))
-            ).withFailMessage("Response should indicate token validation failure").isTrue()
+            assertThat(response.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
+            assertThat(response.body)
+                .isNotNull()
+                .isNotEmpty()
+                .extracting("status", "error", "message", "path")
+                .containsExactly(401, "FUNC_003", "Invalid password reset token", "/api/auth/password/reset")
         }
     }
 
     @Nested
     @DisplayName("Token Validation Tests")
-    @Disabled
     inner class TokenValidationTests {
 
         @Test
         @DisplayName("Should validate valid token")
         fun shouldValidateValidToken() {
             // Given
-            val token = testDataHelper.createPasswordResetToken(testUserDom.id)
+            val token = "ae03e5ea-0eb0-41d1-911c-491092da4798"
 
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.getForEntity(

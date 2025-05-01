@@ -41,3 +41,17 @@ databaseChangeLog:
             stripComments: true
             splitStatements: true
             sql: INSERT INTO users (username, email, password) VALUES ('john_doe', 'john_doe@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6');
+  - changeSet:
+      id: 202505011700-04
+      author: test
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM users WHERE username = 'Bob'
+      changes:
+        - sql:
+            endDelimiter: ;
+            stripComments: true
+            splitStatements: true
+            sql: INSERT INTO users (username, email, password) VALUES ('Bob', 'bob@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6');

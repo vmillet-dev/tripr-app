@@ -12,4 +12,17 @@ databaseChangeLog:
             endDelimiter: ;
             splitStatements: true
             sql: INSERT INTO refresh_tokens (user_id, token, expiry_date, revoked) VALUES (3, 'e42f1f3e-ea56-47be-bc14-3b9bf1e5a58d', '2099-05-08 16:32:36.786274', false);
+  - changeSet:
+      id: 202505011815-02
+      author: test
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM refresh_tokens WHERE user_id = 4 # bob user
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO refresh_tokens (user_id, token, expiry_date, revoked) VALUES (4, '0cb1f58c-ecf9-4501-bfcb-68c527139f4e', '2099-05-08 16:32:36.786274', false);
 

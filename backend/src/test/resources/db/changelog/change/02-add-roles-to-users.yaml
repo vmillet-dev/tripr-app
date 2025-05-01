@@ -38,3 +38,16 @@ databaseChangeLog:
             endDelimiter: ;
             splitStatements: true
             sql: INSERT INTO user_roles (user_id, role_id) VALUES (3, 2); # john_doe -> user role
+  - changeSet:
+      id: 202505011715-04
+      author: test
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM user_roles WHERE user_id = 4 AND role_id = 2
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO user_roles (user_id, role_id) VALUES (4, 2); # Bob -> user role

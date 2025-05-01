@@ -10,3 +10,6 @@ databaseChangeLog:
   - include:
       file: change/03-insert-refresh-token.yaml
       relativeToChangelogFile: true
+  - include:
+      file: change/04-insert-password-reset-token.yaml
+      relativeToChangelogFile: true
