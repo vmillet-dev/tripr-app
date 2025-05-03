@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - include: # include main liquibase before inserting data tests
+      file: classpath:db/changelog/db.changelog-master.yaml
+  - include:
+      file: change/01-insert-users.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: change/02-add-roles-to-users.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: change/03-insert-refresh-token.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: change/04-insert-password-reset-token.yaml
+      relativeToChangelogFile: true

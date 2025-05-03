@@ -12,12 +12,21 @@ class UserPersistenceAdapter(
     private val userEntityMapper: UserEntityMapper
 ) : UserPersistencePort {
 
-    override fun save(userDom: UserDom): UserDom =
-        userRepository.save(userEntityMapper.fromDomain(userDom)).let(userEntityMapper::toDomain)
+    override fun save(userDom: UserDom): UserDom {
+        return userRepository
+            .save(userEntityMapper.fromDomain(userDom))
+            .let { userEntityMapper.toDomain(it) }
+    }
 
-    override fun findById(id: Long): UserDom? =
-        userRepository.findById(id).orElse(null)?.let(userEntityMapper::toDomain)
+    override fun findById(id: Long): UserDom? {
+        return userRepository.findById(id).orElse(null)?.let { userEntityMapper.toDomain(it) }
+    }
 
-    override fun findByUsername(username: String): UserDom? =
-        userRepository.findByUsername(username)?.let(userEntityMapper::toDomain)
+    override fun findByUsername(username: String): UserDom? {
+        return userRepository.findByUsername(username)?.let { userEntityMapper.toDomain(it) }
+    }
+
+    override fun findByEmail(email: String): UserDom? {
+        return userRepository.findByEmail(email)?.let { userEntityMapper.toDomain(it) }
+    }
 }

@@ -1,11 +1,12 @@
 package com.adsearch.application.impl
 
 import com.adsearch.application.AuthenticationUseCase
+import com.adsearch.common.exception.functional.EmailAlreadyExistsException
 import com.adsearch.common.exception.functional.InvalidCredentialsException
 import com.adsearch.common.exception.functional.InvalidTokenException
 import com.adsearch.common.exception.functional.TokenExpiredException
-import com.adsearch.common.exception.functional.UserAlreadyExistsException
 import com.adsearch.common.exception.functional.UserNotFoundException
+import com.adsearch.common.exception.functional.UsernameAlreadyExistsException
 import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
@@ -61,9 +62,12 @@ class AuthenticationUseCaseImpl(
      * Register a new user
      */
     override fun register(user: UserDom) {
-        val existingUser = userPersistence.findByUsername(user.username)
-        if (existingUser != null) {
-            throw UserAlreadyExistsException("Username already exists")
+        if (userPersistence.findByUsername(user.username) != null) {
+            throw UsernameAlreadyExistsException("Username already exists")
+        }
+
+        if (userPersistence.findByEmail(user.email) != null) {
+            throw EmailAlreadyExistsException("Email already exists")
         }
 
         val hashedPassword = authenticationService.generateHashedPassword(user.password)
