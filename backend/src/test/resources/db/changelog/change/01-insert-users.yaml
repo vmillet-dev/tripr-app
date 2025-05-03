@@ -2,11 +2,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011700-01
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM users WHERE username = 'testuser'
       changes:
         - sql:
             endDelimiter: ;
@@ -16,11 +11,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011700-02
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM users WHERE username = 'testadmin'
       changes:
         - sql:
             endDelimiter: ;
@@ -30,11 +20,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011700-03
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM users WHERE username = 'john_doe'
       changes:
         - sql:
             endDelimiter: ;
@@ -44,11 +29,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011700-04
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM users WHERE username = 'Bob'
       changes:
         - sql:
             endDelimiter: ;

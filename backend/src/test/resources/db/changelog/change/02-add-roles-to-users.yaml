@@ -2,11 +2,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011715-01
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM user_roles WHERE user_id = 1 AND role_id = 2
       changes:
         - sql:
             endDelimiter: ;
@@ -15,11 +10,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011715-02
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM user_roles WHERE user_id = 2 AND role_id = 1
       changes:
         - sql:
             endDelimiter: ;
@@ -28,11 +18,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011715-03
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM user_roles WHERE user_id = 3 AND role_id = 2
       changes:
         - sql:
             endDelimiter: ;
@@ -41,11 +26,6 @@ databaseChangeLog:
   - changeSet:
       id: 202505011715-04
       author: test
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: SELECT COUNT(*) FROM user_roles WHERE user_id = 4 AND role_id = 2
       changes:
         - sql:
             endDelimiter: ;
