@@ -74,20 +74,15 @@ class AuthController(
     @PostMapping("/register")
     @Operation(summary = "Register new user", description = "Registers a new user with username, password, and email")
     fun register(@Valid @RequestBody request: RegisterRequestDto): ResponseEntity<Map<String, String>> {
-        return try {
+        val user = UserDom(
+            username = request.username,
+            email = request.email,
+            password = request.password
+        )
 
-            val user = UserDom(
-                username = request.username,
-                email = request.email,
-                password = request.password
-            )
+        authenticationUseCase.register(user)
 
-            authenticationUseCase.register(user)
-
-            ResponseEntity.ok(mapOf("message" to "User registered successfully"))
-        } catch (e: Exception) {
-            ResponseEntity.badRequest().body(mapOf("message" to (e.message ?: "Registration failed")))
-        }
+        return ResponseEntity.ok(mapOf("message" to "User registered successfully"))
     }
 
     /**
