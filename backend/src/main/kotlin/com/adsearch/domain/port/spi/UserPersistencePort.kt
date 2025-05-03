@@ -13,6 +13,10 @@ interface UserPersistencePort {
     fun findByUsername(username: String): UserDom?
 
     /**
+     * Find a user by email
+     */
+    fun findByEmail(email: String): UserDom?
+    /**
      * Find a user by ID
      */
     fun findById(id: Long): UserDom?

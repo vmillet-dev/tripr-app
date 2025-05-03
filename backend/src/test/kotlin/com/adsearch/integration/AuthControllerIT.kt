@@ -11,11 +11,10 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import java.util.UUID
+
 
 /**
  * Integration tests for the Auth Controller
@@ -48,7 +47,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/login",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -69,7 +68,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/login",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -91,7 +90,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/login",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -118,7 +117,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val registerResponse: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/register",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -126,7 +125,7 @@ class AuthControllerIT : BaseIT() {
             val loginRequest = AuthRequestDto("newuser", "password123")
             val loginResponse = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/login",
-                buildJsonPayload(loginRequest),
+                httpUtil.buildJsonPayload(loginRequest),
                 Map::class.java
             )
 
@@ -150,7 +149,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/register",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -161,6 +160,29 @@ class AuthControllerIT : BaseIT() {
                 .isNotEmpty()
                 .extracting("status", "error", "message", "path")
                 .containsExactly(400, "FUNC_004", "Username already exists", "/api/auth/register")
+        }
+
+        @Test
+        @DisplayName("Should return 400 when registering with existing email")
+        fun shouldReturnBadRequestWhenRegisteringWithExistingEmail() {
+            // Given
+            // Using existing email
+            val request = RegisterRequestDto("newuser_2", "password123", "testuser@mail.com")
+
+            // When
+            val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
+                "http://localhost:$port/api/auth/register",
+                httpUtil.buildJsonPayload(request),
+                Map::class.java
+            )
+
+            // Then
+            assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+            assertThat(response.body)
+                .isNotNull()
+                .isNotEmpty()
+                .extracting("status", "error", "message", "path")
+                .containsExactly(400, "FUNC_006", "Email already exists", "/api/auth/register")
         }
     }
 
@@ -177,7 +199,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/refresh",
-                buildJsonPayload("", token),
+                httpUtil.buildJsonPayload("", token),
                 Map::class.java
             )
 
@@ -222,18 +244,18 @@ class AuthControllerIT : BaseIT() {
             // When
             val logoutResponse: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/logout",
-                buildJsonPayload("", token),
+                httpUtil.buildJsonPayload("", token),
                 Map::class.java
             )
 
             // Then
             assertThat(logoutResponse.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(logoutResponse.body).isNotNull()
-            assertThat(logoutResponse.body!!["message"]).isEqualTo("Logged out successfully")
+            assertThat(logoutResponse.body).extracting("message").isEqualTo("Logged out successfully")
 
             val refreshResponse: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/refresh",
-                buildJsonPayload("", token),
+                httpUtil.buildJsonPayload("", token),
                 Map::class.java
             )
 
@@ -256,40 +278,52 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset-request",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
+
             // Then
+            val email = mailpitUtil.fetchLatestMail()
+            assertThat(email)
+                .isNotNull()
+                .extracting("subject")
+                .isEqualTo("Password Reset Request")
+            assertThat(email)
+                .extracting("text")
+                .asString()
+                .contains("http://localhost:8080/password-reset?token=")
+            assertThat(email)
+                .extracting("from")
+                .isNotNull()
+                .extracting("address")
+                .isEqualTo("no-reply@example.com")
+            assertThat(email)
+                .extracting("to")
+                .asInstanceOf(InstanceOfAssertFactories.LIST)
+                .extracting("address")
+                .containsExactly("testuser@mail.com")
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull()
-            assertThat(response.body!!["message"]).isEqualTo("If the username exists, a password reset email has been sent")
+            assertThat(response.body)
+                .extracting("message")
+                .isEqualTo("If the username exists, a password reset email has been sent")
         }
 
         @Test
         @DisplayName("Should return OK for non-existent user (security by obscurity)")
         fun shouldReturnOkForNonExistentUser() {
             // Given
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-
-            val request = PasswordResetRequestDto(
-                username = "nonexistentuser"
-            )
-
-            val entity = HttpEntity(request, headers)
+            val request = PasswordResetRequestDto("nonexistentuser")
 
             // When
-            val response: ResponseEntity<Map<*, *>> = restTemplate.exchange(
+            val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset-request",
-                HttpMethod.POST,
-                entity,
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
             // Then
-            // For security by obscurity, the API should not indicate whether the user exists
-            // Don't check status code - just verify response exists
             assertThat(response).withFailMessage("Response should not be null").isNotNull()
         }
     }
@@ -307,14 +341,14 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
             // Then
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull()
-            assertThat(response.body!!["message"]).isEqualTo("Password has been reset successfully")
+            assertThat(response.body).extracting("message").isEqualTo("Password has been reset successfully")
 
             // Verify login works with new password
             val loginRequest = AuthRequestDto(
@@ -324,12 +358,12 @@ class AuthControllerIT : BaseIT() {
 
             val loginResponse = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/login",
-                buildJsonPayload(loginRequest),
+                httpUtil.buildJsonPayload(loginRequest),
                 Map::class.java
             )
 
             assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.OK)
-            assertThat(loginResponse.body!!["accessToken"]).isNotNull()
+            assertThat(loginResponse.body).extracting("accessToken").isNotNull()
         }
 
         @Test
@@ -344,7 +378,7 @@ class AuthControllerIT : BaseIT() {
             // When
             val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
                 "http://localhost:$port/api/auth/password/reset",
-                buildJsonPayload(request),
+                httpUtil.buildJsonPayload(request),
                 Map::class.java
             )
 
@@ -377,7 +411,7 @@ class AuthControllerIT : BaseIT() {
             // Then
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull()
-            assertThat(response.body!!["valid"]).isEqualTo(true)
+            assertThat(response.body).extracting("valid").isEqualTo(true)
         }
 
         @Test
@@ -395,7 +429,7 @@ class AuthControllerIT : BaseIT() {
             // Then
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull()
-            assertThat(response.body!!["valid"]).isEqualTo(false)
+            assertThat(response.body).extracting("valid").isEqualTo(false)
         }
     }
 }

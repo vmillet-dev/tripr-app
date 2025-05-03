@@ -40,4 +40,5 @@ jwt:
 # Password reset configuration for tests
 password-reset:
   token-expiration: 86400000
-  base-url: http://localhost:8080/reset-password
+  base-url: http://localhost:8080
+  from: no-reply@example.com

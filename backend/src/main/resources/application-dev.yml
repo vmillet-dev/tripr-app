@@ -45,4 +45,4 @@ jwt:
 
 password-reset:
   token-expiration: 86400  # 24 hours in secondes
-  base-url: http://localhost:4200/password-reset
+  base-url: http://localhost:4200

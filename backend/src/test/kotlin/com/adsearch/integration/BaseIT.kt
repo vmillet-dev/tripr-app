@@ -1,12 +1,11 @@
 package com.adsearch.integration
 
+import com.adsearch.integration.util.HttpUtil
+import com.adsearch.integration.util.MailpitUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -25,6 +24,12 @@ abstract class BaseIT {
     @Autowired
     protected lateinit var restTemplate: TestRestTemplate
 
+    @Autowired
+    protected lateinit var mailpitUtil: MailpitUtil
+
+    @Autowired
+    protected lateinit var httpUtil: HttpUtil
+
     companion object {
         // Static containers that will be shared between all test classes
         private val POSTGRES_CONTAINER: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:17.3")
@@ -33,7 +38,7 @@ abstract class BaseIT {
             .withPassword("test")
             .apply { start() }
 
-        private val MAILPIT_CONTAINER: GenericContainer<*> = GenericContainer("axllent/mailpit:v1.23")
+        val MAILPIT_CONTAINER: GenericContainer<*> = GenericContainer("axllent/mailpit:v1.23")
             .withExposedPorts(1025, 8025)
             .apply { start() }
 
@@ -47,16 +52,5 @@ abstract class BaseIT {
             registry.add("spring.mail.host") { "localhost" }
             registry.add("spring.mail.port") { MAILPIT_CONTAINER.getMappedPort(1025) }
         }
-    }
-
-    protected fun buildJsonPayload(payload: Any, token: String? = null): HttpEntity<*> {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_JSON
-
-        if (token != null) {
-            headers.add("Cookie", "refresh-token=${token}; Max-Age=604800000; Expires=Thu")
-        }
-
-        return HttpEntity(payload, headers)
     }
 }

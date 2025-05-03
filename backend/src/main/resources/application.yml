@@ -58,4 +58,5 @@ jwt:
 # Password reset configuration
 password-reset:
   token-expiration: 86400  # 24 hours in milliseconds
-  base-url: ${BASE_URL}/password-reset
+  base-url: ${BASE_URL}
+  from: no-reply@example.com
