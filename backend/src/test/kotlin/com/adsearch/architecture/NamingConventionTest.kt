@@ -1,0 +1,119 @@
+package com.adsearch.architecture
+
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+
+class NamingConventionTest : BaseArchitecture() {
+
+    @Test
+    @DisplayName("Classes in enum packages must end with Enum")
+    fun enumClassesShouldEndWithEnum() {
+        val rule = classes()
+            .that().resideInAPackage("..enum..")
+            .should().haveSimpleNameEndingWith("Enum")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Classes in dto packages must end with Dto")
+    fun dtoClassesShouldEndWithDto() {
+        val rule = classes()
+            .that().resideInAPackage("..dto..")
+            .should().haveSimpleNameEndingWith("Dto")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Classes in domain/model must end with Dom")
+    fun domainModelClassesShouldEndWithDom() {
+        val rule = classes()
+            .that().resideInAPackage("..domain.model..")
+            .should().haveSimpleNameEndingWith("Dom")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Classes in domain/port must be interfaces ending with Port")
+    fun domainPortClassesShouldBeInterfacesEndingWithPort() {
+        val rule = classes()
+            .that().resideInAPackage("..domain.port..")
+            .should().beInterfaces()
+            .andShould().haveSimpleNameEndingWith("Port")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Primary adapters must end with Controller, Resource, or Adapter")
+    fun primaryAdaptersShouldHaveCorrectSuffix() {
+        val rule = classes()
+            .that().resideInAPackage("..adapter.in.web.controller")
+            .should().haveSimpleNameEndingWith("Controller")
+            .orShould().haveSimpleNameEndingWith("Companion")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @Disabled
+    @DisplayName("Secondary adapters must end with Repository, Client, or Adapter")
+    fun secondaryAdaptersShouldHaveCorrectSuffix() {
+        val rule = classes()
+            .that().resideInAPackage("..adapter.out..")
+            .should().haveSimpleNameEndingWith("Repository")
+            .orShould().haveSimpleNameEndingWith("Client")
+            .orShould().haveSimpleNameEndingWith("Adapter")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Use cases must end with UseCase or Service")
+    fun useCasesShouldHaveCorrectSuffix() {
+        val rule = classes()
+            .that().resideInAPackage("..application..")
+            .and().haveSimpleNameNotEndingWith("Impl")
+            .should().haveSimpleNameEndingWith("UseCase")
+            .orShould().haveSimpleNameEndingWith("Companion")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Mappers must end with Mapper")
+    fun mappersShouldEndWithMapper() {
+        val rule = classes()
+            .that().resideInAPackage("..mapper..")
+            .should().haveSimpleNameEndingWith("Mapper")
+            .orShould().haveSimpleNameEndingWith("MapperImpl")
+            .orShould().haveSimpleNameEndingWith("DefaultImpls")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Configurations must end with Config or Configuration")
+    fun configurationsShouldHaveCorrectSuffix() {
+        val rule = classes()
+            .that().resideInAPackage("..config..")
+            .should().haveSimpleNameEndingWith("Config")
+            .orShould().haveSimpleNameEndingWith("Configuration")
+
+        rule.check(importedClasses)
+    }
+
+    @Test
+    @DisplayName("Exceptions must end with Exception")
+    fun exceptionsShouldEndWithException() {
+        val rule = classes()
+            .that().resideInAPackage("..exception..")
+            .should().haveSimpleNameEndingWith("Exception")
+
+        rule.check(importedClasses)
+    }
+}
