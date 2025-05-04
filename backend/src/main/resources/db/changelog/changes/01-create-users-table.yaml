@@ -3,9 +3,9 @@ databaseChangeLog:
       id: 01
       author: devin
       preConditions:
-        onFail: MARK_RAN
-        not:
-          tableExists:
+        - onFail: MARK_RAN
+        - not:
+          - tableExists:
             tableName: users
       changes:
         - createTable:
@@ -35,16 +35,3 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
-        - createTable:
-            tableName: user_entity_roles
-            columns:
-              - column:
-                  name: user_entity_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_user_roles
-                    references: users(id)
-              - column:
-                  name: roles
-                  type: varchar(255)

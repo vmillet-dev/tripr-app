@@ -14,7 +14,8 @@ import org.thymeleaf.context.Context
 class EmailService(
     private val mailSender: JavaMailSender,
     private val templateEngine: TemplateEngine,
-    @Value("\${password-reset.base-url}") private val baseUrl: String
+    @Value("\${password-reset.base-url}") private val baseUrl: String,
+    @Value("\${password-reset.from}") private val from: String
 ) {
 
     private val logger = LoggerFactory.getLogger(EmailServiceAdapter::class.java)
@@ -25,10 +26,11 @@ class EmailService(
             val helper = MimeMessageHelper(message, true, "UTF-8")
 
             helper.setTo(to)
+            helper.setFrom(from)
             helper.setSubject("Password Reset Request")
 
             val context = Context()
-            context.setVariable("resetLink", "$baseUrl?token=$token")
+            context.setVariable("resetLink", "$baseUrl/password-reset?token=$token")
 
             val htmlContent = templateEngine.process("email/password-reset-email", context)
             helper.setText(htmlContent, true)
