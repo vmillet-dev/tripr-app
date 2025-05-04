@@ -23,7 +23,7 @@
     "@jsverse/transloco": "^7.5.1",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.5",
-    "rxjs": "~7.8.0",
+    "rxjs": "~7.8.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
