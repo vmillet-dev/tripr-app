@@ -56,6 +56,7 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs = listOf("-Xmx2048m")
 }
 
 tasks.bootRun {
