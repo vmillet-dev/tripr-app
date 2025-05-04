@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { PasswordResetService } from '../../../core/services/password-reset.service';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {PasswordResetService} from '../../../core/services/password-reset.service';
 
 @Component({
   selector: 'app-password-reset',
   templateUrl: './password-reset.component.html',
   styleUrls: ['./password-reset.component.scss'],
-  standalone: true,
   imports: [ReactiveFormsModule, CommonModule]
 })
 export class PasswordResetComponent implements OnInit {
@@ -31,8 +30,8 @@ export class PasswordResetComponent implements OnInit {
     this.resetForm = this.formBuilder.group({
       newPassword: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]]
-    }, { 
-      validators: this.passwordMatchValidator 
+    }, {
+        validators: this.passwordMatchValidator
     });
 
     this.route.queryParams.subscribe(params => {
@@ -57,7 +56,7 @@ export class PasswordResetComponent implements OnInit {
             this.errorMessage = 'This password reset link has expired or is invalid. Please request a new one.';
           }
         },
-        error: (error) => {
+          error: (_) => {
           this.isValidatingToken = false;
           this.isTokenValid = false;
           this.errorMessage = 'Failed to validate token. Please request a new password reset link.';
@@ -68,8 +67,8 @@ export class PasswordResetComponent implements OnInit {
   passwordMatchValidator(group: FormGroup): { [key: string]: boolean } | null {
     const password = group.get('newPassword')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
-    
-    return password === confirmPassword ? null : { passwordMismatch: true };
+
+      return password === confirmPassword ? null : {passwordMismatch: true};
   }
 
   onSubmit(): void {

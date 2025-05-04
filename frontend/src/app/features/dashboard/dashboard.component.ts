@@ -1,14 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { AuthService } from '../../core/services/auth.service';
-import { TranslocoPipe } from '@jsverse/transloco';
-import { CommonModule } from '@angular/common';
+import {Component, inject, OnInit} from '@angular/core';
+import {AuthService} from '../../core/services/auth.service';
+import {TranslocoPipe} from '@jsverse/transloco';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
-  imports: [TranslocoPipe, CommonModule]
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    imports: [TranslocoPipe]
 })
 export class DashboardComponent implements OnInit {
   username: string | null = null;

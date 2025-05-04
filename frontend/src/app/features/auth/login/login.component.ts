@@ -1,16 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
-import { NgClass, CommonModule } from '@angular/common';
-import { TranslocoPipe } from '@jsverse/transloco';
+import {Component, inject, OnInit} from '@angular/core';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {AuthService} from '../../../core/services/auth.service';
+import {NgClass} from '@angular/common';
+import {TranslocoPipe} from '@jsverse/transloco';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  standalone: true,
-  imports: [ReactiveFormsModule, NgClass, CommonModule, RouterLink, TranslocoPipe]
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    imports: [ReactiveFormsModule, NgClass, RouterLink, TranslocoPipe]
 })
 export class LoginComponent implements OnInit {
   loading = false;
