@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.security
 
-import com.adsearch.domain.port.api.JwtTokenServicePort
+import com.adsearch.domain.port.`in`.JwtTokenServicePort
 import com.adsearch.infrastructure.security.service.JwtUserDetailsService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

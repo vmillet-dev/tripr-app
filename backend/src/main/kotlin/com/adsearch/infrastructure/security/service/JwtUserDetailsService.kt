@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.security.service
 
 
-import com.adsearch.domain.port.spi.UserPersistencePort
+import com.adsearch.domain.port.out.UserPersistencePort
 import com.adsearch.infrastructure.security.model.JwtUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

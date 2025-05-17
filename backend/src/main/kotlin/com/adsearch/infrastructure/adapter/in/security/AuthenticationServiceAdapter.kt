@@ -3,7 +3,7 @@ package com.adsearch.infrastructure.adapter.`in`.security
 import com.adsearch.domain.model.PasswordResetTokenDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
-import com.adsearch.domain.port.api.AuthenticationServicePort
+import com.adsearch.domain.port.`in`.AuthenticationServicePort
 import com.adsearch.infrastructure.adapter.`in`.security.impl.AuthenticationService
 import org.springframework.stereotype.Component
 

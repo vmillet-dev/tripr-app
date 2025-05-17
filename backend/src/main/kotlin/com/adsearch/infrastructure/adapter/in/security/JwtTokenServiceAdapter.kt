@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.`in`.security
 
-import com.adsearch.domain.port.api.JwtTokenServicePort
+import com.adsearch.domain.port.`in`.JwtTokenServicePort
 import com.adsearch.infrastructure.adapter.`in`.security.impl.JwtTokenService
 import org.springframework.stereotype.Component
 

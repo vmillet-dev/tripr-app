@@ -1,4 +1,4 @@
-package com.adsearch.domain.port.spi
+package com.adsearch.domain.port.out
 
 /**
  * Port for email service operations
