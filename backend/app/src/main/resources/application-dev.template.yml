@@ -13,11 +13,11 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/tripr
     username: postgres
-    password: P4ssword!
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   docker:
     compose:
-      file: devops/compose.yaml
+      file: ${user.dir}/../devops/compose.yaml
 
 springdoc:
   swagger-ui:
@@ -36,7 +36,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 jwt:
-  secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
+  secret: ${JWT_SECRET}
   expiration: 3600  # 1 hour in secondes
   issuer: spring-ad-search
   refresh-token:
