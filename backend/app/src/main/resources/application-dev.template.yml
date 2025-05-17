@@ -17,7 +17,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   docker:
     compose:
-      file: devops/compose.yaml
+      file: ${user.dir}/../devops/compose.yaml
 
 springdoc:
   swagger-ui:
