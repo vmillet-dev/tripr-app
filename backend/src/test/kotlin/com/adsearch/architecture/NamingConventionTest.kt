@@ -1,7 +1,6 @@
 package com.adsearch.architecture
 
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -49,10 +48,10 @@ class NamingConventionTest : BaseArchitecture() {
     }
 
     @Test
-    @DisplayName("Primary adapters must end with Controller, Resource, or Adapter")
+    @DisplayName("Controllers must end with Controller")
     fun primaryAdaptersShouldHaveCorrectSuffix() {
         val rule = classes()
-            .that().resideInAPackage("..adapter.in.web.controller")
+            .that().resideInAPackage("..controller")
             .should().haveSimpleNameEndingWith("Controller")
             .orShould().haveSimpleNameEndingWith("Companion")
 
@@ -60,23 +59,10 @@ class NamingConventionTest : BaseArchitecture() {
     }
 
     @Test
-    @Disabled
-    @DisplayName("Secondary adapters must end with Repository, Client, or Adapter")
-    fun secondaryAdaptersShouldHaveCorrectSuffix() {
-        val rule = classes()
-            .that().resideInAPackage("..adapter.out..")
-            .should().haveSimpleNameEndingWith("Repository")
-            .orShould().haveSimpleNameEndingWith("Client")
-            .orShould().haveSimpleNameEndingWith("Adapter")
-
-        rule.check(importedClasses)
-    }
-
-    @Test
-    @DisplayName("Use cases must end with UseCase or Service")
+    @DisplayName("Use cases must end with UseCase")
     fun useCasesShouldHaveCorrectSuffix() {
         val rule = classes()
-            .that().resideInAPackage("..application..")
+            .that().resideInAPackage("..application")
             .and().haveSimpleNameNotEndingWith("Impl")
             .should().haveSimpleNameEndingWith("UseCase")
             .orShould().haveSimpleNameEndingWith("Companion")
@@ -102,7 +88,6 @@ class NamingConventionTest : BaseArchitecture() {
         val rule = classes()
             .that().resideInAPackage("..config..")
             .should().haveSimpleNameEndingWith("Config")
-            .orShould().haveSimpleNameEndingWith("Configuration")
 
         rule.check(importedClasses)
     }

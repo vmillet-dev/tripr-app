@@ -16,14 +16,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.lang.Exception
 
 /**
  * Security configuration for the application
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(jsr250Enabled = true)
 class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
 
     @Bean
@@ -35,7 +34,6 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
                 auth
                     .requestMatchers("/api/swagger-ui/**", "/api/v3/api-docs/**").permitAll()
                     .requestMatchers("/","/*.html", "/*.js", "/*.css", "/assets/**", "/*.ico", "/static/**").permitAll()
-                    .requestMatchers("/api/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
@@ -61,7 +59,6 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
-    @Throws(Exception::class)
     fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration):
         AuthenticationManager = authenticationConfiguration.authenticationManager
 

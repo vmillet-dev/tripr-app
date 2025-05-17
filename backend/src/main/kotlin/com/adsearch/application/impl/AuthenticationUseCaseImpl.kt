@@ -11,8 +11,8 @@ import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.api.AuthenticationServicePort
-import com.adsearch.domain.port.api.EmailServicePort
 import com.adsearch.domain.port.api.JwtTokenServicePort
+import com.adsearch.domain.port.spi.EmailServicePort
 import com.adsearch.domain.port.spi.PasswordResetTokenPersistencePort
 import com.adsearch.domain.port.spi.RefreshTokenPersistencePort
 import com.adsearch.domain.port.spi.UserPersistencePort
