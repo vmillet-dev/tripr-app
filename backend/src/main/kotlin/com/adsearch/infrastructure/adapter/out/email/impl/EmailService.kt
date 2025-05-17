@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.out.email.service
+package com.adsearch.infrastructure.adapter.out.email.impl
 
 import com.adsearch.common.exception.technical.MailSendException
 import com.adsearch.infrastructure.adapter.out.email.EmailServiceAdapter

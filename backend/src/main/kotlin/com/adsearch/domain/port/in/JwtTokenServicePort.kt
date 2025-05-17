@@ -1,4 +1,4 @@
-package com.adsearch.domain.port.api
+package com.adsearch.domain.port.`in`
 
 interface JwtTokenServicePort {
     fun createAccessToken(userId: String, username: String, roles: List<String>): String

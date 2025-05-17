@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.out.security.service
+package com.adsearch.infrastructure.adapter.`in`.security.impl
 
 import com.adsearch.domain.model.PasswordResetTokenDom
 import com.adsearch.domain.model.RefreshTokenDom

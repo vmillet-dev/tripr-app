@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
 import com.adsearch.domain.model.UserDom
-import com.adsearch.domain.port.spi.UserPersistencePort
+import com.adsearch.domain.port.out.UserPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.UserEntityMapper
 import org.springframework.stereotype.Component

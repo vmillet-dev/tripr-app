@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.`in`.web.error
+package com.adsearch.infrastructure.adapter.`in`.web.handler
 
 import com.adsearch.common.enum.HttpStatusEnum
 import com.adsearch.common.enum.LogLevelEnum
@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -42,6 +43,23 @@ class GlobalExceptionHandler {
             path = request.requestURI
         )
     }
+
+    @ExceptionHandler(AuthorizationDeniedException::class)
+    fun handleAuthorizationDeniedException(
+        ex: AuthorizationDeniedException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponseDto> {
+        val errorResponse = createErrorResponse(
+            status = HttpStatus.FORBIDDEN,
+            error = HttpStatus.FORBIDDEN.reasonPhrase,
+            message = "An unexpected error occurred: ${ex.message}",
+            path = request.requestURI
+        )
+
+        log.error("Error occurred: ${errorResponse.body?.message}", ex)
+        return errorResponse
+    }
+
 
     @ExceptionHandler(Exception::class)
     fun handleGenericException(ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {

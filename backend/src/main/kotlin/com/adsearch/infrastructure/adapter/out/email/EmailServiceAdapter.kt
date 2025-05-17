@@ -1,13 +1,13 @@
 package com.adsearch.infrastructure.adapter.out.email
 
-import com.adsearch.domain.port.api.EmailServicePort
-import com.adsearch.infrastructure.adapter.out.email.service.EmailService
-import org.springframework.stereotype.Service
+import com.adsearch.domain.port.out.EmailServicePort
+import com.adsearch.infrastructure.adapter.out.email.impl.EmailService
+import org.springframework.stereotype.Component
 
 /**
  * Implementation of EmailServicePort using Spring Mail
  */
-@Service
+@Component
 class EmailServiceAdapter(
     private val emailService: EmailService,
 ) : EmailServicePort {

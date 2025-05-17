@@ -1,4 +1,4 @@
-package com.adsearch.domain.port.api
+package com.adsearch.domain.port.`in`
 
 import com.adsearch.domain.model.PasswordResetTokenDom
 import com.adsearch.domain.model.RefreshTokenDom
