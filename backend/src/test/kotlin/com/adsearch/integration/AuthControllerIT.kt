@@ -286,7 +286,7 @@ class AuthControllerIT : BaseIT() {
 
 
             // Then
-            val email = mailpitUtil.fetchLatestMail()
+            val email = greenMailUtil.fetchLatestMail()
             assertThat(email)
                 .isNotNull()
                 .extracting("subject")

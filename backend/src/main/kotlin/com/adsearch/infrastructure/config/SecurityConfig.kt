@@ -28,7 +28,7 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-//            .cors { it.configurationSource(corsConfigurationSource()) }
+            .cors { it.configurationSource(corsConfigurationSource()) }
             .csrf { it.disable() }
             .authorizeHttpRequests { auth ->
                 auth
@@ -46,7 +46,7 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:4200", "http://localhost:8081")
+        configuration.allowedOrigins = listOf("http://localhost:4200", "http://localhost:8080", "http://localhost:8081")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowCredentials = true
         configuration.maxAge = 3600L

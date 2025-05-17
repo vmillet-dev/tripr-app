@@ -1,6 +1,8 @@
 [versions]
 archunit = "1.4.0"
 auth0-jwt = "4.5.0"
+greenmail = "2.1.3"
+h2 = "2.3.232"
 httpclient5 = "5.4.3"
 jackson-kotlin = "2.18.3"
 kotlin = "2.0.21"
@@ -11,7 +13,7 @@ postgresql = "42.7.5"
 spring-boot = "3.4.4"
 spring-dependency-management = "1.1.7"
 springdoc-openapi = "2.8.6"
-testcontainers = "1.20.6"
+
 updater = "1.0.0"
 konvert = "4.0.1"
 
@@ -19,6 +21,9 @@ konvert = "4.0.1"
 apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
+greenmail = { module = "com.icegreen:greenmail", version.ref = "greenmail" }
+greenmail-spring = { module = "com.icegreen:greenmail-spring", version.ref = "greenmail" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
@@ -36,8 +41,7 @@ springboot-starter-validation = { module = "org.springframework.boot:spring-boot
 springboot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
 springboot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "spring-boot" }
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
-testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+
 konvert-api = { module = "io.mcarle:konvert-api", version.ref = "konvert" }
 konvert-spring = { module = "io.mcarle:konvert-spring-annotations", version.ref = "konvert" }
 ksp-konvert = { module = "io.mcarle:konvert", version.ref = "konvert" }
