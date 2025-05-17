@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "Authentication", description = "API for user authentication and token management")
-@PreAuthorize("@authorization.permitAll()")
+@PreAuthorize("permitAll()")
 class AuthController(
     private val authenticationUseCase: AuthenticationUseCase,
     @Value("\${jwt.refresh-token.cookie-name}") private val cookieName: String,
