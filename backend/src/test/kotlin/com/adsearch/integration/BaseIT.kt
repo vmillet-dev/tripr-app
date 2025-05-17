@@ -1,6 +1,6 @@
 package com.adsearch.integration
 
-import com.adsearch.integration.config.TestConfig
+import com.adsearch.integration.config.MailConfig
 import com.adsearch.integration.util.GreenMailUtil
 import com.adsearch.integration.util.HttpUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +34,7 @@ abstract class BaseIT {
         fun properties(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url") { "jdbc:h2:mem:testdb_${UUID.randomUUID()};DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=PostgreSQL" }
             registry.add("spring.mail.host") { "localhost" }
-            registry.add("spring.mail.port") { TestConfig.smtpPort }
+            registry.add("spring.mail.port") { MailConfig.smtpPort }
         }
     }
 }
