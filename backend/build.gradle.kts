@@ -43,8 +43,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.archunit.junit5)
     testImplementation(libs.apache.httpclient5)
-    testImplementation(libs.testcontainers.junit.jupiter)
-    testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.h2)
     testImplementation(libs.greenmail)
     testImplementation(libs.greenmail.spring)

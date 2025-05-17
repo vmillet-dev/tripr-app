@@ -13,7 +13,7 @@ postgresql = "42.7.5"
 spring-boot = "3.4.4"
 spring-dependency-management = "1.1.7"
 springdoc-openapi = "2.8.6"
-testcontainers = "1.20.6"
+
 updater = "1.0.0"
 konvert = "4.0.1"
 
@@ -41,8 +41,7 @@ springboot-starter-validation = { module = "org.springframework.boot:spring-boot
 springboot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
 springboot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "spring-boot" }
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
-testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+
 konvert-api = { module = "io.mcarle:konvert-api", version.ref = "konvert" }
 konvert-spring = { module = "io.mcarle:konvert-spring-annotations", version.ref = "konvert" }
 ksp-konvert = { module = "io.mcarle:konvert", version.ref = "konvert" }
