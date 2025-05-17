@@ -10,6 +10,6 @@ data class UserDom(
     val username: String,
     val email: String,
     var password: String,
-    val roles: List<String> = listOf(UserRoleEnum.USER.type),
+    val roles: List<String> = listOf(UserRoleEnum.ROLE_USER.type),
     val enabled: Boolean = true
 )
