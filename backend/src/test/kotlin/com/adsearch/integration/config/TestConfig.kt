@@ -1,7 +1,7 @@
 package com.adsearch.integration.config
 
 import com.icegreen.greenmail.spring.GreenMailBean
-import com.icegreen.greenmail.util.ServerSetup
+import com.icegreen.greenmail.util.ServerSetupTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -12,32 +12,17 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 class TestConfig {
     companion object {
         // Store the SMTP port for use in the DynamicPropertySource
-        var smtpPort: Int = 0
+        // ServerSetupTest.SMTP is the official approach for test port allocation
+        var smtpPort: Int = ServerSetupTest.SMTP.port
             private set
-            
-        init {
-            // Generate a random port offset between 3000-9000 to avoid conflicts in parallel tests
-            val randomPortOffset = (3000..9000).random()
-            
-            // Set the SMTP port for the DynamicPropertySource method
-            smtpPort = randomPortOffset + ServerSetup.SMTP.port
-        }
     }
     
     @Bean
     fun greenMailBean(): GreenMailBean {
-        // Create GreenMailBean with the same port offset used to calculate smtpPort
-        return GreenMailBean().apply {
-            portOffset = smtpPort - ServerSetup.SMTP.port
-            
-            // Enable SMTP protocol only
-            setSmtpProtocol(true)
-            setPop3Protocol(false)
-            setImapProtocol(false)
-            
-            // Start automatically
-            setAutostart(true)
-        }
+        // Create GreenMailBean with default settings
+        // It will use ServerSetupTest.SMTP (port 3025) by default
+        return GreenMailBean()
+        // The bean is autoconfigured to start automatically
     }
     
     @Bean
