@@ -45,6 +45,7 @@ dependencies {
     testImplementation(libs.apache.httpclient5)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.h2)
 
 }
 

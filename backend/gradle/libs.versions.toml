@@ -1,6 +1,7 @@
 [versions]
 archunit = "1.4.0"
 auth0-jwt = "4.5.0"
+h2 = "2.3.232"
 httpclient5 = "5.4.3"
 jackson-kotlin = "2.18.3"
 kotlin = "2.0.21"
@@ -19,6 +20,7 @@ konvert = "4.0.1"
 apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
