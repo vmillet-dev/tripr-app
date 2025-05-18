@@ -13,7 +13,7 @@ services:
       - mynet
 
   mailpit:
-    image: axllent/mailpit:v1.23
+    image: axllent/mailpit:v1.25
     ports:
       - "1026:1025"  # SMTP server port (changed from 1025 to avoid conflict)
       - "8026:8025"  # Web UI port (changed from 8025 to avoid conflict)
