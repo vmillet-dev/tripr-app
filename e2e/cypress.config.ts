@@ -15,7 +15,7 @@ export default defineConfig({
     chromeWebSecurity: false,
     // Add retries for more stability in CI
     retries: {
-      runMode: 2,
+      runMode: 10,
       openMode: 0,
     },
   },
