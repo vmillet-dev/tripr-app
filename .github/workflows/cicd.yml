@@ -130,14 +130,6 @@ jobs:
             frontend/package-lock.json
             e2e/package-lock.json
 
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: gradle-${{ runner.os }}-${{ hashFiles('backend/gradle/wrapper/gradle-wrapper.properties', '**/build.gradle.kts') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
       - name: Install e2e dependencies
         working-directory: e2e
         run: npm ci
