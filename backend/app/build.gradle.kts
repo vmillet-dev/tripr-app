@@ -72,5 +72,5 @@ tasks.jar {
 
 tasks.bootRun {
     environment["SPRING_PROFILES_ACTIVE"] = environment["SPRING_PROFILES_ACTIVE"] ?: "dev"
-    workingDir = project.rootDir.resolve("./../../")
+    workingDir = project.rootDir.resolve(".")
 }
