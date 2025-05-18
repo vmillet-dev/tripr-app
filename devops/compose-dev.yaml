@@ -21,29 +21,6 @@ services:
     networks:
       - mynet
 
-  app:
-      profiles: [fullstack]
-      build:
-          context: ../
-          dockerfile: devops/Dockerfile
-      environment:
-          DB_HOST: host.docker.internal
-          DB_PORT: 5433
-          DB_NAME: tripr
-          DB_USERNAME: postgres
-          DB_PASSWORD: P4ssword!
-          MAIL_HOST: localhost
-          MAIL_PORT: 1026
-          MAIL_USERNAME: ""
-          MAIL_PASSWORD: ""
-          JWT_SECRET: verySecretKeyThatShouldBeAtLeast32CharactersLong
-          BASE_URL: localhost:8080
-      ports:
-          - "8080:8081"
-      depends_on:
-          - postgres
-          - mailpit
-
 volumes:
   postgres_data:
 networks:
