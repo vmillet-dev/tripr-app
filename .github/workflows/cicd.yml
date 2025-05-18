@@ -117,4 +117,6 @@ jobs:
 
       - name: Run e2e tests
         working-directory: e2e
-        run: npm run cypress:run
+        run: |
+          rpm i
+          npm run cypress:run
