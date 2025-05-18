@@ -134,21 +134,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
-          key: gradle-${{ runner.os }}-${{ hashFiles('backend/gradle/wrapper/gradle-wrapper.properties') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('backend/gradle/wrapper/gradle-wrapper.properties', '**/build.gradle.kts') }}
           restore-keys: |
             gradle-${{ runner.os }}-
-
-      - name: Grant execute permission to Gradle wrapper
-        working-directory: backend
-        run: chmod +x gradlew
 
       - name: Install e2e dependencies
         working-directory: e2e
         run: npm ci
 
-      - name: Build frontend
-        working-directory: frontend
-        run: npm run build
+      - name: Grant execute permission to Gradle wrapper
+        working-directory: backend
+        run: chmod +x gradlew
 
       - name: Start backend for e2e tests
         working-directory: backend
