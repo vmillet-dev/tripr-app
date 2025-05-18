@@ -115,45 +115,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            frontend/package-lock.json
-            e2e/package-lock.json
-
-      - name: Install e2e dependencies
-        working-directory: e2e
-        run: npm ci
-
-      - name: Grant execute permission to Gradle wrapper
-        working-directory: backend
-        run: chmod +x gradlew
-
-      - name: Start backend for e2e tests
-        working-directory: backend
-        run: |
-          ./gradlew bootRun &
-          echo "Waiting for backend to start..."
-          sleep 15
-          echo "Backend should be ready now!"
-
-      - name: Start frontend for e2e tests
-        working-directory: frontend
-        run: |
-          npm i
-          npm start &
-          echo "Waiting for frontend to start..."
-          sleep 15
-          echo "Frontend should be ready now!"
       - name: Run e2e tests
         working-directory: e2e
         run: npm run cypress:run
