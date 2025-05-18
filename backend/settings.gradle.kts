@@ -1,6 +1,6 @@
 rootProject.name = "spring-ad-search"
 
-include("app")
+include("bootstrap")
 include("domain")
 include("application")
 include("common")

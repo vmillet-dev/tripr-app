@@ -10,14 +10,14 @@ RUN npm run build
 FROM gradle:8-jdk21 AS backend-build
 WORKDIR /app
 COPY ./backend .
-COPY --from=frontend-build /app/dist/browser/ app/src/main/resources/static/
-COPY --from=frontend-build /app/public/ app/src/main/resources/static/
-RUN gradle :app:bootJar
+COPY --from=frontend-build /app/dist/browser/ bootstrap/src/main/resources/static/
+COPY --from=frontend-build /app/public/ bootstrap/src/main/resources/static/
+RUN gradle --no-daemon :bootstrap:bootJar
 
 # Step 3: Create the final image with the fat JAR
 FROM alpine/java:21-jre
 WORKDIR /app
-COPY --from=backend-build /app/app/build/libs/app.jar app.jar
+COPY --from=backend-build /app/bootstrap/build/libs/app.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
