@@ -29,7 +29,7 @@ services:
       DB_NAME: tripr
       DB_USERNAME: postgres
       DB_PASSWORD: P4ssword!
-      MAIL_HOST: localhost
+      MAIL_HOST: host.docker.internal
       MAIL_PORT: 1027
       MAIL_USERNAME: ""
       MAIL_PASSWORD: ""
