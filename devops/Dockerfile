@@ -1,5 +1,5 @@
 # Step 1: Build Angular frontend
-FROM node:20 AS frontend-build
+FROM node:22 AS frontend-build
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN npm install
@@ -12,7 +12,7 @@ WORKDIR /app
 COPY ./backend .
 COPY --from=frontend-build /app/dist/browser/ bootstrap/src/main/resources/static/
 COPY --from=frontend-build /app/public/ bootstrap/src/main/resources/static/
-RUN gradle --no-daemon :bootstrap:bootJar
+RUN gradle :bootstrap:bootJar
 
 # Step 3: Create the final image with the fat JAR
 FROM alpine/java:21-jre
