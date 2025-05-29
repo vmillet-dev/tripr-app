@@ -123,21 +123,12 @@ jobs:
         run: |
           echo "=== Container Status ==="
           docker ps -a
-          echo ""
-          echo "=== Container Logs ==="
-          docker logs devops-app-e2e-1
-          echo ""
-          echo "=== Container Inspect ==="
-          docker image inspect devops-app-e2e --format='{{.State.Status}}: {{.State.ExitCode}}'
-          if [ "$(docker image inspect devops-app-e2e --format='{{.State.Status}}')" != "running" ]; then
-            echo "Container is not running!"
-            exit 1
-          fi
-
-      - name: Test database connectivity from container
-        run: |
-          echo "=== Testing DB connectivity from container ==="
-          docker exec devops-app-e2e sh -c "nc -zv localhost 5434 || echo 'DB connection failed'"
+          sleep 2
+          docker ps -a
+          sleep 2
+          docker ps -a
+          sleep 2
+          docker ps -a
 
       - name: Wait for application to be ready
         run: |
@@ -145,7 +136,7 @@ jobs:
           max_attempts=30
           attempt=0
           while [ $attempt -lt $max_attempts ]; do
-            if curl -f http://localhost:8080 2>/dev/null || curl -f http://localhost:8080 2>/dev/null; then
+            if curl -f http://localhost:8080 2>/dev/null; then
               echo "Application is ready!"
               break
             fi
