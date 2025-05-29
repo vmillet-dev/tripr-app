@@ -24,12 +24,12 @@ services:
       context: ../
       dockerfile: devops/Dockerfile
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: 172.17.0.1
       DB_PORT: 5434
       DB_NAME: tripr
       DB_USERNAME: postgres
       DB_PASSWORD: P4ssword!
-      MAIL_HOST: host.docker.internal
+      MAIL_HOST: 172.17.0.1
       MAIL_PORT: 1027
       MAIL_USERNAME: ""
       MAIL_PASSWORD: ""
