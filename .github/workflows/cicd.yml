@@ -119,6 +119,7 @@ jobs:
         run: docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e
 
       - name: Check container status and logs
+        working-directory: devops
         run: |
           echo "=== Container Status ==="
           docker ps -a
