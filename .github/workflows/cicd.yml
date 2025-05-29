@@ -119,7 +119,7 @@ jobs:
       - name: Install basics software's
         run: |
           apt update
-          apt install -y curl sudo gpg lsb-release
+          apt install -y curl sudo gpg lsb-release iptables
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
