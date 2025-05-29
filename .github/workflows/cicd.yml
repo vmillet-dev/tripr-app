@@ -164,7 +164,14 @@ jobs:
           -e JWT_SECRET='verySecretKeyThatShouldBeAtLeast32CharactersLong' \
           -e BASE_URL='localhost:8080' \
           app-e2e
-          sleep 15
+
+      - name: Wait until server is up
+        uses: cygnetdigital/wait_for_response@v2.0.0
+        with:
+          url: 'http://localhost:8080/'
+          responseCode: '200,500'
+          timeout: 20000
+          interval: 500
 
       - name: Cypress run
         working-directory: e2e
