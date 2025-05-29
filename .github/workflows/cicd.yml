@@ -110,7 +110,7 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-    container: ubuntu
+    container: cypress/included
     services:
       postgresql:
         image: postgres:17.3
