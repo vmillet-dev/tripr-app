@@ -166,18 +166,7 @@ jobs:
           app-e2e
 
       - name: Check docker images
-        run: docker ps
-
-      - name: Wait until server is up
-        uses: cygnetdigital/wait_for_response@v2.0.0
-        with:
-          url: 'http://[::1]:8080'
-          responseCode: '200,500'
-          timeout: 30000
-          interval: 500
-
-      - name: Check docker images
-        run: docker ps
+        run: docker ps && sleep 10 && docker ps
 
       - name: Cypress run
         working-directory: e2e
