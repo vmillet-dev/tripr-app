@@ -119,7 +119,7 @@ jobs:
       - name: Install basics software's
         run: |
           apt update
-          apt install curl sudo gpg
+          apt install -y curl sudo gpg
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
