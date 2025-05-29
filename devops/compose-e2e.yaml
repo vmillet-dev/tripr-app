@@ -7,6 +7,8 @@ services:
       - POSTGRES_PASSWORD=P4ssword!
     ports:
       - "5434:5432"
+    networks:
+      - net-e2e
 
   mailpit-e2e:
     image: axllent/mailpit:v1.23
@@ -14,6 +16,8 @@ services:
       - "1027:1025"  # SMTP server port (changed from 1025 to avoid conflict)
       - "8027:8025"  # Web UI port (changed from 8025 to avoid conflict)
     restart: unless-stopped
+    networks:
+      - net-e2e
 
   app-e2e:
     build:
@@ -36,6 +40,11 @@ services:
     depends_on:
       - postgres-e2e
       - mailpit-e2e
+    networks:
+      - net-e2e
 
 volumes:
   postgres_data:
+networks:
+  net-e2e:
+    driver: bridge

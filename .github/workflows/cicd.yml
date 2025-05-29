@@ -111,7 +111,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     container: ubuntu
-    #    needs: [test-backend, test-frontend]
+    needs: [ test-backend, test-frontend ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -122,8 +122,6 @@ jobs:
           apt install -y curl sudo gpg lsb-release iptables ca-certificates
           curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
           chmod a+r /etc/apt/keyrings/docker.asc
-
-          # Add the repository to Apt sources:
           echo \
           "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
           $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
@@ -140,7 +138,4 @@ jobs:
         working-directory: e2e
         run: |
           npm i
-          docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e
-          sleep 10
-          curl -i http://127.0.0.1:8080
-          npm run cypress:ci
+          npm run cypress:run
