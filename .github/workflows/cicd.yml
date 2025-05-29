@@ -112,6 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/included
+      options: --privileged
     services:
       docker:
         image: docker:dind
