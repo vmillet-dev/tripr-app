@@ -124,7 +124,7 @@ jobs:
           docker ps -a
           echo ""
           echo "=== Container Logs ==="
-          docker logs devops-app-e2e
+          docker compose logs app-e2e
           echo ""
           echo "=== Container Inspect ==="
           docker image inspect devops-app-e2e --format='{{.State.Status}}: {{.State.ExitCode}}'
