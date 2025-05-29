@@ -116,6 +116,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install basics software's
+        run: apt install curl sudo gpg
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
