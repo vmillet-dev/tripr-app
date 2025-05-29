@@ -110,24 +110,9 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/included
-      options: --privileged
-    services:
-      docker:
-        image: docker:dind
-        options: --privileged
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install basics software's
-        run: |
-          apt update
-          apt install -y curl sudo gpg lsb-release iptables netcat-openbsd
-
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
 
       - name: Build docker image app
         working-directory: e2e
