@@ -124,6 +124,7 @@ jobs:
           echo "=== Container Status ==="
           docker ps -a
           sleep 2
+          docker logs devops-app-e2e
           docker ps -a
           sleep 2
           docker ps -a
