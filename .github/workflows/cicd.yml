@@ -121,6 +121,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+
       - name: Cypress run
         working-directory: e2e
         run: |
