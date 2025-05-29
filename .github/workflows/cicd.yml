@@ -117,24 +117,6 @@ jobs:
       docker:
         image: docker:dind
         options: --privileged
-      postgresql:
-        image: postgres:17.3
-        ports:
-          - 5434:5432
-        env:
-          POSTGRES_DB: tripr
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: P4ssword!
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 25s
-          --health-timeout 15s
-          --health-retries 10
-      mailpit:
-        image: axllent/mailpit:v1.23
-        ports:
-          - 1027:1025
-          - 8027:8025
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -149,29 +131,7 @@ jobs:
 
       - name: Build docker image app
         working-directory: e2e
-        run: docker build -t app-e2e -f ../devops/Dockerfile ../
-
-      - name: Run docker image with detailed logging
-        run: |
-          docker run -d \
-          --name app-e2e \
-          -p 8080:8081 \
-          --add-host=host.docker.internal:host-gateway \
-          -e DB_HOST=localhost \
-          -e DB_PORT=5434 \
-          -e DB_NAME=tripr \
-          -e DB_USERNAME=postgres \
-          -e DB_PASSWORD='P4ssword!' \
-          -e MAIL_HOST=localhost \
-          -e MAIL_PORT=1027 \
-          -e MAIL_USERNAME='' \
-          -e MAIL_PASSWORD='' \
-          -e JWT_SECRET='verySecretKeyThatShouldBeAtLeast32CharactersLong' \
-          -e BASE_URL='localhost:8080' \
-          app-e2e
-
-          # Attendre un peu pour que l'app démarre
-          sleep 5
+        run: docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e
 
       - name: Check container status and logs
         run: |
@@ -191,7 +151,7 @@ jobs:
       - name: Test database connectivity from container
         run: |
           echo "=== Testing DB connectivity from container ==="
-          docker exec app-e2e sh -c "nc -zv host.docker.internal 5434 || echo 'DB connection failed'"
+          docker exec app-e2e sh -c "nc -zv localhost 5434 || echo 'DB connection failed'"
 
       - name: Wait for application to be ready
         run: |
@@ -199,7 +159,7 @@ jobs:
           max_attempts=30
           attempt=0
           while [ $attempt -lt $max_attempts ]; do
-            if curl -f http://localhost:8080/health 2>/dev/null || curl -f http://localhost:8080 2>/dev/null; then
+            if curl -f http://localhost:8080 2>/dev/null || curl -f http://localhost:8080 2>/dev/null; then
               echo "Application is ready!"
               break
             fi
