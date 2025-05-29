@@ -166,7 +166,7 @@ jobs:
           app-e2e
 
       - name: Check docker images
-        run: docker ps && sleep 10 && docker ps
+        run: docker ps && sleep 10 && docker ps && docker ps && docker ps
 
       - name: Cypress run
         working-directory: e2e
