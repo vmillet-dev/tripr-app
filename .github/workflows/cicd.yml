@@ -111,7 +111,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     container:
-      image: docker:latest
+      image: cypress/included
     services:
       docker:
         image: docker:dind
@@ -134,12 +134,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install basics software's
-        run: |
-          apt update
-          apt install nodejs -y
-          ln -s /usr/bin/nodejs /usr/local/bin/node
-
+      #      - name: Install basics software's
+      #        run: |
       #          apt update
       #          apt install -y curl sudo gpg lsb-release iptables ca-certificates libgtk2.0-0 libgtk-3-0 libnss3 xvfb
       #          curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
