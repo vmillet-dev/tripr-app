@@ -124,12 +124,12 @@ jobs:
           echo "=== Container Status ==="
           docker ps -a
           sleep 2
+          docker ps -a
+          sleep 2
+          docker ps -a
+          sleep 2
+          docker ps -a
           docker logs devops-app-e2e-1
-          docker ps -a
-          sleep 2
-          docker ps -a
-          sleep 2
-          docker ps -a
 
       - name: Wait for application to be ready
         run: |
@@ -180,5 +180,4 @@ jobs:
         run: |
           echo "=== Debug Info on Failure ==="
           docker ps -a
-          docker logs devops-app-e2e
-          docker image inspect devops-app-e2e
+          docker logs devops-app-e2e-1
