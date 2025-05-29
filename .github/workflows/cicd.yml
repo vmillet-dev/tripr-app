@@ -119,17 +119,22 @@ jobs:
       - name: Install basics software's
         run: |
           apt update
-          apt install -y curl sudo gpg lsb-release iptables
+          apt install -y curl sudo gpg lsb-release iptables ca-certificates
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          chmod a+r /etc/apt/keyrings/docker.asc
+
+          # Add the repository to Apt sources:
+          echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+          $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+          tee /etc/apt/sources.list.d/docker.list > /dev/null
+          apt-get update
+          apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-        with:
-          rootless: true
 
       - name: Cypress run
         working-directory: e2e
