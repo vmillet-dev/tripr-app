@@ -5,6 +5,7 @@
   "scripts": {
     "cypress:open": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress open",
     "cypress:run": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress run",
+    "cypress:ci": "cypress run",
     "test": "cypress run"
   },
   "keywords": [],
