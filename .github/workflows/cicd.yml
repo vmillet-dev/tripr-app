@@ -134,10 +134,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      #      - name: Install basics software's
-      #        run: |
-      #          apt update
-      #          apt install -y curl sudo gpg lsb-release iptables
+      - name: Install basics software's
+        run: |
+          apt update
+          apt install -y curl sudo gpg lsb-release iptables
       #          curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
       #          chmod a+r /etc/apt/keyrings/docker.asc
       #          echo \
