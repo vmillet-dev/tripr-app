@@ -157,12 +157,12 @@ jobs:
           --name app-e2e \
           -p 8080:8081 \
           --add-host=host.docker.internal:host-gateway \
-          -e DB_HOST=host.docker.internal \
+          -e DB_HOST=localhost \
           -e DB_PORT=5434 \
           -e DB_NAME=tripr \
           -e DB_USERNAME=postgres \
           -e DB_PASSWORD='P4ssword!' \
-          -e MAIL_HOST=host.docker.internal \
+          -e MAIL_HOST=localhost \
           -e MAIL_PORT=1027 \
           -e MAIL_USERNAME='' \
           -e MAIL_PASSWORD='' \
