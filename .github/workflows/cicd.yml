@@ -111,7 +111,21 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     container: ubuntu
-    #needs: [ test-backend, test-frontend ]
+    services:
+      postgresql:
+        image: postgres:17.3
+        ports:
+          - 5434:5432
+        env:
+          POSTGRES_DB: tripr
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: P4ssword!
+      mailpit:
+        image: axllent/mailpit:v1.23
+        ports:
+          - 1027:1025
+          - 8027:8025
+          #needs: [ test-backend, test-frontend ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -134,11 +148,30 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Build docker image app
+        working-directory: e2e
+        run: docker build -t app-e2e -f devops/Dockerfile ../
+
+      - name: Run docker image
+        run: |
+          docker run -d \
+          --name app-e2e \
+          -p 8080:8081 \
+          -e DB_HOST=host.docker.internal \
+          -e DB_PORT=5434 \
+          -e DB_NAME=tripr \
+          -e DB_USERNAME=postgres \
+          -e DB_PASSWORD='P4ssword!' \
+          -e MAIL_HOST=host.docker.internal \
+          -e MAIL_PORT=1027 \
+          -e MAIL_USERNAME='' \
+          -e MAIL_PASSWORD='' \
+          -e JWT_SECRET='verySecretKeyThatShouldBeAtLeast32CharactersLong' \
+          -e BASE_URL='localhost:8080' \
+          app-e2e
+
       - name: Cypress run
         working-directory: e2e
         run: |
           npm i
-          docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e
-          sleep 2
-          docker ps
           npm run cypress:run
