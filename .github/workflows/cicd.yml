@@ -127,8 +127,8 @@ jobs:
           docker logs devops-app-e2e
           echo ""
           echo "=== Container Inspect ==="
-          docker inspect devops-app-e2e --format='{{.State.Status}}: {{.State.ExitCode}}'
-          if [ "$(docker inspect devops-app-e2e --format='{{.State.Status}}')" != "running" ]; then
+          docker image inspect devops-app-e2e --format='{{.State.Status}}: {{.State.ExitCode}}'
+          if [ "$(docker image inspect devops-app-e2e --format='{{.State.Status}}')" != "running" ]; then
             echo "Container is not running!"
             exit 1
           fi
@@ -188,4 +188,4 @@ jobs:
           echo "=== Debug Info on Failure ==="
           docker ps -a
           docker logs devops-app-e2e
-          docker inspect devops-app-e2e
+          docker image inspect devops-app-e2e
