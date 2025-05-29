@@ -119,12 +119,16 @@ jobs:
       - name: Install basics software's
         run: |
           apt update
-          apt install -y curl sudo gpg docker docker-compose
+          apt install -y curl sudo gpg lsb-release
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
+
+      - name: Set up Docker
+        uses: docker-practice/actions-setup-docker@master
+        timeout-minutes: 12
 
       - name: Cypress run
         working-directory: e2e
