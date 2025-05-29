@@ -127,9 +127,9 @@ jobs:
           POSTGRES_PASSWORD: P4ssword!
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 25s
+          --health-timeout 15s
+          --health-retries 10
       mailpit:
         image: axllent/mailpit:v1.23
         ports:
@@ -146,15 +146,6 @@ jobs:
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
-
-      - name: Wait for PostgreSQL
-        run: |
-          echo "Waiting for PostgreSQL to be ready..."
-          until nc -z localhost 5434; do
-            echo "PostgreSQL is not ready yet..."
-            sleep 2
-          done
-          echo "PostgreSQL is ready!"
 
       - name: Build docker image app
         working-directory: e2e
