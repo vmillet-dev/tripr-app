@@ -127,8 +127,7 @@ jobs:
           node-version: '22'
 
       - name: Set up Docker
-        uses: docker-practice/actions-setup-docker@master
-        timeout-minutes: 12
+        uses: docker/setup-docker-action@v4
 
       - name: Cypress run
         working-directory: e2e
