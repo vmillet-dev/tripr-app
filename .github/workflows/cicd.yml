@@ -164,6 +164,7 @@ jobs:
           -e JWT_SECRET='verySecretKeyThatShouldBeAtLeast32CharactersLong' \
           -e BASE_URL='localhost:8080' \
           app-e2e
+          sleep 15
 
       - name: Cypress run
         working-directory: e2e
