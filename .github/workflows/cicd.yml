@@ -110,6 +110,7 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    container: ubuntu
     #    needs: [test-backend, test-frontend]
     steps:
       - name: Checkout repository
