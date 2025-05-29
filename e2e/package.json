@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "cypress:open": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress open",
-    "cypress:run": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress run",
+    "cypress:run": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress run --headed",
     "test": "cypress run"
   },
   "keywords": [],
