@@ -124,11 +124,11 @@ jobs:
           docker ps -a
           echo ""
           echo "=== Container Logs ==="
-          docker logs app-e2e
+          docker logs devops-app-e2e
           echo ""
           echo "=== Container Inspect ==="
-          docker inspect app-e2e --format='{{.State.Status}}: {{.State.ExitCode}}'
-          if [ "$(docker inspect app-e2e --format='{{.State.Status}}')" != "running" ]; then
+          docker inspect devops-app-e2e --format='{{.State.Status}}: {{.State.ExitCode}}'
+          if [ "$(docker inspect devops-app-e2e --format='{{.State.Status}}')" != "running" ]; then
             echo "Container is not running!"
             exit 1
           fi
@@ -136,7 +136,7 @@ jobs:
       - name: Test database connectivity from container
         run: |
           echo "=== Testing DB connectivity from container ==="
-          docker exec app-e2e sh -c "nc -zv localhost 5434 || echo 'DB connection failed'"
+          docker exec devops-app-e2e sh -c "nc -zv localhost 5434 || echo 'DB connection failed'"
 
       - name: Wait for application to be ready
         run: |
@@ -152,9 +152,9 @@ jobs:
             sleep 10
 
             # Vérifier si le conteneur est encore en vie
-            if [ "$(docker inspect app-e2e --format='{{.State.Status}}')" != "running" ]; then
+            if [ "$(docker inspect devops-app-e2e --format='{{.State.Status}}')" != "running" ]; then
               echo "Container stopped running! Logs:"
-              docker logs app-e2e
+              docker logs devops-app-e2e
               exit 1
             fi
 
@@ -164,7 +164,7 @@ jobs:
           if [ $attempt -eq $max_attempts ]; then
             echo "Application failed to start within timeout"
             echo "Final container logs:"
-            docker logs app-e2e
+            docker logs devops-app-e2e
             exit 1
           fi
 
@@ -174,7 +174,7 @@ jobs:
           docker ps
           echo ""
           echo "=== Final Logs ==="
-          docker logs app-e2e --tail 50
+          docker logs devops-app-e2e --tail 50
 
       - name: Cypress run
         working-directory: e2e
@@ -187,5 +187,5 @@ jobs:
         run: |
           echo "=== Debug Info on Failure ==="
           docker ps -a
-          docker logs app-e2e
-          docker inspect app-e2e
+          docker logs devops-app-e2e
+          docker inspect devops-app-e2e
