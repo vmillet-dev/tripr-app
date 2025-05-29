@@ -115,10 +115,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run e2e tests
-        working-directory: e2e
-        run: |
-          docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e
-          npm i
-          sleep 10
-          npm run cypress:run
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          project: ./e2e
