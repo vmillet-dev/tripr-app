@@ -154,7 +154,7 @@ jobs:
 
       - name: Build docker image app
         working-directory: e2e
-        run: docker build -t app-e2e -f devops/Dockerfile ../
+        run: docker build -t app-e2e -f ../devops/Dockerfile ../
 
       - name: Run docker image
         run: |
