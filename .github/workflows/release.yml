@@ -52,10 +52,20 @@ jobs:
 
       - name: Setup SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.RASPBERRY_HOST }} >> ~/.ssh/known_hosts
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SERVER_USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SERVER_HOST }}
 
       - name: Install Ansible
         run: |
@@ -66,7 +76,7 @@ jobs:
         run: |
           cat > inventory.ini << EOF
           [raspberry]
-          ${{ secrets.RASPBERRY_HOST }} ansible_user=${{ secrets.RASPBERRY_USER }} ansible_ssh_private_key_file=~/.ssh/id_rsa
+          ${{ secrets.SERVER_HOST }} ansible_user=${{ secrets.SERVER_USERNAME }} ansible_ssh_private_key_file=~/.ssh/production.key
           EOF
 
       - name: Run Ansible Playbook

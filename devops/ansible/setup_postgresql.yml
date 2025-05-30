@@ -1,0 +1,54 @@
+---
+- name: Installer et configurer PostgreSQL sur DietPi
+  hosts: mon_serveur_dietpi
+  become: yes # Exécute les tâches avec les privilèges sudo
+  vars:
+    db_name: trpir
+    db_user: postgres
+    db_password: VotreMotDePasseSuperSécurisé
+    pg_version: 15
+
+  tasks:
+    - name: Mettre à jour les paquets APT
+      apt:
+        update_cache: yes
+        force_apt_get: yes # Utile pour DietPi
+
+    - name: Installer PostgreSQL et les dépendances
+      apt:
+        name:
+          - "postgresql-{{ pg_version }}"
+          - "postgresql-client-{{ pg_version }}"
+          - python3-psycopg2 # Nécessaire pour le module community.postgresql.postgresql_user et postgresql_db
+        state: present
+
+    - name: S'assurer que le service PostgreSQL est démarré et activé
+      systemd:
+        name: "postgresql@{{ pg_version }}-main" # Adapter si le nom du service est différent sur votre DietPi
+        state: started
+        enabled: yes
+
+    - name: Créer la base de données PostgreSQL
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        state: present
+      become_user: postgres # Exécute cette tâche en tant qu'utilisateur 'postgres'
+
+    - name: Créer l'utilisateur PostgreSQL
+      community.postgresql.postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        state: present
+      become_user: postgres
+
+    - name: Accorder tous les privilèges sur la base de données à l'utilisateur
+      community.postgresql.postgresql_privs:
+        db: "{{ db_name }}"
+        role: "{{ db_user }}"
+        privs: ALL
+        type: database
+      become_user: postgres
+
+    - name: Afficher un message de succès
+      debug:
+        msg: "La base de données '{{ db_name }}' et l'utilisateur '{{ db_user }}' ont été créés avec succès."
