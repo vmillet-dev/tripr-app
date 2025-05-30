@@ -1,9 +1,8 @@
 ---
 - name: Installer et configurer PostgreSQL sur DietPi
-  hosts: all
+  hosts: raspberry
   become: yes # Exécute les tâches avec les privilèges sudo
   vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
     db_name: trpir
     db_user: postgres
     db_password: VotreMotDePasseSuperSécurisé
