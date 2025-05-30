@@ -1,50 +1,27 @@
 services:
   postgres-e2e:
-    image: postgres:17.3
-    environment:
-      - POSTGRES_DB=tripr
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=P4ssword!
+    extends:
+      service: postgres-base
+      file: ./compose-base.yaml
     ports:
       - "5434:5432"
-    networks:
-      - net-e2e
 
   mailpit-e2e:
-    image: axllent/mailpit:v1.23
+    extends:
+      service: mailpit-base
+      file: ./compose-base.yaml
     ports:
-      - "1027:1025"  # SMTP server port (changed from 1025 to avoid conflict)
-      - "8027:8025"  # Web UI port (changed from 8025 to avoid conflict)
-    restart: unless-stopped
-    networks:
-      - net-e2e
+      - "1027:1025"
+      - "8027:8025"
 
   app-e2e:
     build:
       context: ../
       dockerfile: devops/Dockerfile
     environment:
-      DB_HOST: 172.17.0.1
-      DB_PORT: 5434
-      DB_NAME: tripr
-      DB_USERNAME: postgres
-      DB_PASSWORD: P4ssword!
-      MAIL_HOST: 172.17.0.1
-      MAIL_PORT: 1027
-      MAIL_USERNAME: ""
-      MAIL_PASSWORD: ""
-      JWT_SECRET: verySecretKeyThatShouldBeAtLeast32CharactersLong
-      BASE_URL: localhost:8080
+      SPRING_PROFILES_ACTIVE: dev,e2e
     ports:
       - "8080:8081"
     depends_on:
       - postgres-e2e
       - mailpit-e2e
-    networks:
-      - net-e2e
-
-volumes:
-  postgres_data:
-networks:
-  net-e2e:
-    driver: bridge

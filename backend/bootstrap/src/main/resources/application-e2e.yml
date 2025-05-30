@@ -1,0 +1,8 @@
+spring:
+  mail:
+    host: 172.17.0.1 # static IP for docker bridge gateway network
+    port: 1027
+  datasource:
+    url: jdbc:postgresql://172.17.0.1:5434/tripr
+password-reset:
+  base-url: localhost:8080

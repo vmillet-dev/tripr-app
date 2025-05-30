@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "cypress:open": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress open",
-    "cypress:run": "docker compose -f ../devops/compose-e2e.yaml up -d --wait app-e2e && cypress run",
+    "cypress:open": "docker compose -f ../devops/compose-e2e.yaml up -d --wait --build app-e2e && cypress open",
+    "cypress:run": "docker compose -f ../devops/compose-e2e.yaml up -d --wait --build app-e2e && cypress run",
     "cypress:ci": "cypress run",
     "test": "cypress run"
   },
