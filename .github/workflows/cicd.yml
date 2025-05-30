@@ -12,10 +12,8 @@ env:
   NODE_VERSION: '22'
 
 jobs:
-  deploy:
-    needs: build-and-push-docker-image
+  test-ssh:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
