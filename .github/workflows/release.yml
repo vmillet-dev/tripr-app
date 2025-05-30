@@ -4,12 +4,8 @@ on:
   push:
     tags: [ 'v*' ]
 
-env:
-  IMAGE_NAME: vmillet-dev/starter-app
-  REGISTRY: docker.io
-
 jobs:
-  deploy-docker:
+  build-and-push-docker-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,3 +42,39 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
+  deploy:
+    needs: build-and-push-docker-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.RASPBERRY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Create Ansible inventory
+        run: |
+          cat > inventory.ini << EOF
+          [raspberry]
+          ${{ secrets.RASPBERRY_HOST }} ansible_user=${{ secrets.RASPBERRY_USER }} ansible_ssh_private_key_file=~/.ssh/id_rsa
+          EOF
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i inventory.ini deploy.yml \
+            -e "docker_image=${{ needs.build-and-push.outputs.image-tag }}" \
+            -e "app_name=${{ env.IMAGE_NAME }}" \
+            -e "db_password=${{ secrets.DB_PASSWORD }}" \
+            -e "app_env=${{ secrets.APP_ENV }}" \
+            -e "app_port=${{ secrets.APP_PORT || '3000' }}" \
+            --ssh-extra-args='-o StrictHostKeyChecking=no'

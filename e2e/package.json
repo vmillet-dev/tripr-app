@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "cypress:open": "docker compose -f ../devops/compose-e2e.yaml up -d --wait --build app-e2e && cypress open",
-    "cypress:run": "docker compose -f ../devops/compose-e2e.yaml up -d --wait --build app-e2e && cypress run",
-    "cypress:ci": "cypress run",
-    "test": "cypress run"
+    "cypress:open:docker": "docker compose -f ../devops/compose-e2e.yaml up -d --wait --build app-e2e && cypress open && docker compose -f ../devops/compose-e2e.yaml stop app-e2e",
+    "cypress:run:docker": "docker compose -f ../devops/compose-e2e.yaml up -d --wait --build app-e2e && cypress run && docker compose -f ../devops/compose-e2e.yaml stop app-e2e",
+    "cypress:open": "cypress open --config baseUrl=http://localhost:4200",
+    "cypress:run": "cypress run --config baseUrl=http://localhost:4200",
+    "cypress:ci": "cypress run"
   },
   "keywords": [],
   "author": "",

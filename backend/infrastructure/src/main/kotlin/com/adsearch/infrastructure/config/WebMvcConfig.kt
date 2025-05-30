@@ -20,7 +20,6 @@ class WebMvcConfig : WebMvcConfigurer {
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
-        registry.addViewController("/{path:[^\\.]*}")
-            .setViewName("forward:/index.html")
+        registry.addViewController("/{path:[^\\.]*}").setViewName("forward:/index.html")
     }
 }
