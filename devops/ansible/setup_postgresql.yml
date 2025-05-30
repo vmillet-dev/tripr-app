@@ -1,6 +1,6 @@
 ---
 - name: Installer et configurer PostgreSQL sur DietPi
-  hosts: mon_serveur_dietpi
+  hosts: all
   become: yes # Exécute les tâches avec les privilèges sudo
   vars:
     db_name: trpir
