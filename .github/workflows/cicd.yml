@@ -19,13 +19,13 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/staging.key
-          chmod 600 ~/.ssh/staging.key
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
           cat >>~/.ssh/config <<END
-          Host staging
+          Host production
             HostName $SSH_HOST
             User $SSH_USER
-            IdentityFile ~/.ssh/staging.key
+            IdentityFile ~/.ssh/production.key
             StrictHostKeyChecking no
           END
         env:
@@ -33,7 +33,7 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SERVER_HOST }}
       - name: Check connection
-        run: ssh staging 'whoami'
+        run: ssh production 'touch toto'
   build-backend:
     runs-on: ubuntu-latest
     steps:
