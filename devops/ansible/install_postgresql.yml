@@ -30,6 +30,7 @@
       apt:
         name:
           - "postgresql-{{ pg_version }}"
+          - "postgresql-client-{{ pg_version }}"
           - python3-psycopg2 # Required for module community.postgresql.postgresql_user and postgresql_db
         state: present
 
