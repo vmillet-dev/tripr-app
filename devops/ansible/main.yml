@@ -1,4 +1,3 @@
 ---
 - import_playbook: install_postgresql.yml
 - import_playbook: install_k3s.yml
----

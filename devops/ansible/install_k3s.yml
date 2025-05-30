@@ -2,10 +2,7 @@
   hosts: raspberry
   become: yes
   vars:
-    app_name: webapp
-    app_image: "{{ image_name }}:{{ image_tag | default('latest') }}"
-    app_port: 3000
-    replicas: 2
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
   tasks:
     - name: Check if K3S is installed
