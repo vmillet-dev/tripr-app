@@ -4,5 +4,7 @@ spring:
     port: 1027
   datasource:
     url: jdbc:postgresql://172.17.0.1:5434/tripr
+jwt:
+  secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
 password-reset:
   base-url: localhost:8080
