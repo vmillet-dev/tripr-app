@@ -50,7 +50,8 @@ jobs:
 
       - name: Run ansible playbook
         working-directory: devops/ansible
-        run: ansible-playbook -i inventory.ini setup_postgresql.yml
+        run: |
+          ansible-playbook -i inventory.ini main.yml
   build-backend:
     runs-on: ubuntu-latest
     steps:

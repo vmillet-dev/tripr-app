@@ -1,5 +1,5 @@
 ---
-- name: Installer et configurer PostgreSQL sur DietPi
+- name: Install and setup PostgreSQL
   hosts: all
   become: yes # Exécute les tâches avec les privilèges sudo
   vars:
@@ -7,7 +7,7 @@
     db_name: trpir
     db_user: postgres
     db_password: VotreMotDePasseSuperSécurisé
-    pg_version: 15
+    pg_version: 17
 
   tasks:
     - name: Install postgresql-common to get APT configuration script

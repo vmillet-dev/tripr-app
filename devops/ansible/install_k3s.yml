@@ -1,0 +1,26 @@
+- name: Install K3s
+  hosts: raspberry
+  become: yes
+  vars:
+    app_name: webapp
+    app_image: "{{ image_name }}:{{ image_tag | default('latest') }}"
+    app_port: 3000
+    replicas: 2
+
+  tasks:
+    - name: Check if K3S is installed
+      command: which k3s
+      register: k3s_check
+      failed_when: false
+      changed_when: false
+
+    - name: Install K3s if needed
+      shell: curl -sfL https://get.k3s.io | sh -
+      when: k3s_check.rc != 0
+
+    - name: Wait K3S to be ready
+      wait_for:
+        port: 6443
+        host: localhost
+        timeout: 60
+      when: k3s_check.rc != 0
