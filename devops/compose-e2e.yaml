@@ -1,0 +1,27 @@
+services:
+  postgres-e2e:
+    extends:
+      service: postgres-base
+      file: ./compose-base.yaml
+    ports:
+      - "5434:5432"
+
+  mailpit-e2e:
+    extends:
+      service: mailpit-base
+      file: ./compose-base.yaml
+    ports:
+      - "1027:1025"
+      - "8027:8025"
+
+  app-e2e:
+    build:
+      context: ../
+      dockerfile: devops/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: dev,e2e
+    ports:
+      - "8080:8081"
+    depends_on:
+      - postgres-e2e
+      - mailpit-e2e
