@@ -28,7 +28,7 @@
       changed_when: true
 
     - name: Wait for deployment to be ready
-      ansible.builtin.shell: "kubectl rollout status deployment/{{ app_name }} --timeout=300s
+      ansible.builtin.shell: "kubectl rollout status deployment/{{ app_name }} --timeout=300s"
       register: rollout_status
       until: rollout_status.rc == 0
       retries: 60 # Retry for up to 5 minutes (60 retries * 5s delay)
