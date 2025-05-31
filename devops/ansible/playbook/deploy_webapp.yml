@@ -81,23 +81,3 @@
       file:
         path: /tmp/{{ app_name }}-deployment.yaml
         state: absent
-
-  rescue:
-    - name: Display logs on error
-      shell: kubectl logs -l app={{ app_name }} --tail=50
-      register: app_logs
-      ignore_errors: yes
-
-    - name: Display Kubernetes events
-      shell: kubectl get events --sort-by=.metadata.creationTimestamp
-      register: k8s_events
-      ignore_errors: yes
-
-    - name: Debug info
-      debug:
-        msg: |
-          Application logs:
-          {{ app_logs.stdout | default('No logs available') }}
-
-          Kubernetes events:
-          {{ k8s_events.stdout | default('No events available') }}
