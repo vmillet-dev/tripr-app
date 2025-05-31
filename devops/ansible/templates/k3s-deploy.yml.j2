@@ -27,7 +27,7 @@ spec:
           name: http
         envFrom:
         - secretRef:
-            name: spring-ad-search-secrets # Référence au Secret créé par Ansible
+            name: {{ app_name }}-secrets
         resources:
           limits:
             memory: "512Mi"
