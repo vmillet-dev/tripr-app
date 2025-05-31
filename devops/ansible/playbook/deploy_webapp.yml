@@ -7,7 +7,7 @@
   tasks:
     - name: Generate Kubernetes Secret YAML
       ansible.builtin.template:
-        src: k3s-secret.yml.j2
+        src: ../templates/k3s-secret.yml.j2
         dest: /tmp/{{ app_name }}-secret.yml # Where to render it on the remote server
 
     - name: Apply Kubernetes Secret
@@ -18,7 +18,7 @@
 
     - name: Generate K3s deployment and service YAML
       ansible.builtin.template:
-        src: k3s-deploy.yml.j2
+        src: ../templates/k3s-deploy.yml.j2
         dest: /tmp/{{ app_name }}-deploy.yml
 
     - name: Apply K3s deployment and service
