@@ -2,6 +2,11 @@
 - name: Install and setup PostgreSQL
   hosts: raspberry
   become: yes
+  vars:
+    db_name: "{{ lookup('env', 'ANSIBLE_DB_NAME') }}"
+    db_user: "{{ lookup('env', 'ANSIBLE_DB_USER') }}"
+    db_password: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
+    pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') }}"
 
   tasks:
     - name: Install postgresql-common to get APT configuration script

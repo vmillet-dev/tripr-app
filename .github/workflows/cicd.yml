@@ -67,6 +67,7 @@ jobs:
           ANSIBLE_BASE_URL: ${{ secrets.BASE_URL }}
           ANSIBLE_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}:latest
           ANSIBLE_K3S_REPLICAS: ${{ secrets.K3S_REPLICAS }}
+          ANSIBLE_PG_VERSION: ${{ secrets.PG_VERSION }}
   build-backend:
     runs-on: ubuntu-latest
     steps:
