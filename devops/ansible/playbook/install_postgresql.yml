@@ -41,7 +41,7 @@
 
     - name: Create PostgreSQL database
       community.postgresql.postgresql_db:
-        name: "{{ lookup('env', 'ANSIBLE_MAIL_HOST') }}"
+        name: "{{ db_name }}"
         state: present
       become_user: postgres
 
