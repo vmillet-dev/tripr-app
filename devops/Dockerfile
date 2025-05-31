@@ -15,7 +15,7 @@ COPY --from=frontend-build /app/public/ bootstrap/src/main/resources/static/
 RUN gradle :bootstrap:bootJar
 
 # Step 3: Create the final image with the fat JAR
-FROM alpine/java:21-jre
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=backend-build /app/bootstrap/build/libs/app.jar app.jar
 
