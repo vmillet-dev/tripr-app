@@ -1,13 +1,9 @@
 ---
 - name: Install and setup PostgreSQL
-  hosts: all
-  become: yes # Exécute les tâches avec les privilèges sudo
+  hosts: raspberry
+  become: yes
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-    db_name: trpir
-    db_user: postgres
-    db_password: VotreMotDePasseSuperSécurisé
-    pg_version: 17
 
   tasks:
     - name: Install postgresql-common to get APT configuration script

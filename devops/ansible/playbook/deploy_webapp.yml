@@ -1,0 +1,91 @@
+---
+- name: Deploy webapp with K3s
+  hosts: raspberry
+  become: yes
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+  tasks:
+    - name: Create or update secrets
+      shell: |
+        kubectl create secret generic {{ app_name }}-secrets \
+          --from-literal=database-url="{{ database_url }}" \
+          --from-literal=api-key="{{ api_key }}" \
+          --from-literal=jwt-secret="{{ jwt_secret }}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+      when: database_url is defined and api_key is defined
+
+    - name: Generate deployment manifest
+      template:
+        src: ../template/deployment.yaml.j2
+        dest: /tmp/{{ app_name }}-deployment.yaml
+      vars:
+        image_name: "{{ image_name }}"
+        image_tag: "{{ image_tag | default('latest') }}"
+
+    - name: Apply deployment manifest
+      shell: kubectl apply -f /tmp/{{ app_name }}-deployment.yaml
+
+    - name: Wait for deployment to be ready
+      shell: kubectl rollout status deployment/{{ app_name }} --timeout=300s
+
+    - name: Get service details
+      shell: |
+        kubectl get service {{ app_name }}-service \
+        -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || \
+        kubectl get service {{ app_name }}-service \
+        -o jsonpath='{.spec.clusterIP}'
+      register: service_ip
+      retries: 10
+      delay: 10
+      until: service_ip.stdout != ""
+
+    - name: Test application health
+      uri:
+        url: "http://{{ service_ip.stdout }}:80{{ health_check_path | default('/') }}"
+        method: GET
+        status_code: 200
+        timeout: 10
+      register: health_check
+      retries: 12
+      delay: 5
+      until: health_check.status == 200
+
+    - name: Display deployment status
+      debug:
+        msg: |
+          Deployment successful!
+          App: {{ app_name }}
+          Image: {{ image_name }}:{{ image_tag | default('latest') }}
+          URL: http://{{ service_ip.stdout }}:80/
+          Status: {{ health_check.status }}
+
+    - name: Rollback on health check failure
+      shell: kubectl rollout undo deployment/{{ app_name }}
+      when: health_check.failed | default(false)
+      ignore_errors: yes
+
+    - name: Clean up temp files
+      file:
+        path: /tmp/{{ app_name }}-deployment.yaml
+        state: absent
+
+  rescue:
+    - name: Display logs on error
+      shell: kubectl logs -l app={{ app_name }} --tail=50
+      register: app_logs
+      ignore_errors: yes
+
+    - name: Display Kubernetes events
+      shell: kubectl get events --sort-by=.metadata.creationTimestamp
+      register: k8s_events
+      ignore_errors: yes
+
+    - name: Debug info
+      debug:
+        msg: |
+          Application logs:
+          {{ app_logs.stdout | default('No logs available') }}
+
+          Kubernetes events:
+          {{ k8s_events.stdout | default('No events available') }}
