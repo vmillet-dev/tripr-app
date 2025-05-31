@@ -4,7 +4,7 @@
   become: yes
   vars:
     db_name: "{{ lookup('env', 'ANSIBLE_DB_NAME') }}"
-    db_user: "{{ lookup('env', 'ANSIBLE_DB_USER') }}"
+    db_user: "{{ lookup('env', 'ANSIBLE_DB_USERNAME') }}"
     db_password: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
     pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') }}"
 
