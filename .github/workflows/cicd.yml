@@ -51,16 +51,22 @@ jobs:
       - name: Run ansible playbook
         working-directory: devops/ansible
         run: |
-          ansible-playbook -i inventory.ini playbook/main.yml \
-          -e "db_name=${{ secrets.DB_NAME }}" \
-          -e "db_user=${{ secrets.DB_USER }}" \
-          -e "db_password=${{ secrets.DB_PASSWORD }}" \
-          -e "pg_version=${{ secrets.PG_VERSION }}" \
-          -e "k3s_app_name=${{ secrets.K3S_APP_NAME }}" \
-          -e "k3s_app_port=${{ secrets.K3S_APP_PORT}}" \
-          -e "k3s_replicas=${{ secrets.K3S_REPLICAS}}" \
-          -e "app_image=${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest" \
-
+          ansible-playbook -i inventory.ini playbook/main.yml --ssh-extra-args='-o StrictHostKeyChecking=no'
+        env:
+          ANSIBLE_APP_NAME: ${{ secrets.APP_NAME }}
+          ANSIBLE_MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          ANSIBLE_MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          ANSIBLE_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          ANSIBLE_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          ANSIBLE_DB_HOST: ${{ secrets.DB_HOST }}
+          ANSIBLE_DB_PORT: ${{ secrets.DB_PORT }}
+          ANSIBLE_DB_NAME: ${{ secrets.DB_NAME }}
+          ANSIBLE_DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          ANSIBLE_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ANSIBLE_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ANSIBLE_BASE_URL: ${{ secrets.BASE_URL }}
+          ANSIBLE_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}:latest
+          ANSIBLE_K3S_REPLICAS: ${{ secrets.K3S_REPLICAS }}
   build-backend:
     runs-on: ubuntu-latest
     steps:

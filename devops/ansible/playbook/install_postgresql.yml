@@ -2,8 +2,6 @@
 - name: Install and setup PostgreSQL
   hosts: raspberry
   become: yes
-  vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
   tasks:
     - name: Install postgresql-common to get APT configuration script
@@ -38,7 +36,7 @@
 
     - name: Create PostgreSQL database
       community.postgresql.postgresql_db:
-        name: "{{ db_name }}"
+        name: "{{ lookup('env', 'ANSIBLE_MAIL_HOST') }}"
         state: present
       become_user: postgres
 

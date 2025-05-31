@@ -3,28 +3,40 @@
   hosts: raspberry
   become: yes
   vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-
+    app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"
+    k3s_template_filename: "k3s-deploy.yml"
   tasks:
-    - name: Create or update secrets
-      shell: |
-        kubectl create secret generic {{ app_name }}-secrets \
-          --from-literal=database-url="{{ database_url }}" \
-          --from-literal=api-key="{{ api_key }}" \
-          --from-literal=jwt-secret="{{ jwt_secret }}" \
-          --dry-run=client -o yaml | kubectl apply -f -
-      when: database_url is defined and api_key is defined
+    - name: Create Kubernetes Secret for Spring Boot app
+      ansible.builtin.kubernetes.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: { { app_name } }-secrets
+          stringData:
+            MAIL_HOST: "{{ lookup('env', 'ANSIBLE_MAIL_HOST') }}"
+            MAIL_PORT: "{{ lookup('env', 'ANSIBLE_MAIL_PORT') }}"
+            MAIL_USERNAME: "{{ lookup('env', 'ANSIBLE_MAIL_USERNAME') }}"
+            MAIL_PASSWORD: "{{ lookup('env', 'ANSIBLE_MAIL_PASSWORD') }}"
+            DB_HOST: "{{ lookup('env', 'ANSIBLE_DB_HOST') }}"
+            DB_PORT: "{{ lookup('env', 'ANSIBLE_DB_PORT') }}"
+            DB_NAME: "{{ lookup('env', 'ANSIBLE_DB_NAME') }}"
+            DB_USERNAME: "{{ lookup('env', 'ANSIBLE_DB_USERNAME') }}"
+            DB_PASSWORD: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
+            JWT_SECRET: "{{ lookup('env', 'ANSIBLE_JWT_SECRET') }}"
+            BASE_URL: "{{ lookup('env', 'ANSIBLE_BASE_URL') }}"
 
-    - name: Generate deployment manifest
-      template:
-        src: ../template/deployment.yaml.j2
-        dest: /tmp/{{ app_name }}-deployment.yaml
-      vars:
-        image_name: "{{ image_name }}"
-        image_tag: "{{ image_tag | default('latest') }}"
+    - name: Generate K3s deployment and service YAML
+      ansible.builtin.template:
+        src: { { k3s_template_filename } }.j2
+        dest: /tmp/{{ k3s_template_filename }}
 
-    - name: Apply deployment manifest
-      shell: kubectl apply -f /tmp/{{ app_name }}-deployment.yaml
+    - name: Apply K3s deployment and service
+      ansible.builtin.command: kubectl apply -f /tmp/{{ k3s_template_filename }}
+      args:
+        chdir: /tmp
+      changed_when: true
 
     - name: Wait for deployment to be ready
       shell: kubectl rollout status deployment/{{ app_name }} --timeout=300s
@@ -56,7 +68,7 @@
         msg: |
           Deployment successful!
           App: {{ app_name }}
-          Image: {{ image_name }}:{{ image_tag | default('latest') }}
+          Image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
           URL: http://{{ service_ip.stdout }}:80/
           Status: {{ health_check.status }}
 

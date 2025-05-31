@@ -1,8 +1,6 @@
 - name: Install K3s
   hosts: raspberry
   become: yes
-  vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
   tasks:
     - name: Check if K3S is installed

@@ -1,12 +1,13 @@
+{% set app_name = {{ lookup('env', 'ANSIBLE_APP_NAME') }} %}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ app_name }}
   labels:
     app: {{ app_name }}
-    version: {{ image_tag | default('latest') }}
 spec:
-  replicas: {{ replicas | default(2) }}
+  replicas: {{ lookup('env', 'ANSIBLE_K3S_REPLICAS') | default(2) }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,24 +20,27 @@ spec:
     metadata:
       labels:
         app: {{ app_name }}
-        version: {{ image_tag | default('latest') }}
     spec:
       containers:
       - name: {{ app_name }}
-        image: {{ image_name }}:{{ image_tag | default('latest') }}
+        image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
         ports:
-        - containerPort: {{ app_port | default(3000) }}
+        - containerPort: {{ app_port | default(8081) }}
           name: http
-        env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ app_name }}
-              key: database-url
+        envFrom:
+        - secretRef:
+            name: spring-ad-search-secrets # Référence au Secret créé par Ansible
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
         readinessProbe:
           httpGet:
             path: {{ health_check_path | default('/') }}
-            port: {{ app_port | default(3000) }}
+            port: {{ app_port | default(8081) }}
           initialDelaySeconds: 10
           periodSeconds: 5
           timeoutSeconds: 3
@@ -45,7 +49,7 @@ spec:
         livenessProbe:
           httpGet:
             path: {{ health_check_path | default('/') }}
-            port: {{ app_port | default(3000) }}
+            port: {{ app_port | default(8081) }}
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
@@ -61,6 +65,6 @@ spec:
     app: {{ app_name }}
   ports:
   - port: 80
-    targetPort: {{ app_port | default(3000) }}
+    targetPort: {{ app_port | default(8081) }}
     name: http
   type: {{ service_type | default('LoadBalancer') }}
