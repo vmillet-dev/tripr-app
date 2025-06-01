@@ -54,30 +54,19 @@
 
     - name: Grant all database privileges to the user
       community.postgresql.postgresql_privs:
-        db: "{{ db_name }}"
-        role: "{{ db_user }}"
+        login_db: postgres
         privs: ALL
         type: database
-      become_user: postgres
+        obj: "{{ db_name }}"
+        role: "{{ db_user }}"
 
     - name: Grant schema privileges to the user
       community.postgresql.postgresql_privs:
-        db: "{{ db_name }}"
-        role: "{{ db_user }}"
-        schema: public
+        login_db: "{{ db_name }}"
         privs: ALL
         type: schema
-      become_user: postgres
-
-    - name: Grant table privileges to the user
-      community.postgresql.postgresql_privs:
-        db: "{{ db_name }}"
+        objs: public
         role: "{{ db_user }}"
-        schema: public
-        privs: ALL
-        type: table
-        objs: ALL_IN_SCHEMA
-      become_user: postgres
 
     - name: Show success message
       debug:
