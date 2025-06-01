@@ -40,6 +40,7 @@
         enabled: yes
 
     - name: Create PostgreSQL user
+      become_user: postgres
       community.postgresql.postgresql_user:
         db: "{{ db_name }}" # Connect to the specified database
         name: "{{ db_user }}"
@@ -47,12 +48,14 @@
         state: present
 
     - name: Create PostgreSQL database for the new user
+      become_user: postgres
       community.postgresql.postgresql_db:
         name: "{{ db_name }}"
         owner: "{{ db_user }}"
         state: present
 
     - name: Grant ALL PRIVILEGES on the database to the new user
+      become_user: postgres
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
         role: "{{ db_user }}"
@@ -62,6 +65,7 @@
       # This grants the user all privileges on the specified database.
 
     - name: Grant ALL PRIVILEGES on the public schema to the new user
+      become_user: postgres
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
         role: "{{ db_user }}"
@@ -72,12 +76,14 @@
       # This grants the user all privileges on the 'public' schema.
 
     - name: Grant ALL PRIVILEGES on existing tables in public schema to the new user
+      become_user: postgres
       community.postgresql.postgresql_query:
         db: "{{ db_name }}"
         query: "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {{ db_user }};"
       # This runs a raw SQL query to grant privileges on *all currently existing* tables in the public schema.
 
     - name: Grant ALL PRIVILEGES on future tables in public schema to the new user
+      become_user: postgres
       community.postgresql.postgresql_query:
         db: "{{ db_name }}"
         query: "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO {{ db_user }};"
