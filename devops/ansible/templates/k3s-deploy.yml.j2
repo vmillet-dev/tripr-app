@@ -20,6 +20,7 @@ spec:
       labels:
         app: {{ app_name }}
     spec:
+      hostNetwork: true
       containers:
       - name: {{ app_name }}
         image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
