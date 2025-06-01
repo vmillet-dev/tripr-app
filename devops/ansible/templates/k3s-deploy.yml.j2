@@ -6,12 +6,12 @@ metadata:
   labels:
     app: {{ app_name }}
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: {{ app_name }}
