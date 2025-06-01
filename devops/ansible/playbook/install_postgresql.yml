@@ -39,38 +39,50 @@
         state: started
         enabled: yes
 
-    - name: Create PostgreSQL database
-      community.postgresql.postgresql_db:
-        name: "{{ db_name }}"
-        state: present
-      become_user: postgres
-
-    - name: Create new PostgreSQL user
+    - name: Create PostgreSQL user
       community.postgresql.postgresql_user:
+        db: "{{ db_name }}" # Connect to the specified database
         name: "{{ db_user }}"
         password: "{{ db_password }}"
         state: present
-      become_user: postgres
 
-    - name: Grant ALL privileges on the database to the user
+    - name: Create PostgreSQL database for the new user
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ db_user }}"
+        state: present
+
+    - name: Grant ALL PRIVILEGES on the database to the new user
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
+        role: "{{ db_user }}"
         privs: ALL
         type: database
-        objs: "{{ db_name }}"
-        roles: "{{ db_user }}"
         state: present
-      become_user: postgres
+      # This grants the user all privileges on the specified database.
 
-    - name: Grant ALL privileges on the public schema to the user
+    - name: Grant ALL PRIVILEGES on the public schema to the new user
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
+        role: "{{ db_user }}"
         privs: ALL
         type: schema
-        objs: public
-        roles: "{{ db_user }}"
+        obj: public # Target the 'public' schema
         state: present
-      become_user: postgres
+      # This grants the user all privileges on the 'public' schema.
+
+    - name: Grant ALL PRIVILEGES on existing tables in public schema to the new user
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {{ db_user }};"
+      # This runs a raw SQL query to grant privileges on *all currently existing* tables in the public schema.
+
+    - name: Grant ALL PRIVILEGES on future tables in public schema to the new user
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO {{ db_user }};"
+      # This sets up default privileges so that any *new* tables created in the public schema
+      # will automatically grant ALL PRIVILEGES to the specified user.
 
     - name: Show success message
       debug:
