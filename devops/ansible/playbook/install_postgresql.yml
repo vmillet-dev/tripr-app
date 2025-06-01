@@ -52,21 +52,25 @@
         state: present
       become_user: postgres
 
-    - name: Grant all database privileges to the user
+    - name: Grant ALL privileges on the database to the user
       community.postgresql.postgresql_privs:
-        login_db: postgres
+        db: "{{ db_name }}"
         privs: ALL
         type: database
-        obj: "{{ db_name }}"
-        role: "{{ db_user }}"
+        objs: "{{ db_name }}"
+        roles: "{{ db_user }}"
+        state: present
+        login_user: postgres
 
-    - name: Grant schema privileges to the user
+    - name: Grant ALL privileges on the public schema to the user
       community.postgresql.postgresql_privs:
-        login_db: "{{ db_name }}"
+        db: "{{ db_name }}"
         privs: ALL
         type: schema
         objs: public
-        role: "{{ db_user }}"
+        roles: "{{ db_user }}"
+        state: present
+        login_user: postgres
 
     - name: Show success message
       debug:
