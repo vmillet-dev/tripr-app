@@ -60,7 +60,7 @@
         objs: "{{ db_name }}"
         roles: "{{ db_user }}"
         state: present
-        login_user: postgres
+      become_user: postgres
 
     - name: Grant ALL privileges on the public schema to the user
       community.postgresql.postgresql_privs:
@@ -70,7 +70,7 @@
         objs: public
         roles: "{{ db_user }}"
         state: present
-        login_user: postgres
+      become_user: postgres
 
     - name: Show success message
       debug:
