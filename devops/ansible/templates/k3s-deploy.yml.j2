@@ -41,7 +41,7 @@ spec:
           httpGet:
             path: /
             port: {{ app_port | default(8080) }}
-          initialDelaySeconds: 10
+          initialDelaySeconds: 65
           periodSeconds: 5
           timeoutSeconds: 3
           successThreshold: 1
@@ -50,7 +50,7 @@ spec:
           httpGet:
             path: /
             port: {{ app_port | default(8080) }}
-          initialDelaySeconds: 30
+          initialDelaySeconds: 65
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
