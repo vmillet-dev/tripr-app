@@ -29,13 +29,6 @@ spec:
         envFrom:
         - secretRef:
             name: {{ app_name }}-secrets
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-          requests:
-            memory: "256Mi"
-            cpu: "200m"
         readinessProbe:
           httpGet:
             path: {{ health_check_path | default('/') }}
