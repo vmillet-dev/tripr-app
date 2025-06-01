@@ -62,6 +62,7 @@ jobs:
           ANSIBLE_JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ANSIBLE_BASE_URL: ${{ secrets.BASE_URL }}
           ANSIBLE_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}:latest
+          ANSIBLE_K3S_APP_PORT: ${{ secrets.K3S_APP_PORT }}
           ANSIBLE_K3S_REPLICAS: ${{ secrets.K3S_REPLICAS }}
           ANSIBLE_PG_VERSION: ${{ secrets.PG_VERSION }}
   build-backend:

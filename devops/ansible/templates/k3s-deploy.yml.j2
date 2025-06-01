@@ -31,7 +31,7 @@ spec:
             memory: "1Gi"
             cpu: "2"
         ports:
-        - containerPort: {{ app_port | default(8081) }}
+        - containerPort: {{ app_port | default(8080) }}
           name: http
         envFrom:
         - secretRef:
@@ -47,6 +47,6 @@ spec:
     app: {{ app_name }}
   ports:
   - port: 80
-    targetPort: {{ app_port | default(8081) }}
+    targetPort: {{ app_port | default(8080) }}
     name: http
   type: {{ service_type | default('LoadBalancer') }}

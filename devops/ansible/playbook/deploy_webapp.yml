@@ -4,6 +4,8 @@
   become: yes
   vars:
     app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"
+    app_port: "{{ lookup('env', 'ANSIBLE_K3S_APP_PORT') }}"
+    app_replicas: "{{ lookup('env', 'ANSIBLE_K3S_REPLICAS') }}"
   tasks:
     - name: Check if namespace exists
       ansible.builtin.command: "kubectl get namespace {{ app_name }}"
