@@ -1,41 +1,4 @@
 ---
-- name: Install and setup PostgreSQL
-  hosts: raspberry
-  become: yes
-  vars:
-    db_name: "{{ lookup('env', 'ANSIBLE_DB_NAME') }}"
-    db_user: "{{ lookup('env', 'ANSIBLE_DB_USERNAME') }}"
-    db_password: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
-    pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') }}"
-
-  tasks:
-    - name: Install postgresql-common to get APT configuration script
-      apt:
-        name:
-          - "postgresql-common"
-        state: present
-
-    - name: Check if PostgreSQL APT source is already present
-      ansible.builtin.shell: "cat /etc/apt/sources.list /etc/apt/sources.list.d/* | grep -q 'https://apt.postgresql.org'"
-      register: pgsql_apt_source_check
-      ignore_errors: true
-      changed_when: false
-
-    - name: Execute pgdg apt script if PostgreSQL APT source is not found
-      ansible.builtin.command: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y"
-      when: pgsql_apt_source_check.rc != 0
-
-    - name: Install PostgreSQL and its dependencies
-      apt:
-        name:
-          - "postgresql-{{ pg_version }}"
-          - "postgresql-client-{{ pg_version }}"
-          - python3-psycopg2 # Required for module community.postgresql.postgresql_user and postgresql_db
-        state: present
-
-    - name: Ensure that the PostgreSQL service is started and activated
-      systemd:
----
 - name: Install and configure PostgreSQL
   hosts: raspberry
   become: yes
@@ -145,15 +108,4 @@
     - name: Restart PostgreSQL
       systemd:
         name: postgresql
-        state: restarted ALL TABLES IN SCHEMA public TO {{ db_user }};"
-
-    - name: Grant ALL PRIVILEGES on future tables in public schema to the new user
-      become_user: postgres
-      community.postgresql.postgresql_query:
-        db: "{{ db_name }}"
-        query: "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO {{ db_user }};"
-
-    - name: Show success message
-      debug:
-        msg: "The database '{{ db_name }}' and the user '{{ db_user }}' have been successfully created."
-
+        state: restarted
