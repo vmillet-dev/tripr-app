@@ -35,6 +35,43 @@
 
     - name: Ensure that the PostgreSQL service is started and activated
       systemd:
+---
+- name: Install and configure PostgreSQL
+  hosts: raspberry
+  become: yes
+  vars:
+    db_name: "{{ lookup('env', 'ANSIBLE_DB_NAME') }}"
+    db_user: "{{ lookup('env', 'ANSIBLE_DB_USERNAME') }}"
+    db_password: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
+    pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') }}"
+    pg_data_dir: "/etc/postgresql/{{ pg_version }}/main"
+
+  tasks:
+    - name: Install postgresql-common to get APT configuration script
+      apt:
+        name: postgresql-common
+        state: present
+
+    - name: Check if PostgreSQL APT source is already present
+      shell: "cat /etc/apt/sources.list /etc/apt/sources.list.d/* | grep -q 'https://apt.postgresql.org'"
+      register: pgsql_apt_source_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Execute pgdg apt script if PostgreSQL APT source is not found
+      command: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y"
+      when: pgsql_apt_source_check.rc != 0
+
+    - name: Install PostgreSQL and its dependencies
+      apt:
+        name:
+          - "postgresql-{{ pg_version }}"
+          - "postgresql-client-{{ pg_version }}"
+          - python3-psycopg2
+        state: present
+
+    - name: Ensure PostgreSQL is started and enabled
+      systemd:
         name: "postgresql@{{ pg_version }}-main"
         state: started
         enabled: yes
@@ -47,14 +84,14 @@
         password: "{{ db_password }}"
         state: present
 
-    - name: Create PostgreSQL database for the new user
+    - name: Create PostgreSQL database
       become_user: postgres
       community.postgresql.postgresql_db:
         name: "{{ db_name }}"
         owner: "{{ db_user }}"
         state: present
 
-    - name: Grant ALL PRIVILEGES on the database to the new user
+    - name: Grant privileges on database
       become_user: postgres
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
@@ -63,21 +100,52 @@
         type: database
         state: present
 
-    - name: Grant ALL PRIVILEGES on the public schema to the new user
+    - name: Grant privileges on schema
       become_user: postgres
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
         role: "{{ db_user }}"
         privs: ALL
         type: schema
-        obj: public # Target the 'public' schema
+        obj: public
         state: present
 
-    - name: Grant ALL PRIVILEGES on existing tables in public schema to the new user
+    - name: Grant privileges on existing tables
       become_user: postgres
       community.postgresql.postgresql_query:
         db: "{{ db_name }}"
         query: "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {{ db_user }};"
+
+    - name: Grant privileges on future tables
+      become_user: postgres
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO {{ db_user }};"
+
+    - name: Allow local network access in pg_hba.conf
+      lineinfile:
+        path: "{{ pg_data_dir }}/pg_hba.conf"
+        insertafter: "^# TYPE.*DATABASE.*USER.*ADDRESS.*METHOD"
+        line: "host    all             all             192.168.0.0/24            md5"
+        state: present
+      notify: Restart PostgreSQL
+
+    - name: Set listen_addresses to '*'
+      lineinfile:
+        path: "{{ pg_data_dir }}/postgresql.conf"
+        regexp: "^#?listen_addresses\s*="
+        line: "listen_addresses = '*'"
+      notify: Restart PostgreSQL
+
+    - name: Show success message
+      debug:
+        msg: "The database '{{ db_name }}' and the user '{{ db_user }}' have been successfully created and configured."
+
+  handlers:
+    - name: Restart PostgreSQL
+      systemd:
+        name: postgresql
+        state: restarted ALL TABLES IN SCHEMA public TO {{ db_user }};"
 
     - name: Grant ALL PRIVILEGES on future tables in public schema to the new user
       become_user: postgres
@@ -88,3 +156,4 @@
     - name: Show success message
       debug:
         msg: "The database '{{ db_name }}' and the user '{{ db_user }}' have been successfully created."
+
