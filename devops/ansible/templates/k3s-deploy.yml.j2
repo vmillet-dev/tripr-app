@@ -32,24 +32,22 @@ spec:
             memory: "1Gi"
             cpu: "2"
         ports:
-        - containerPort: {{ app_port | default(8080) }}
+        - containerPort: 8080
           name: http
         envFrom:
         - secretRef:
             name: {{ app_name }}-secrets
         readinessProbe:
-          httpGet:
-            path: /
-            port: {{ app_port | default(8080) }}
+          tcpSocket:
+            port: 8080
           initialDelaySeconds: 65
           periodSeconds: 5
           timeoutSeconds: 3
           successThreshold: 1
           failureThreshold: 30
         livenessProbe:
-          httpGet:
-            path: /
-            port: {{ app_port | default(8080) }}
+          tcpSocket:
+            port: 8080
           initialDelaySeconds: 65
           periodSeconds: 10
           timeoutSeconds: 5
@@ -65,6 +63,26 @@ spec:
     app: {{ app_name }}
   ports:
   - port: 80
-    targetPort: {{ app_port | default(8080) }}
-    name: http
-  type: {{ service_type | default('LoadBalancer') }}
+    targetPort: 8080
+  type: ClusterIP
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ app_name }}-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: tripr.ovh
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ app_name }}-service
+                port:
+                  number: 80

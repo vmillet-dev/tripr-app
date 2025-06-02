@@ -48,22 +48,10 @@
       # Using 'shell' for 'kubectl rollout status' is common as there isn't a direct Ansible module that blocks until rollout completion.
       # The '--timeout' flag is important to prevent indefinite waiting.
 
-    - name: Get service details (LoadBalancer IP or ClusterIP)
-      ansible.builtin.shell: |
-        set -euo pipefail
-        # Try to get LoadBalancer IP first
-        SERVICE_IP=$(kubectl get service {{ app_name }}-service -n {{ app_name }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
-        echo "$SERVICE_IP"
-      register: service_ip
-      retries: 10 # Retry getting IP for up to 100 seconds (10 retries * 10s delay)
-      delay: 10
-      until: service_ip.stdout is defined and service_ip.stdout != ""
-      # The '2>/dev/null' suppresses errors if LoadBalancer IP is not yet available.
-      # The 'if [ -z "$SERVICE_IP" ]' checks if the LoadBalancer IP is empty and falls back to ClusterIP.
 
     - name: Test application health
       ansible.builtin.uri:
-        url: "http://{{ service_ip.stdout }}:80"
+        url: "http://127.0.0.1:80"
         method: GET
         status_code: 200
         timeout: 10
