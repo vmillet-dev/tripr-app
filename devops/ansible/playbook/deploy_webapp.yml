@@ -3,8 +3,8 @@
   hosts: raspberry
   become: yes
   vars:
-    app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"
-    app_port: "{{ lookup('env', 'ANSIBLE_K3S_APP_PORT') }}"
+    app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"*
+    db_host_ip: "{{ ansible_default_ipv4.address }}"
     app_replicas: "{{ lookup('env', 'ANSIBLE_K3S_REPLICAS') }}"
   tasks:
     - name: Check if namespace exists

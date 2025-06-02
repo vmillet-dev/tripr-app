@@ -20,7 +20,6 @@ spec:
       labels:
         app: {{ app_name }}
     spec:
-      hostNetwork: true
       containers:
       - name: {{ app_name }}
         image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
@@ -52,6 +51,20 @@ spec:
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-external
+  namespace: {{ app_name }}
+spec:
+  type: ExternalName
+  externalName: {{ db_host_ip }}
+  ports:
+  - port: 5432
+    targetPort: 5432
+
 ---
 apiVersion: v1
 kind: Service
