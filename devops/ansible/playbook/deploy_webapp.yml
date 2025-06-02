@@ -68,7 +68,7 @@
           Deployment successful!
           App: {{ app_name }}
           Image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
-          URL: http://{{ service_ip.stdout }}:80
+          URL: http://127.0.0.1:80
           Status: {{ health_check.status }}
       when: health_check.status == 200 # Only display success message if health check passed
 
