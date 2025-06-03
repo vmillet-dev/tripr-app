@@ -89,7 +89,7 @@
       lineinfile:
         path: "{{ pg_data_dir }}/pg_hba.conf"
         insertafter: "^# TYPE.*DATABASE.*USER.*ADDRESS.*METHOD"
-        line: "host    all             all             192.168.0.0/24            md5"
+        line: "host    all             all            {{ pod_cidr_ip }}           md5"
         state: present
       notify: Restart PostgreSQL
 
