@@ -86,7 +86,7 @@ kind: Ingress
 metadata:
   name: {{ app_name }}-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: traefik
 spec:
   rules:
     - http:
