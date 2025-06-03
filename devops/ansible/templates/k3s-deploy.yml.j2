@@ -20,6 +20,11 @@ spec:
       labels:
         app: {{ app_name }}
     spec:
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - "1.1.1.1"
+          - "9.9.9.9"
       containers:
       - name: {{ app_name }}
         image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
