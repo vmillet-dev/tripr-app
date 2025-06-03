@@ -22,26 +22,31 @@
       when: k3s_check.rc != 0
 
     - name: Install cert-manager
-      kubernetes.core.k8s:
-        state: present
-        src: https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
-        wait: true
-        wait_timeout: 300
+      shell: |
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
+      register: cert_manager_install
+
+    - name: Wait for cert-manager to be ready
+      shell: |
+        kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=cert-manager -n cert-manager --timeout=300s
+      retries: 3
+      delay: 10
 
     - name: Create Let's Encrypt issuer
-      kubernetes.core.k8s:
-        definition:
-          apiVersion: cert-manager.io/v1
-          kind: ClusterIssuer
-          metadata:
-            name: letsencrypt-prod
-          spec:
-            acme:
-              server: https://acme-v02.api.letsencrypt.org/directory
-              email: test@mail.com
-              privateKeySecretRef:
-                name: letsencrypt-prod-key
-              solvers:
-              - http01:
-                  ingress:
-                    class: traefik
+      shell: |
+        kubectl apply -f - <<EOF
+        apiVersion: cert-manager.io/v1
+        kind: ClusterIssuer
+        metadata:
+          name: letsencrypt-prod
+        spec:
+          acme:
+            server: https://acme-v02.api.letsencrypt.org/directory
+            email: mail@toto.com
+            privateKeySecretRef:
+              name: letsencrypt-prod-key
+            solvers:
+            - http01:
+                ingress:
+                  class: traefik
+        EOF
