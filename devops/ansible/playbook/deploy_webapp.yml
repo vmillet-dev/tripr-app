@@ -14,14 +14,6 @@
       set_fact:
         db_host_ip: "{{ host_ip_result.stdout }}"
 
-    - name: Get pod CIDR addresses
-      shell: kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}'
-      register: pod_cidr_result
-
-    - name: Set pod_cidr_result variable
-      set_fact:
-        pod_cidr_ip: "{{ pod_cidr_result.stdout }}"
-
     - name: Check if namespace exists
       ansible.builtin.command: "kubectl get namespace {{ app_name }}"
       register: namespace_check
