@@ -5,7 +5,7 @@
   vars:
     app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"
     app_replicas: "{{ lookup('env', 'ANSIBLE_K3S_REPLICAS') }}"
-    cert_manager_email: "toto@gmail.com"
+    cert_manager_email: "valentin.millet39@gmail.com"
     app_domain: "tripr.ovh"
   tasks:
     - name: Get host IP address
