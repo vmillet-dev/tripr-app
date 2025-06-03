@@ -89,7 +89,8 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - http:
+    - host: tripr.ovh  # Remplacez par votre domaine
+      http:
         paths:
           - path: /
             pathType: Prefix
