@@ -39,7 +39,6 @@
         kind: ClusterIssuer
         metadata:
           name: letsencrypt-prod
-          namespace: {{ app_name }}
         spec:
           acme:
             server: https://acme-v02.api.letsencrypt.org/directory
