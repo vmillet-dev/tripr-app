@@ -86,8 +86,9 @@ metadata:
   name: {{ app_name }}-ingress
   namespace: {{ app_name }}
   annotations:
-    traefik.ingress.kubernetes.io/service.namespace: {{ app_name }}
     kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
     #cert-manager.io/cluster-issuer: "letsencrypt-staging"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
