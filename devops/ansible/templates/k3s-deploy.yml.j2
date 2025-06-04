@@ -87,7 +87,8 @@ metadata:
   namespace: {{ app_name }}
   annotations:
     kubernetes.io/ingress.class: traefik
-    cert-manager.io/cluster-issuer: "letsencrypt-staging" # Ou "letsencrypt-prod" quand vous êtes prêt
+    #cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   rules:
     - host: {{ app_domain }}
