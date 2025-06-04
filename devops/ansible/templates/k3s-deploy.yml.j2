@@ -87,10 +87,8 @@ metadata:
   namespace: {{ app_name }}
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    #cert-manager.io/cluster-issuer: "letsencrypt-staging"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    #cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   rules:
     - host: {{ app_domain }}
@@ -100,7 +98,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ app_name }}-service
+                name: {{ app_name }}-service.{{ app_name }}.svc.cluster.local
                 port:
                   number: 80
   tls:
