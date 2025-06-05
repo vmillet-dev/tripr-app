@@ -2,7 +2,7 @@ name: Build and Test
 
 on:
   push:
-  #branches-ignore: [ main ]
+    branches-ignore: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -12,59 +12,6 @@ env:
   NODE_VERSION: '22'
 
 jobs:
-  test-ssh:
-    runs-on: ubuntu-latest
-    container: alpine/ansible:2.18.6
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/production.key
-          chmod 600 ~/.ssh/production.key
-          cat >>~/.ssh/config <<END
-          Host production
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/production.key
-            StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: ${{ secrets.SERVER_USERNAME }}
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SERVER_HOST }}
-
-      - name: Create Ansible inventory
-        working-directory: devops/ansible
-        run: |
-          cat > inventory.ini << EOF
-          [raspberry]
-          ${{ secrets.SERVER_HOST }} ansible_user=${{ secrets.SERVER_USERNAME }} ansible_ssh_private_key_file=~/.ssh/production.key
-          EOF
-
-      - name: Run ansible playbook
-        working-directory: devops/ansible
-        run: |
-          ansible-playbook -i inventory.ini playbook/main.yml --ssh-extra-args='-o StrictHostKeyChecking=no'
-        env:
-          ANSIBLE_APP_NAME: ${{ secrets.APP_NAME }}
-          ANSIBLE_MAIL_HOST: ${{ secrets.MAIL_HOST }}
-          ANSIBLE_MAIL_PORT: ${{ secrets.MAIL_PORT }}
-          ANSIBLE_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-          ANSIBLE_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-          ANSIBLE_DB_HOST: ${{ secrets.DB_HOST }}
-          ANSIBLE_DB_PORT: ${{ secrets.DB_PORT }}
-          ANSIBLE_DB_NAME: ${{ secrets.DB_NAME }}
-          ANSIBLE_DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          ANSIBLE_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          ANSIBLE_JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          ANSIBLE_BASE_URL: ${{ secrets.BASE_URL }}
-          ANSIBLE_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}:latest
-          ANSIBLE_K3S_APP_PORT: ${{ secrets.K3S_APP_PORT }}
-          ANSIBLE_K3S_REPLICAS: ${{ secrets.K3S_REPLICAS }}
-          ANSIBLE_PG_VERSION: ${{ secrets.PG_VERSION }}
   build-backend:
     runs-on: ubuntu-latest
     steps:

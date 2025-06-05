@@ -6,10 +6,9 @@ app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"
 app_replicas: "{{ lookup('env', 'ANSIBLE_K3S_REPLICAS') | default('2') }}"
 app_port: "{{ lookup('env', 'ANSIBLE_K3S_APP_PORT') | default('8080') }}"
 docker_image: "{{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}"
-base_url: "{{ lookup('env', 'ANSIBLE_BASE_URL') }}"
 
 # Domain and SSL Configuration
-app_domain: "tripr.ovh"
+app_domain: "{{ lookup('env', 'ANSIBLE_BASE_URL') }}"
 cert_manager_email: "valentin.millet39@gmail.com"
 
 # Database Configuration
@@ -18,7 +17,7 @@ db_user: "{{ lookup('env', 'ANSIBLE_DB_USERNAME') }}"
 db_password: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
 db_host: "{{ lookup('env', 'ANSIBLE_DB_HOST') }}"
 db_port: "{{ lookup('env', 'ANSIBLE_DB_PORT') | default('5432') }}"
-pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') | default('15') }}"
+pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') | default('17') }}"
 
 # Mail Configuration
 mail_host: "{{ lookup('env', 'ANSIBLE_MAIL_HOST') }}"

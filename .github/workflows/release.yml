@@ -5,7 +5,7 @@ on:
     tags: [ 'v*' ]
 
 jobs:
-  build-and-push-docker-image:
+  docker-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,7 +28,6 @@ jobs:
           images: ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}
           tags: |
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest
 
       - name: Build and push
@@ -39,13 +38,16 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
+          cache-from: |
+            type=gha
+            type=registry,ref=${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:cache
+          cache-to: |
+            type=gha,mode=max
+            type=registry,ref=${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:cache,mode=max
   deploy:
-    needs: build-and-push-docker-image
     runs-on: ubuntu-latest
-
+    needs: docker-image
+    container: alpine/ansible:2.18.6
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,24 +69,32 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SERVER_HOST }}
 
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
-
       - name: Create Ansible inventory
+        working-directory: devops/ansible
         run: |
           cat > inventory.ini << EOF
           [raspberry]
           ${{ secrets.SERVER_HOST }} ansible_user=${{ secrets.SERVER_USERNAME }} ansible_ssh_private_key_file=~/.ssh/production.key
           EOF
 
-      - name: Run Ansible Playbook
+      - name: Run ansible playbook
+        working-directory: devops/ansible
         run: |
-          ansible-playbook -i inventory.ini deploy.yml \
-            -e "docker_image=${{ needs.build-and-push.outputs.image-tag }}" \
-            -e "app_name=${{ env.IMAGE_NAME }}" \
-            -e "db_password=${{ secrets.DB_PASSWORD }}" \
-            -e "app_env=${{ secrets.APP_ENV }}" \
-            -e "app_port=${{ secrets.APP_PORT || '3000' }}" \
-            --ssh-extra-args='-o StrictHostKeyChecking=no'
+          ansible-playbook -i inventory.ini playbook/main.yml --ssh-extra-args='-o StrictHostKeyChecking=no'
+        env:
+          ANSIBLE_APP_NAME: ${{ secrets.APP_NAME }}
+          ANSIBLE_MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          ANSIBLE_MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          ANSIBLE_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          ANSIBLE_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          ANSIBLE_DB_HOST: ${{ secrets.DB_HOST }}
+          ANSIBLE_DB_PORT: ${{ secrets.DB_PORT }}
+          ANSIBLE_DB_NAME: ${{ secrets.DB_NAME }}
+          ANSIBLE_DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          ANSIBLE_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ANSIBLE_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ANSIBLE_BASE_URL: ${{ secrets.BASE_URL }}
+          ANSIBLE_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}:latest
+          ANSIBLE_K3S_APP_PORT: ${{ secrets.K3S_APP_PORT }}
+          ANSIBLE_K3S_REPLICAS: ${{ secrets.K3S_REPLICAS }}
+          ANSIBLE_PG_VERSION: ${{ secrets.PG_VERSION }}

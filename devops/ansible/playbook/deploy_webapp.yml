@@ -1,7 +1,7 @@
 ---
 # Web Application Deployment Playbook
 #
-# This playbook deploys the Tripr Spring Boot application to K3s cluster.
+# This playbook deploys the Spring Boot application to K3s cluster.
 # It creates namespaces, applies secrets, configures SSL certificates,
 # and deploys the application with health checks and rollback capabilities.
 #
