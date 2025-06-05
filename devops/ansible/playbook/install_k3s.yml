@@ -29,14 +29,7 @@
         name:
           - python3-pip
           - python3-packaging
-        state: present
-      tags:
-        - k3s
-        - dependencies
-
-    - name: Install Python kubernetes library
-      ansible.builtin.pip:
-        name: kubernetes
+          - python3-kubernetes
         state: present
       tags:
         - k3s
