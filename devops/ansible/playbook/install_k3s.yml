@@ -74,6 +74,7 @@
         api_version: v1
         kind: Namespace
         name: "{{ cert_manager.namespace }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       register: cert_manager_namespace_check
       failed_when: false
       changed_when: false
@@ -89,6 +90,7 @@
           kind: Namespace
           metadata:
             name: "{{ cert_manager.namespace }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       when: cert_manager_namespace_check.resources is defined and cert_manager_namespace_check.resources | length == 0
       tags:
         - cert-manager
@@ -98,6 +100,7 @@
       kubernetes.core.k8s:
         state: present
         src: "{{ cert_manager.manifest_url }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       when: cert_manager_namespace_check.resources is defined and cert_manager_namespace_check.resources | length == 0
       tags:
         - cert-manager
@@ -115,6 +118,7 @@
           type: Ready
           status: "True"
         wait_timeout: "{{ cert_manager.wait_timeout }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       retries: 3
       delay: 10
       tags:
