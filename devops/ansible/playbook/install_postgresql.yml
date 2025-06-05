@@ -1,13 +1,24 @@
 ---
+# PostgreSQL Installation and Configuration Playbook
+# 
+# This playbook installs PostgreSQL server, creates application database and user,
+# configures network access for Kubernetes pods, and sets up proper privileges.
+#
+# Variables used:
+# - db_name: Database name for the application
+# - db_user: Database username for the application
+# - db_password: Database password for the application
+# - pg_version: PostgreSQL version to install
+# - postgresql.data_dir: PostgreSQL data directory path
+#
+# Tags: postgresql, database, setup, privileges, configuration
 - name: Install and configure PostgreSQL
   hosts: raspberry
   become: yes
-  vars:
-    db_name: "{{ lookup('env', 'ANSIBLE_DB_NAME') }}"
-    db_user: "{{ lookup('env', 'ANSIBLE_DB_USERNAME') }}"
-    db_password: "{{ lookup('env', 'ANSIBLE_DB_PASSWORD') }}"
-    pg_version: "{{ lookup('env', 'ANSIBLE_PG_VERSION') }}"
-    pg_data_dir: "/etc/postgresql/{{ pg_version }}/main"
+  tags:
+    - postgresql
+    - database
+    - setup
 
   tasks:
     - name: Get pod CIDR addresses
@@ -24,14 +35,27 @@
         state: present
 
     - name: Check if PostgreSQL APT source is already present
-      shell: "cat /etc/apt/sources.list /etc/apt/sources.list.d/* | grep -q 'https://apt.postgresql.org'"
-      register: pgsql_apt_source_check
-      ignore_errors: true
+      ansible.builtin.find:
+        paths:
+          - /etc/apt/sources.list.d
+        patterns: "*postgresql*"
+      register: pgsql_apt_source_files
+      
+    - name: Check PostgreSQL APT source in main sources.list
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list
+        regexp: "apt.postgresql.org"
+        state: absent
+      check_mode: yes
+      register: pgsql_main_source_check
       changed_when: false
 
     - name: Execute pgdg apt script if PostgreSQL APT source is not found
       command: "/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y"
-      when: pgsql_apt_source_check.rc != 0
+      when: 
+        - pgsql_apt_source_files.files | length == 0
+        - not pgsql_main_source_check.found
+      changed_when: true
 
     - name: Install PostgreSQL and its dependencies
       apt:
@@ -81,32 +105,62 @@
         obj: public
         state: present
 
+    - name: Check if user has table privileges
+      become_user: postgres
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: "SELECT COUNT(*) FROM information_schema.table_privileges WHERE grantee = '{{ db_user }}' AND privilege_type = 'SELECT';"
+      register: table_privileges_check
+      changed_when: false
+
     - name: Grant privileges on existing tables
       become_user: postgres
       community.postgresql.postgresql_query:
         db: "{{ db_name }}"
         query: "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {{ db_user }};"
+      when: table_privileges_check.query_result[0].count | int == 0
+      tags:
+        - postgresql
+        - privileges
+
+    - name: Check if default privileges are set
+      become_user: postgres
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: "SELECT COUNT(*) FROM pg_default_acl WHERE defaclrole = (SELECT oid FROM pg_roles WHERE rolname = '{{ db_user }}');"
+      register: default_privileges_check
+      changed_when: false
 
     - name: Grant privileges on future tables
       become_user: postgres
       community.postgresql.postgresql_query:
         db: "{{ db_name }}"
         query: "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO {{ db_user }};"
+      when: default_privileges_check.query_result[0].count | int == 0
+      tags:
+        - postgresql
+        - privileges
 
     - name: Allow local network access in pg_hba.conf
       lineinfile:
-        path: "{{ pg_data_dir }}/pg_hba.conf"
+        path: "{{ postgresql.data_dir }}/pg_hba.conf"
         insertafter: "^# TYPE.*DATABASE.*USER.*ADDRESS.*METHOD"
         line: "host    all             all            {{ pod_cidr_ip }}           md5"
         state: present
       notify: Restart PostgreSQL
+      tags:
+        - postgresql
+        - configuration
 
     - name: Set listen_addresses to '*'
       lineinfile:
-        path: "{{ pg_data_dir }}/postgresql.conf"
+        path: "{{ postgresql.data_dir }}/postgresql.conf"
         regexp: '^#?listen_addresses\s*='
         line: "listen_addresses = '*'"
       notify: Restart PostgreSQL
+      tags:
+        - postgresql
+        - configuration
 
     - name: Show success message
       debug:

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: {{ app_name }}
 spec:
-  replicas: 2
+  replicas: {{ app_replicas }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -22,35 +22,36 @@ spec:
     spec:
       containers:
       - name: {{ app_name }}
-        image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
+        image: {{ docker_image }}
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "250m"
+            memory: "{{ k8s_resources.requests.memory }}"
+            cpu: "{{ k8s_resources.requests.cpu }}"
           limits:
-            memory: "1Gi"
-            cpu: "2"
+            memory: "{{ k8s_resources.limits.memory }}"
+            cpu: "{{ k8s_resources.limits.cpu }}"
         ports:
-        - containerPort: 8080
+        - containerPort: {{ app_port }}
           name: http
+          protocol: TCP
         envFrom:
         - secretRef:
             name: {{ app_name }}-secrets
         readinessProbe:
           tcpSocket:
-            port: 8080
-          initialDelaySeconds: 65
-          periodSeconds: 5
-          timeoutSeconds: 3
-          successThreshold: 1
-          failureThreshold: 30
+            port: {{ app_port }}
+          initialDelaySeconds: {{ health_check.initial_delay_seconds }}
+          periodSeconds: {{ health_check.period_seconds }}
+          timeoutSeconds: {{ health_check.timeout_seconds }}
+          successThreshold: {{ health_check.success_threshold }}
+          failureThreshold: {{ health_check.failure_threshold }}
         livenessProbe:
           tcpSocket:
-            port: 8080
-          initialDelaySeconds: 65
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 30
+            port: {{ app_port }}
+          initialDelaySeconds: {{ liveness_probe.initial_delay_seconds }}
+          periodSeconds: {{ liveness_probe.period_seconds }}
+          timeoutSeconds: {{ liveness_probe.timeout_seconds }}
+          failureThreshold: {{ liveness_probe.failure_threshold }}
 
 ---
 apiVersion: v1
@@ -62,8 +63,8 @@ spec:
   type: ExternalName
   externalName: {{ db_host_ip }}
   ports:
-  - port: 5432
-    targetPort: 5432
+  - port: {{ db_port }}
+    targetPort: {{ db_port }}
 
 ---
 apiVersion: v1
@@ -76,7 +77,7 @@ spec:
     app: {{ app_name }}
   ports:
   - port: 80
-    targetPort: 8080
+    targetPort: {{ app_port }}
   type: ClusterIP
 
 ---
