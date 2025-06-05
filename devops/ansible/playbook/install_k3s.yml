@@ -1,33 +1,126 @@
 ---
+# K3s and Cert-Manager Installation Playbook
+#
+# This playbook installs K3s (lightweight Kubernetes) and cert-manager for
+# automatic SSL certificate management. It includes proper idempotency checks
+# and uses the kubernetes.core collection for better resource management.
+#
+# Variables used:
+# - k3s.install_script_url: URL for K3s installation script
+# - k3s.api_port: K3s API server port (default: 6443)
+# - k3s.wait_timeout: Timeout for K3s readiness check
+# - cert_manager.version: Cert-manager version to install
+# - cert_manager.manifest_url: URL for cert-manager manifests
+# - cert_manager.namespace: Namespace for cert-manager (default: cert-manager)
+# - cert_manager.wait_timeout: Timeout for cert-manager readiness
+#
+# Tags: k3s, kubernetes, cert-manager, setup, installation, verification
 - name: Install K3s
   hosts: raspberry
   become: yes
+  tags:
+    - k3s
+    - kubernetes
+    - setup
 
   tasks:
-    - name: Check if K3S is installed
-      command: which k3s
-      register: k3s_check
+    - name: Install Python dependencies
+      ansible.builtin.package:
+        name:
+          - python3-pip
+          - python3-packaging
+          - python3-kubernetes
+        state: present
+      tags:
+        - k3s
+        - dependencies
+    - name: Check if K3s service exists and is running
+      ansible.builtin.systemd:
+        name: k3s
+      register: k3s_service_status
       failed_when: false
       changed_when: false
 
     - name: Install K3s if needed
-      shell: curl -sfL https://get.k3s.io | sh -
-      when: k3s_check.rc != 0
+      ansible.builtin.get_url:
+        url: "{{ k3s.install_script_url }}"
+        dest: /tmp/k3s-install.sh
+        mode: '0755'
+      when: k3s_service_status.status.ActiveState is not defined or k3s_service_status.status.ActiveState != "active"
+      tags:
+        - k3s
+        - installation
 
-    - name: Wait K3S to be ready
-      wait_for:
-        port: 6443
+    - name: Execute K3s installation script
+      ansible.builtin.command: /tmp/k3s-install.sh
+      when: k3s_service_status.status.ActiveState is not defined or k3s_service_status.status.ActiveState != "active"
+      changed_when: true
+      tags:
+        - k3s
+        - installation
+
+    - name: Wait for K3s to be ready
+      ansible.builtin.wait_for:
+        port: "{{ k3s.api_port }}"
         host: localhost
-        timeout: 60
-      when: k3s_check.rc != 0
+        timeout: "{{ k3s.wait_timeout }}"
+      when: k3s_service_status.status.ActiveState is not defined or k3s_service_status.status.ActiveState != "active"
+      tags:
+        - k3s
+        - verification
+
+    - name: Check if cert-manager namespace exists
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Namespace
+        name: "{{ cert_manager.namespace }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      register: cert_manager_namespace_check
+      failed_when: false
+      changed_when: false
+      tags:
+        - cert-manager
+        - verification
 
     - name: Install cert-manager
-      shell: |
-        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.2/cert-manager.yaml
-      register: cert_manager_install
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ cert_manager.namespace }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      when: cert_manager_namespace_check.resources is defined and cert_manager_namespace_check.resources | length == 0
+      tags:
+        - cert-manager
+        - installation
+
+    - name: Apply cert-manager manifests
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ cert_manager.manifest_url }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      when: cert_manager_namespace_check.resources is defined and cert_manager_namespace_check.resources | length == 0
+      tags:
+        - cert-manager
+        - installation
 
     - name: Wait for cert-manager to be ready
-      shell: |
-        kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=cert-manager -n cert-manager --timeout=300s
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ cert_manager.namespace }}"
+        label_selectors:
+          - app.kubernetes.io/instance=cert-manager
+        wait: true
+        wait_condition:
+          type: Ready
+          status: "True"
+        wait_timeout: "{{ cert_manager.wait_timeout }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       retries: 3
       delay: 10
+      tags:
+        - cert-manager
+        - verification

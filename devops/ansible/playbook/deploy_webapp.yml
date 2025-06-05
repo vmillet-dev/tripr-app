@@ -1,12 +1,27 @@
 ---
+# Web Application Deployment Playbook
+#
+# This playbook deploys the Spring Boot application to K3s cluster.
+# It creates namespaces, applies secrets, configures SSL certificates,
+# and deploys the application with health checks and rollback capabilities.
+#
+# Variables used:
+# - app_name: Application name for Kubernetes resources
+# - app_replicas: Number of application replicas
+# - app_domain: Domain name for the application
+# - cert_manager_email: Email for SSL certificate registration
+# - docker_image: Docker image for the application
+# - All database, mail, and security configuration variables
+#
+# Tags: webapp, deployment, kubernetes, namespace, secrets, certificates, verification, rollback
 - name: Deploy webapp with K3s
   hosts: raspberry
   become: yes
-  vars:
-    app_name: "{{ lookup('env', 'ANSIBLE_APP_NAME') }}"
-    app_replicas: "{{ lookup('env', 'ANSIBLE_K3S_REPLICAS') }}"
-    cert_manager_email: "valentin.millet39@gmail.com"
-    app_domain: "tripr.ovh"
+  tags:
+    - webapp
+    - deployment
+    - kubernetes
+
   tasks:
     - name: Get host IP address
       shell: hostname -I | awk '{print $1}'
@@ -17,14 +32,29 @@
         db_host_ip: "{{ host_ip_result.stdout }}"
 
     - name: Check if namespace exists
-      ansible.builtin.command: "kubectl get namespace {{ app_name }}"
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Namespace
+        name: "{{ app_name }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       register: namespace_check
       failed_when: false
       changed_when: false
+      tags:
+        - webapp
+        - namespace
 
     - name: Create namespace if it doesn't exist
-      ansible.builtin.command: "kubectl create namespace {{ app_name }}"
-      when: namespace_check.rc != 0
+      kubernetes.core.k8s:
+        name: "{{ app_name }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      when: namespace_check.api_found is defined and not namespace_check.api_found
+      tags:
+        - webapp
+        - namespace
 
     - name: Generate Kubernetes Secret YAML
       ansible.builtin.template:
@@ -32,10 +62,13 @@
         dest: /tmp/{{ app_name }}-secret.yml # Where to render it on the remote server
 
     - name: Apply Kubernetes Secret
-      ansible.builtin.command: "kubectl apply -f /tmp/{{ app_name }}-secret.yml"
-      changed_when: true
-      args:
-        chdir: /tmp
+      kubernetes.core.k8s:
+        state: present
+        src: "/tmp/{{ app_name }}-secret.yml"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      tags:
+        - webapp
+        - secrets
 
     - name: Generate K3s cert manager cluster issuer
       ansible.builtin.template:
@@ -43,10 +76,13 @@
         dest: /tmp/{{ app_name }}-clusterissuer.yml
 
     - name: Apply K3s cert manager cluster issuer
-      ansible.builtin.command: "kubectl apply -f /tmp/{{ app_name }}-clusterissuer.yml"
-      args:
-        chdir: /tmp
-      changed_when: true
+      kubernetes.core.k8s:
+        state: present
+        src: "/tmp/{{ app_name }}-clusterissuer.yml"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      tags:
+        - webapp
+        - certificates
 
     - name: Generate K3s deployment and service YAML
       ansible.builtin.template:
@@ -54,19 +90,31 @@
         dest: /tmp/{{ app_name }}-deploy.yml
 
     - name: Apply K3s deployment and service
-      ansible.builtin.command: "kubectl apply -f /tmp/{{ app_name }}-deploy.yml"
-      args:
-        chdir: /tmp
-      changed_when: true
+      kubernetes.core.k8s:
+        state: present
+        src: "/tmp/{{ app_name }}-deploy.yml"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      tags:
+        - webapp
+        - deployment
 
     - name: Wait for deployment to be ready
-      ansible.builtin.shell: "kubectl rollout status deployment/{{ app_name }} --timeout=300s -n {{ app_name }}"
-      register: rollout_status
-      until: rollout_status.rc == 0
-      retries: 60 # Retry for up to 5 minutes (60 retries * 5s delay)
-      delay: 5
-      # Using 'shell' for 'kubectl rollout status' is common as there isn't a direct Ansible module that blocks until rollout completion.
-      # The '--timeout' flag is important to prevent indefinite waiting.
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: "{{ app_name }}"
+        namespace: "{{ app_name }}"
+        wait: true
+        wait_condition:
+          type: Progressing
+          status: "True"
+          reason: NewReplicaSetAvailable
+        wait_timeout: 300
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      register: deployment_status
+      tags:
+        - webapp
+        - verification
 
 
     - name: Test application health
@@ -88,15 +136,32 @@
         msg: |
           Deployment successful!
           App: {{ app_name }}
-          Image: {{ lookup('env', 'ANSIBLE_DOCKER_IMAGE') }}
+          Image: {{ docker_image }}
           URL: http://127.0.0.1:80
           Status: {{ health_check.status }}
-      when: health_check.status == 200 # Only display success message if health check passed
+      when: health_check.status == 200
+      tags:
+        - webapp
+        - verification
 
     - name: Rollback on health check failure
-      ansible.builtin.shell: "kubectl rollout undo deployment/{{ app_name }} -n {{ app_name }}"
-      when: health_check.failed | default(false) # Only run if the 'health_check' task failed
-      ignore_errors: yes # Ensure the playbook continues even if rollback fails
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "{{ app_name }}"
+            namespace: "{{ app_name }}"
+            annotations:
+              deployment.kubernetes.io/revision: "{{ (deployment_status.resources[0].metadata.annotations['deployment.kubernetes.io/revision'] | int) - 1 }}"
+        merge_type: strategic-merge
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+      when: health_check.failed | default(false)
+      ignore_errors: yes
+      tags:
+        - webapp
+        - rollback
 
     - name: Clean up temp files
       ansible.builtin.file:
