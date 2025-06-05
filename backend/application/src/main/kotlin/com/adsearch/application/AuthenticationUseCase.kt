@@ -1,6 +1,7 @@
 package com.adsearch.application
 
-import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.application.model.LoginResult
+import com.adsearch.application.model.RefreshResult
 import com.adsearch.domain.model.UserDom
 
 /**
@@ -11,7 +12,7 @@ interface AuthenticationUseCase {
     /**
      * Authenticate a user with username and password
      */
-    fun login(username: String, password: String): AuthResponseDom
+    fun login(username: String, password: String): LoginResult
 
     /**
      * Register a new user
@@ -21,7 +22,7 @@ interface AuthenticationUseCase {
     /**
      * Refresh an access token using a refresh token
      */
-    fun refreshAccessToken(refreshToken: String?): AuthResponseDom
+    fun refreshAccessToken(refreshToken: String?): RefreshResult
 
     /**
      * Logout a user by invalidating their refresh tokens
