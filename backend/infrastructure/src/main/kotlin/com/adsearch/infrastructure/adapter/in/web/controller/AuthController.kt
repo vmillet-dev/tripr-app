@@ -1,13 +1,13 @@
 package com.adsearch.infrastructure.adapter.`in`.web.controller
 
 import com.adsearch.application.AuthenticationUseCase
-import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthResponseDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.RegisterRequestDto
+import com.adsearch.infrastructure.adapter.`in`.web.mapper.AuthResponseMapper
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.Cookie
@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController
 @PreAuthorize("permitAll()")
 class AuthController(
     private val authenticationUseCase: AuthenticationUseCase,
+    private val authResponseMapper: AuthResponseMapper,
     @Value("\${jwt.refresh-token.cookie-name}") private val cookieName: String,
     @Value("\${jwt.refresh-token.expiration}") private val cookieMaxAge: Int
 ) {
@@ -49,25 +50,17 @@ class AuthController(
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
     fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
-        val authResponse: AuthResponseDom = authenticationUseCase.login(request.username, request.password)
+        val loginResult = authenticationUseCase.login(request.username, request.password)
 
-        authResponse.refreshToken?.let { token ->
-            Cookie(cookieName, token).apply {
-                maxAge = cookieMaxAge
-                path = "/"
-                isHttpOnly = true
-                //TODO enable only in prod mode `secure = true`
-                response.addCookie(this)
-            }
+        Cookie(cookieName, loginResult.refreshToken).apply {
+            maxAge = cookieMaxAge
+            path = "/"
+            isHttpOnly = true
+            //TODO enable only in prod mode `secure = true`
+            response.addCookie(this)
         }
 
-        return ResponseEntity.ok(
-            AuthResponseDto(
-                accessToken = authResponse.accessToken,
-                username = authResponse.user.username,
-                roles = authResponse.user.roles
-            )
-        )
+        return ResponseEntity.ok(authResponseMapper.toDto(loginResult))
     }
 
     /**
@@ -94,15 +87,9 @@ class AuthController(
     @Operation(summary = "Refresh access token", description = "Uses the refresh token cookie to generate a new access token")
     fun refreshToken(request: HttpServletRequest): ResponseEntity<AuthResponseDto> {
         val cookies: String? = request.cookies?.find { it.name == cookieName }?.value
-        val authResponse = authenticationUseCase.refreshAccessToken(cookies)
+        val refreshResult = authenticationUseCase.refreshAccessToken(cookies)
 
-        return ResponseEntity.ok(
-            AuthResponseDto(
-                accessToken = authResponse.accessToken,
-                username = authResponse.user.username,
-                roles = authResponse.user.roles
-            )
-        )
+        return ResponseEntity.ok(authResponseMapper.toDto(refreshResult))
     }
 
     /**

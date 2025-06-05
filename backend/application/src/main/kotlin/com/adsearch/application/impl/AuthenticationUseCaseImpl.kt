@@ -7,7 +7,8 @@ import com.adsearch.common.exception.functional.InvalidTokenException
 import com.adsearch.common.exception.functional.TokenExpiredException
 import com.adsearch.common.exception.functional.UserNotFoundException
 import com.adsearch.common.exception.functional.UsernameAlreadyExistsException
-import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.application.model.LoginResult
+import com.adsearch.application.model.RefreshResult
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.AuthenticationServicePort
@@ -40,7 +41,7 @@ class AuthenticationUseCaseImpl(
     /**
      * Authenticate a user with username and password
      */
-    override fun login(username: String, password: String): AuthResponseDom {
+    override fun login(username: String, password: String): LoginResult {
         try {
             authenticationService.authenticate(username, password)
         } catch (_: Exception) {
@@ -55,7 +56,7 @@ class AuthenticationUseCaseImpl(
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
 
-        return AuthResponseDom(user, accessToken,refreshToken.token)
+        return LoginResult(user, accessToken, refreshToken.token)
     }
 
     /**
@@ -79,7 +80,7 @@ class AuthenticationUseCaseImpl(
     /**
      * Refresh an access token using a refresh token
      */
-    override fun refreshAccessToken(refreshToken: String?): AuthResponseDom {
+    override fun refreshAccessToken(refreshToken: String?): RefreshResult {
         if (refreshToken == null) {
             LOG.error("Refresh token is missing in cookies")
             throw InvalidTokenException(message = "Refresh token is missing")
@@ -106,7 +107,7 @@ class AuthenticationUseCaseImpl(
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
 
-        return AuthResponseDom(authenticateUser, accessToken)
+        return RefreshResult(authenticateUser, accessToken)
     }
 
     /**
