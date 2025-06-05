@@ -36,6 +36,7 @@
         api_version: v1
         kind: Namespace
         name: "{{ app_name }}"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       register: namespace_check
       failed_when: false
       changed_when: false
@@ -49,6 +50,7 @@
         api_version: v1
         kind: Namespace
         state: present
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       when: namespace_check.api_found is defined and not namespace_check.api_found
       tags:
         - webapp
@@ -63,6 +65,7 @@
       kubernetes.core.k8s:
         state: present
         src: "/tmp/{{ app_name }}-secret.yml"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       tags:
         - webapp
         - secrets
@@ -76,6 +79,7 @@
       kubernetes.core.k8s:
         state: present
         src: "/tmp/{{ app_name }}-clusterissuer.yml"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       tags:
         - webapp
         - certificates
@@ -89,6 +93,7 @@
       kubernetes.core.k8s:
         state: present
         src: "/tmp/{{ app_name }}-deploy.yml"
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       tags:
         - webapp
         - deployment
@@ -105,6 +110,7 @@
           status: "True"
           reason: NewReplicaSetAvailable
         wait_timeout: 300
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       register: deployment_status
       tags:
         - webapp
@@ -150,6 +156,7 @@
             annotations:
               deployment.kubernetes.io/revision: "{{ (deployment_status.resources[0].metadata.annotations['deployment.kubernetes.io/revision'] | int) - 1 }}"
         merge_type: strategic-merge
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
       when: health_check.failed | default(false)
       ignore_errors: yes
       tags:
