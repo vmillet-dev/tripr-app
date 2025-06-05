@@ -49,7 +49,7 @@
         api_version: v1
         kind: Namespace
         state: present
-      when: namespace_check.resources | length == 0
+      when: namespace_check.api_found is defined and not namespace_check.api_found
       tags:
         - webapp
         - namespace
