@@ -24,6 +24,13 @@
     - setup
 
   tasks:
+    - name: Install Python kubernetes library
+      ansible.builtin.pip:
+        name: kubernetes
+        state: present
+      tags:
+        - k3s
+        - dependencies
     - name: Check if K3s service exists and is running
       ansible.builtin.systemd:
         name: k3s
