@@ -79,7 +79,7 @@
           kind: Namespace
           metadata:
             name: "{{ cert_manager.namespace }}"
-      when: cert_manager_namespace_check.resources | length == 0
+      when: cert_manager_namespace_check.resources is defined and cert_manager_namespace_check.resources | length == 0
       tags:
         - cert-manager
         - installation
@@ -88,7 +88,7 @@
       kubernetes.core.k8s:
         state: present
         src: "{{ cert_manager.manifest_url }}"
-      when: cert_manager_namespace_check.resources | length == 0
+      when: cert_manager_namespace_check.resources is defined and cert_manager_namespace_check.resources | length == 0
       tags:
         - cert-manager
         - installation
