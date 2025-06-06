@@ -84,40 +84,18 @@ jobs:
     needs: docker-multiarch-image
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Extract version
         id: version
         run: echo "tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Install hub-tool
-        run: |
-          wget https://github.com/docker/hub-tool/releases/download/v0.4.6/hub-tool-linux-amd64.tar.gz -O hub-tool.tar.gz
-          tar -xzf hub-tool.tar.gz
-          chmod +x hub-tool/hub-tool
-          sudo mv hub-tool/hub-tool /usr/local/bin/
 
-      - name: Login hub-tool
-        run: |
-          HUB_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d "{\"username\": \"$DOCKER_USERNAME\", \"password\": \"$DOCKER_PASSWORD\"}" https://hub.docker.com/v2/users/login/ | jq -r .token)
-          USERNAME="$(printf '%s:' "$DOCKER_USERNAME" | base64 -w0)"
-          USER_PASS="$(printf '%s:%s' "$DOCKER_USERNAME" "$DOCKER_PASSWORD" | base64 -w0)"
-          mkdir -p ~/.docker/
-          printf '{"auths": {"hub-tool": {"auth": "%s"}, "hub-tool-refresh-token": {"auth": "%s"}, "hub-tool-token": { "auth": "%s", "identitytoken": "%s"}}}' \
-            "$USER_PASS" "$USERNAME" \
-            "$USERNAME" "$HUB_TOKEN" \
-            > ~/.docker/config.json
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Run hub-tool commands
         run: |
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-amd64
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-arm64
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-amd64
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
+          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${{ steps.version.outputs.tag }}-amd64/"
+          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${{ steps.version.outputs.tag }}-arm64/"
+          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-amd64/"
+          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-arm64/"
 
   deploy:
     runs-on: ubuntu-latest
