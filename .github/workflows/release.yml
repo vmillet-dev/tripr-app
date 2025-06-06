@@ -88,14 +88,16 @@ jobs:
         id: version
         run: echo "tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-
-
-      - name: Run hub-tool commands
+      - name: Run curl command's to delete monoarch image
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+          DOCKER_TAG: ${{ steps.version.outputs.tag }}
         run: |
-          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${{ steps.version.outputs.tag }}-amd64/"
-          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${{ steps.version.outputs.tag }}-arm64/"
-          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-amd64/"
-          curl -X DELETE -H "Authorization: JWT  ${{ secrets.DOCKER_TOKEN }}" "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-arm64/"
+          curl --request DELETE --url https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/latest-amd64/ --header 'authorization: JWT ${DOCKER_TOKEN}'
+          curl --request DELETE --url https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/latest-arm64/ --header 'authorization: JWT ${DOCKER_TOKEN}'
+          curl --request DELETE --url https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/${DOCKER_TAG}-amd64/ --header 'authorization: JWT ${DOCKER_TOKEN}'
+          curl --request DELETE --url https://hub.docker.com/v2/repositories/${DOCKER_IMAGE}/tags/${DOCKER_TAG}-arm64/ --header 'authorization: JWT ${DOCKER_TOKEN}'
 
   deploy:
     runs-on: ubuntu-latest
