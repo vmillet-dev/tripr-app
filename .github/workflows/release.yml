@@ -92,7 +92,7 @@ jobs:
         env:
           DOCKER_TAG: ${{ steps.version.outputs.tag }}
         run: |
-          curl --request DELETE --url https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-amd64/ --header "authorization: JWT ${{ secrets.DOCKER_TOKEN }}}"
+          curl --request DELETE --url https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-amd64/ --header "authorization: JWT ${{ secrets.DOCKER_TOKEN }}"
           curl --request DELETE --url https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-arm64/ --header "authorization: JWT ${{ secrets.DOCKER_TOKEN }}"
           curl --request DELETE --url https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${DOCKER_TAG}-amd64/ --header "authorization: JWT ${{ secrets.DOCKER_TOKEN }}"
           curl --request DELETE --url https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${DOCKER_TAG}-arm64/ --header "authorization: JWT ${{ secrets.DOCKER_TOKEN }}"
