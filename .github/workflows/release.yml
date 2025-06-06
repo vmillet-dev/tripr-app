@@ -80,7 +80,6 @@ jobs:
             ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-amd64 \
             ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
 
-          docker manifest push ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest
   deploy:
     runs-on: ubuntu-latest
     needs: docker-multiarch-image
