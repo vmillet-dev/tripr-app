@@ -80,22 +80,37 @@ jobs:
             ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-amd64 \
             ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
 
-          # Delete temp architecture-specific tags
-          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
-            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${VERSION}-amd64/" || true
+  remove-monoarch-image:
+    needs: docker-multiarch-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
-            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/${VERSION}-arm64/" || true
+      - name: Extract version
+        id: version
+        run: echo "tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
-            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-amd64/" || true
+      - name: Install hub-tool
+        run: |
+          wget https://github.com/docker/hub-tool/releases/download/v0.4.6/hub-tool-linux-amd64.tar.gz -O hub-tool.tar.gz
+          tar -xzf hub-tool.tar.gz
+          chmod +x hub-tool
+          sudo mv hub-tool /usr/local/bin/
 
-          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
-            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_IMAGE }}/tags/latest-arm64/" || true
+      - name: Run hub-tool commands
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-amd64
+          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-arm64
+          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-amd64
+          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
 
   deploy:
     runs-on: ubuntu-latest
-    needs: docker-multiarch-image
+    needs: remove-monoarch-image
     container: alpine/ansible:2.18.6
     steps:
       - name: Checkout
