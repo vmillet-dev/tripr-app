@@ -45,7 +45,7 @@ jobs:
         with:
           context: .
           file: ./devops/Dockerfile
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -70,62 +70,17 @@ jobs:
       - name: Create and push multiarch image
 
         run: |
-          # Create multiarch manifest for version tag
             docker buildx imagetools create -t ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }} \
-            ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-amd64 \
-            ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-arm64
+            ${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-amd64 \
+            ${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-arm64
 
-          # Create multiarch manifest for latest tag
-          docker buildx imagetools create -t ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest \
-            ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-amd64 \
-            ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
-
-  remove-monoarch-image:
-    needs: docker-multiarch-image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Extract version
-        id: version
-        run: echo "tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
-      - name: Install hub-tool
-        run: |
-          wget https://github.com/docker/hub-tool/releases/download/v0.4.6/hub-tool-linux-amd64.tar.gz -O hub-tool.tar.gz
-          tar -xzf hub-tool.tar.gz
-          chmod +x hub-tool/hub-tool
-          sudo mv hub-tool/hub-tool /usr/local/bin/
-
-      - name: Create Docker config directory
-        run: mkdir -p ~/.docker
-
-      - name: Create Docker config.json
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
-        run: |
-          cat > ~/.docker/config.json <<EOF
-          {
-            "auths": {
-              "https://index.docker.io/v1/": {
-                "auth": "$(echo -n $DOCKER_HUB_USERNAME:$DOCKER_HUB_PASSWORD | base64 -w 0)"
-              }
-            }
-          }
-          EOF
-
-      - name: Run hub-tool commands
-        run: |
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-amd64
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:${{ steps.version.outputs.tag }}-arm64
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-amd64
-          hub-tool tag rm --verbose --force ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
+            docker buildx imagetools create -t ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest \
+            ${{ secrets.DOCKER_IMAGE }}:latest-amd64 \
+            ${{ secrets.DOCKER_IMAGE }}:latest-arm64
 
   deploy:
     runs-on: ubuntu-latest
-    needs: remove-monoarch-image
+    needs: docker-multiarch-image
     container: alpine/ansible:2.18.6
     steps:
       - name: Checkout
