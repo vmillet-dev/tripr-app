@@ -17,6 +17,8 @@
 - name: Deploy webapp with K3s
   hosts: raspberry
   become: yes
+  vars_files:
+    - group_vars/all.yml
   tags:
     - webapp
     - deployment

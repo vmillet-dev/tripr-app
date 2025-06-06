@@ -81,20 +81,16 @@ jobs:
             ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}:latest-arm64
 
           # Delete temp architecture-specific tags
-          curl -X DELETE \
-            -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
+          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
             "${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}/tags/${VERSION}-amd64/" || true
 
-          curl -X DELETE \
-            -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
+          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
             "${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}/tags/${VERSION}-arm64/" || true
 
-          curl -X DELETE \
-            -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
+          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
             "${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}/tags/latest-amd64/" || true
 
-          curl -X DELETE \
-            -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
+          curl -X DELETE -H "Accept: application/json" -H "Authorization: JWT ${{ secrets.DOCKER_TOKEN }}" \
             "${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_IMAGE }}/tags/latest-arm64/" || true
 
   deploy:
