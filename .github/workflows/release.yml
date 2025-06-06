@@ -98,23 +98,19 @@ jobs:
           chmod +x hub-tool/hub-tool
           sudo mv hub-tool/hub-tool /usr/local/bin/
 
-      - name: Create Docker config directory
-        run: mkdir -p ~/.docker
-
-      - name: Create Docker config.json
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+      - name: Login hub-tool
         run: |
-          cat > ~/.docker/config.json <<EOF
-          {
-            "auths": {
-              "https://index.docker.io/v1/": {
-                "auth": "$(echo -n $DOCKER_HUB_USERNAME:$DOCKER_HUB_PASSWORD | base64 -w 0)"
-              }
-            }
-          }
-          EOF
+          HUB_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d "{\"username\": \"$DOCKER_USERNAME\", \"password\": \"$DOCKER_PASSWORD\"}" https://hub.docker.com/v2/users/login/ | jq -r .token)
+          USERNAME="$(printf '%s:' "$DOCKER_USERNAME" | base64 -w0)"
+          USER_PASS="$(printf '%s:%s' "$DOCKER_USERNAME" "$DOCKER_PASSWORD" | base64 -w0)"
+          mkdir -p ~/.docker/
+          printf '{"auths": {"hub-tool": {"auth": "%s"}, "hub-tool-refresh-token": {"auth": "%s"}, "hub-tool-token": { "auth": "%s", "identitytoken": "%s"}}}' \
+            "$USER_PASS" "$USERNAME" \
+            "$USERNAME" "$HUB_TOKEN" \
+            > ~/.docker/config.json
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Run hub-tool commands
         run: |
