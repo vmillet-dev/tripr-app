@@ -95,8 +95,8 @@ jobs:
         run: |
           wget https://github.com/docker/hub-tool/releases/download/v0.4.6/hub-tool-linux-amd64.tar.gz -O hub-tool.tar.gz
           tar -xzf hub-tool.tar.gz
-          chmod +x hub-tool
-          sudo mv hub-tool /usr/local/bin/
+          chmod +x hub-tool/hub-tool
+          sudo mv hub-tool/hub-tool /usr/local/bin/
 
       - name: Run hub-tool commands
         env:
