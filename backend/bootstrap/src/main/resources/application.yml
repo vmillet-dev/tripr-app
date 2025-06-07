@@ -8,10 +8,10 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1026}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -19,9 +19,9 @@ spring:
           starttls:
             enable: false
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:tripr}
+    username: ${DB_USERNAME:tripr}
+    password: ${DB_PASSWORD:tripr}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
@@ -42,13 +42,40 @@ server:
     include-message: always
     include-binding-errors: always
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+
 logging:
   level:
     root: INFO
+    com.adsearch: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"
 
 # JWT configuration
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
   expiration: 3600  # 1 hour in secondes
   issuer: spring-ad-search
   refresh-token:
@@ -58,5 +85,5 @@ jwt:
 # Password reset configuration
 password-reset:
   token-expiration: 86400  # 24 hours in milliseconds
-  base-url: ${BASE_URL}
+  base-url: ${BASE_URL:http://localhost:8081}
   from: no-reply@example.com

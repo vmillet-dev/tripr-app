@@ -88,6 +88,8 @@ class NamingConventionTest : BaseArchitecture() {
         val rule = classes()
             .that().resideInAPackage("..config..")
             .should().haveSimpleNameEndingWith("Config")
+            .orShould().haveSimpleNameEndingWith("Configuration")
+            .orShould().haveSimpleNameEndingWith("AppConfig")
 
         rule.check(importedClasses)
     }

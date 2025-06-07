@@ -11,6 +11,8 @@ dependencies {
 
     implementation(libs.springboot.starter.web)
     implementation(libs.springboot.starter.data.jpa)
+    implementation(libs.springboot.starter.actuator)
+    implementation(libs.micrometer.registry.prometheus)
     implementation(libs.liquibase.core)
 
     developmentOnly(libs.springboot.docker.compose)
