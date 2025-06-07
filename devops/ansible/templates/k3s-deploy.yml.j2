@@ -19,6 +19,10 @@ spec:
     metadata:
       labels:
         app: {{ app_name }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ app_port }}"
+        prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
       - name: {{ app_name }}

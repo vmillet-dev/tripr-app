@@ -1,0 +1,71 @@
+---
+- name: Deploy Monitoring Stack
+  hosts: all
+  become: yes
+  vars_files:
+    - ../group_vars/all.yml
+  
+  tasks:
+    - name: Create monitoring namespace
+      kubernetes.core.k8s:
+        name: monitoring
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Deploy Prometheus and Grafana
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/k3s-monitoring.yml.j2') | from_yaml_all | list }}"
+
+    - name: Install Kubernetes Dashboard
+      shell: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+      register: dashboard_install
+      changed_when: "'created' in dashboard_install.stdout or 'configured' in dashboard_install.stdout"
+
+    - name: Deploy Dashboard configuration
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/k3s-dashboard.yml.j2') | from_yaml_all | list }}"
+
+    - name: Wait for monitoring pods to be ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: monitoring
+        label_selectors:
+          - app=prometheus
+        wait: true
+        wait_condition:
+          type: Ready
+          status: "True"
+        wait_timeout: 300
+
+    - name: Wait for Grafana pods to be ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: monitoring
+        label_selectors:
+          - app=grafana
+        wait: true
+        wait_condition:
+          type: Ready
+          status: "True"
+        wait_timeout: 300
+
+    - name: Get dashboard admin token
+      shell: |
+        kubectl -n kubernetes-dashboard create token admin-user --duration=8760h
+      register: dashboard_token
+      changed_when: false
+
+    - name: Display monitoring URLs
+      debug:
+        msg:
+          - "Monitoring stack deployed successfully!"
+          - "Grafana: https://monitoring.{{ app_domain }}/grafana (admin/admin)"
+          - "Prometheus: https://monitoring.{{ app_domain }}/prometheus"
+          - "Kubernetes Dashboard: https://dashboard.{{ app_domain }}"
+          - "Dashboard Token: {{ dashboard_token.stdout }}"

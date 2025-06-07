@@ -18,6 +18,8 @@ dependencies {
     implementation(libs.springboot.starter.mail)
     implementation(libs.springboot.starter.thymeleaf)
     implementation(libs.springboot.starter.validation)
+    implementation(libs.springboot.starter.actuator)
+    implementation(libs.micrometer.registry.prometheus)
 
     implementation(libs.kotlin.reflect)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
