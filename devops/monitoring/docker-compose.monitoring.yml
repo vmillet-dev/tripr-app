@@ -17,6 +17,8 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     restart: unless-stopped
+    networks:
+      - monitoring
 
   grafana:
     image: grafana/grafana:10.0.0
@@ -32,6 +34,8 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
+    networks:
+      - monitoring
 
   alertmanager:
     image: prom/alertmanager:v0.25.0
@@ -46,8 +50,14 @@ services:
       - '--storage.path=/alertmanager'
       - '--web.external-url=http://localhost:9093'
     restart: unless-stopped
+    networks:
+      - monitoring
 
 volumes:
   prometheus_data:
   grafana_data:
   alertmanager_data:
+
+networks:
+  monitoring:
+    driver: bridge
