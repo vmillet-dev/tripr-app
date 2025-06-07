@@ -1,0 +1,20 @@
+services:
+  postgres:
+    extends:
+      file: compose-base.yaml
+      service: postgres-base
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  mailpit:
+    extends:
+      file: compose-base.yaml
+      service: mailpit-base
+    ports:
+      - "1026:1025"  # SMTP server port (changed from 1025 to avoid conflict)
+      - "8026:8025"  # Web UI port (changed from 8025 to avoid conflict)
+
+volumes:
+  postgres_data:
