@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.security
 
-import com.adsearch.infrastructure.config.CustomMetrics
+import com.adsearch.infrastructure.config.CustomMetricsConfig
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -14,7 +14,7 @@ import java.util.*
 @Component
 @Order(1)
 class RequestLoggingFilter(
-    private val customMetrics: CustomMetrics
+    private val customMetrics: CustomMetricsConfig
 ) : OncePerRequestFilter() {
 
     private val logger = LoggerFactory.getLogger(RequestLoggingFilter::class.java)

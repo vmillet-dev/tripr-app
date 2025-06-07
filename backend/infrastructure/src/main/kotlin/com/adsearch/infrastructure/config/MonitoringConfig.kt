@@ -19,7 +19,7 @@ class MonitoringConfig {
 }
 
 @Component
-class CustomMetrics(private val meterRegistry: MeterRegistry) {
+class CustomMetricsConfig(private val meterRegistry: MeterRegistry) {
 
     fun recordUserLogin(username: String) {
         meterRegistry.counter("user.login.attempts", "username", username).increment()
