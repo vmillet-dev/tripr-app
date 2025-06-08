@@ -1,0 +1,113 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: monitoring-auth@kubernetescrd
+spec:
+  tls:
+  - hosts:
+    - "{{ app_domain }}"
+    secretName: monitoring-tls-secret
+  rules:
+  - host: "{{ app_domain }}"
+    http:
+      paths:
+      - path: /dashboard/grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy-service
+            port:
+              number: 4180
+      - path: /dashboard/kubernetes
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy-service
+            port:
+              number: 4180
+      - path: /oauth2
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy-service
+            port:
+              number: 4180
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: monitoring-auth
+  namespace: monitoring
+spec:
+  forwardAuth:
+    address: http://oauth2-proxy-service.monitoring.svc.cluster.local:4180/oauth2/auth
+    trustForwardHeader: true
+    authResponseHeaders:
+      - X-Auth-Request-User
+      - X-Auth-Request-Email
+      - X-Auth-Request-Access-Token
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: monitoring-grafana-route
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`{{ app_domain }}`) && PathPrefix(`/dashboard/grafana`)
+    kind: Rule
+    services:
+    - name: grafana-service
+      port: 3000
+    middlewares:
+    - name: monitoring-auth
+  tls:
+    secretName: monitoring-tls-secret
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: monitoring-k8s-dashboard-route
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`{{ app_domain }}`) && PathPrefix(`/dashboard/kubernetes`)
+    kind: Rule
+    services:
+    - name: kubernetes-dashboard
+      port: 443
+      scheme: https
+    middlewares:
+    - name: monitoring-auth
+  tls:
+    secretName: monitoring-tls-secret
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: oauth2-proxy-route
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`{{ app_domain }}`) && PathPrefix(`/oauth2`)
+    kind: Rule
+    services:
+    - name: oauth2-proxy-service
+      port: 4180
+  tls:
+    secretName: monitoring-tls-secret

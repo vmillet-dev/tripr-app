@@ -28,6 +28,11 @@ mail_password: "{{ lookup('env', 'ANSIBLE_MAIL_PASSWORD') }}"
 # Security Configuration
 jwt_secret: "{{ lookup('env', 'ANSIBLE_JWT_SECRET') }}"
 
+# OAuth2 Proxy Configuration for monitoring dashboards
+github_oauth_client_id: "{{ lookup('env', 'ANSIBLE_GITHUB_OAUTH_CLIENT_ID') }}"
+github_oauth_client_secret: "{{ lookup('env', 'ANSIBLE_GITHUB_OAUTH_CLIENT_SECRET') }}"
+oauth2_proxy_cookie_secret: "{{ lookup('env', 'ANSIBLE_OAUTH2_PROXY_COOKIE_SECRET') }}"
+
 # Kubernetes Resource Configuration
 k8s_resources:
   requests:

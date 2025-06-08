@@ -16,5 +16,22 @@ services:
       - "1026:1025"  # SMTP server port (changed from 1025 to avoid conflict)
       - "8026:8025"  # Web UI port (changed from 8025 to avoid conflict)
 
+  prometheus:
+    extends:
+      file: compose-monitoring.yaml
+      service: prometheus
+
+  grafana:
+    extends:
+      file: compose-monitoring.yaml
+      service: grafana
+
+  oauth2-proxy:
+    extends:
+      file: compose-monitoring.yaml
+      service: oauth2-proxy
+
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:

@@ -6,6 +6,7 @@ jackson-kotlin = "2.18.3"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.27"
 liquibase = "4.31.1"
+micrometer = "1.13.8"
 mockk = "1.13.17"
 postgresql = "42.7.5"
 spring-boot = "3.4.4"
@@ -27,6 +28,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 springboot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose", version.ref = "spring-boot" }
+springboot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
 springboot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
 springboot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "spring-boot" }
 springboot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
@@ -42,6 +44,7 @@ konvert-api = { module = "io.mcarle:konvert-api", version.ref = "konvert" }
 konvert-spring = { module = "io.mcarle:konvert-spring-annotations", version.ref = "konvert" }
 ksp-konvert = { module = "io.mcarle:konvert", version.ref = "konvert" }
 ksp-konvert-spring = { module = "io.mcarle:konvert-spring-injector", version.ref = "konvert" }
+micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 
 [plugins]
 kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
