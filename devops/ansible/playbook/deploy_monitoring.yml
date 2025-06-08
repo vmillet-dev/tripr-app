@@ -1,0 +1,119 @@
+---
+- name: Deploy Monitoring Stack
+  hosts: all
+  become: yes
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Create monitoring namespace
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/monitoring-namespace.yml.j2') | from_yaml }}"
+      tags: [monitoring, namespace]
+
+    - name: Deploy Prometheus
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/prometheus-deploy.yml.j2') | from_yaml_all | list }}"
+      tags: [monitoring, prometheus]
+
+    - name: Deploy Grafana
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/grafana-deploy.yml.j2') | from_yaml_all | list }}"
+      tags: [monitoring, grafana]
+
+    - name: Deploy Kubernetes Dashboard
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/k8s-dashboard-deploy.yml.j2') | from_yaml_all | list }}"
+      tags: [monitoring, k8s-dashboard]
+
+    - name: Deploy OAuth2 Proxy
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/oauth2-proxy-deploy.yml.j2') | from_yaml_all | list }}"
+      tags: [monitoring, oauth2-proxy]
+
+    - name: Deploy Monitoring Ingress
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('template', '../templates/monitoring-ingress.yml.j2') | from_yaml_all | list }}"
+      tags: [monitoring, ingress]
+
+    - name: Wait for Prometheus deployment to be ready
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: prometheus
+        namespace: monitoring
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 300
+      tags: [monitoring, prometheus, wait]
+
+    - name: Wait for Grafana deployment to be ready
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: grafana
+        namespace: monitoring
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 300
+      tags: [monitoring, grafana, wait]
+
+    - name: Wait for Kubernetes Dashboard deployment to be ready
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: kubernetes-dashboard
+        namespace: monitoring
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 300
+      tags: [monitoring, k8s-dashboard, wait]
+
+    - name: Wait for OAuth2 Proxy deployment to be ready
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: oauth2-proxy
+        namespace: monitoring
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 300
+      tags: [monitoring, oauth2-proxy, wait]
+
+    - name: Verify monitoring services are accessible
+      uri:
+        url: "https://{{ app_domain }}/dashboard/grafana"
+        method: GET
+        status_code: [200, 302, 401]
+        validate_certs: no
+      register: grafana_check
+      retries: 5
+      delay: 30
+      tags: [monitoring, verify]
+
+    - name: Display monitoring deployment status
+      debug:
+        msg: |
+          Monitoring stack deployment completed successfully!
+          
+          Services deployed:
+          - Prometheus: Metrics collection
+          - Grafana: Dashboards and visualization
+          - Kubernetes Dashboard: Cluster monitoring
+          - OAuth2 Proxy: GitHub authentication
+          
+          Access URLs:
+          - Grafana: https://{{ app_domain }}/dashboard/grafana
+          - Kubernetes Dashboard: https://{{ app_domain }}/dashboard/kubernetes
+          
+          Note: OAuth2 authentication with GitHub is required for access.
+      tags: [monitoring, status]
