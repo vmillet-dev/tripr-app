@@ -14,3 +14,8 @@ export interface AuthResponse {
   username: string;
   roles: string[];
 }
+
+export interface User {
+  username: string;
+  roles: string[];
+}

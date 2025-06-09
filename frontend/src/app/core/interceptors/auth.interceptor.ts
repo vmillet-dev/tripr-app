@@ -8,9 +8,10 @@ import { inject } from '@angular/core';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { AuthResponse } from '../models/auth.model';
 
 let isRefreshing = false;
-const refreshTokenSubject = new BehaviorSubject<any>(null);
+const refreshTokenSubject = new BehaviorSubject<AuthResponse | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (
   request: HttpRequest<unknown>,
@@ -24,8 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (
   }
 
   return next(request).pipe(
-    catchError(error => {
-        console.log(error)
+    catchError((error: HttpErrorResponse) => {
       if (error instanceof HttpErrorResponse && error.status === 401 && error.error === 'FUNC_002') {
         return handle401Error(request, next, authService);
       }
@@ -52,23 +52,26 @@ function handle401Error(
     refreshTokenSubject.next(null);
 
     return authService.refreshToken().pipe(
-      switchMap(token => {
+      switchMap((token: AuthResponse) => {
         isRefreshing = false;
         refreshTokenSubject.next(token);
         return next(addToken(request, token.accessToken));
       }),
-      catchError(error => {
+      catchError((error: HttpErrorResponse) => {
         isRefreshing = false;
-        authService.logout();
+        authService.logout().subscribe();
         return throwError(() => error);
       })
     );
   } else {
     return refreshTokenSubject.pipe(
-      filter(token => token != null),
+      filter((token: AuthResponse | null) => token !== null),
       take(1),
-      switchMap(token => {
-        return next(addToken(request, token.accessToken));
+      switchMap((token: AuthResponse | null) => {
+        if (token) {
+          return next(addToken(request, token.accessToken));
+        }
+        return throwError(() => new Error('Token refresh failed'));
       })
     );
   }
