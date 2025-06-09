@@ -3,8 +3,8 @@ archunit = "1.4.0"
 auth0-jwt = "4.5.0"
 httpclient5 = "5.4.3"
 jackson-kotlin = "2.18.3"
-kotlin = "2.0.21"
-ksp = "2.0.21-1.0.27"
+kotlin = "2.1.21"
+ksp = "2.1.21-2.0.1"
 liquibase = "4.31.1"
 mockk = "1.13.17"
 postgresql = "42.7.5"
@@ -14,6 +14,7 @@ springdoc-openapi = "2.8.6"
 testcontainers = "1.20.6"
 updater = "1.0.0"
 konvert = "4.0.1"
+slf4j = "2.0.17"
 
 [libraries]
 apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
@@ -25,7 +26,7 @@ kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", versi
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-slf4j = { module = "org.slf4j:slf4j-api" } # No need to add version.ref because we'll use the one from springboot package
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" } # No need to add version.ref because we'll use the one from springboot package
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 springboot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose", version.ref = "spring-boot" }
 springboot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
@@ -51,7 +52,6 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "updater" }
 
 [bundles]

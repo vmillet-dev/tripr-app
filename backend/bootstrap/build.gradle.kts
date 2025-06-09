@@ -25,12 +25,6 @@ dependencies {
     testImplementation(libs.testcontainers.postgresql)
 }
 
-kotlin {
-    compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
-    }
-}
-
 tasks.bootJar {
     enabled = true
     archiveFileName.set("app.jar")
