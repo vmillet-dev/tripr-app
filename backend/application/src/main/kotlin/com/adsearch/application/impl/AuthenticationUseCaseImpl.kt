@@ -8,6 +8,7 @@ import com.adsearch.common.exception.functional.TokenExpiredException
 import com.adsearch.common.exception.functional.UserNotFoundException
 import com.adsearch.common.exception.functional.UsernameAlreadyExistsException
 import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.domain.model.PasswordResetTokenDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.AuthenticationServicePort
@@ -39,71 +40,89 @@ class AuthenticationUseCaseImpl(
      * Authenticate a user with username and password
      */
     override fun login(username: String, password: String): AuthResponseDom {
+        LOG.info("Login attempt for user $username")
+
         try {
             authenticationService.authenticate(username, password)
+            LOG.debug("User $username authentication successful ")
         } catch (_: Exception) {
-            throw InvalidCredentialsException()
+            throw InvalidCredentialsException("Authentication failed for user $username - invalid credentials provided")
         }
 
         val user: UserDom = authenticationService.loadAuthenticateUserByUsername(username)
 
+        // Clean up existing refresh tokens
         refreshTokenPersistence.deleteByUserId(user.id)
+
         val refreshToken: RefreshTokenDom = authenticationService.generateRefreshToken(user.id)
         refreshTokenPersistence.save(refreshToken)
+        LOG.debug("Access token ${refreshToken.token} created for user $username with id: ${user.id}")
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
+        LOG.debug("Access token $accessToken created for user $username with id: ${user.id}")
 
-        return AuthResponseDom(user, accessToken,refreshToken.token)
+        LOG.info("Login successful for user $username")
+        return AuthResponseDom(user, accessToken, refreshToken.token)
     }
 
     /**
      * Register a new user
      */
     override fun register(user: UserDom) {
+        LOG.info("Registration attempt initiated for user ${user.username}")
+
         if (userPersistence.findByUsername(user.username) != null) {
-            throw UsernameAlreadyExistsException("Username already exists")
+            throw UsernameAlreadyExistsException("Registration failed - username  ${user.username} already exists")
         }
 
         if (userPersistence.findByEmail(user.email) != null) {
-            throw EmailAlreadyExistsException("Email already exists")
+            throw EmailAlreadyExistsException("Registration failed - email ${user.email} already exists")
         }
+
 
         val hashedPassword = authenticationService.generateHashedPassword(user.password)
 
         user.apply { password = hashedPassword }
-        userPersistence.save(user)
+        val userSaved: UserDom = userPersistence.save(user)
+
+        LOG.info("User ${user.username} registration successful - new user id: ${userSaved.id}")
     }
 
     /**
      * Refresh an access token using a refresh token
      */
     override fun refreshAccessToken(refreshToken: String?): AuthResponseDom {
+        LOG.debug("Access token refresh attempt with refresh token $refreshToken")
+
         if (refreshToken == null) {
-            LOG.error("Refresh token is missing in cookies")
-            throw InvalidTokenException(message = "Refresh token is missing")
+            throw InvalidTokenException("Token refresh failed - refresh token missing")
         }
 
         val refreshTokenDom: RefreshTokenDom? = refreshTokenPersistence.findByToken(refreshToken)
 
         if (refreshTokenDom == null) {
-            LOG.warn("Refresh token invalid")
-            throw InvalidTokenException()
+            throw InvalidTokenException("Token refresh failed - invalid refresh token provided")
         }
 
         if (refreshTokenDom.isExpired() || refreshTokenDom.revoked) {
             refreshTokenPersistence.deleteById(refreshTokenDom.id)
-            throw TokenExpiredException("Refresh token was expired. Please make a new sign in request")
+            throw TokenExpiredException("Token refresh failed - refresh token expired or revoked for user id: ${refreshTokenDom.userId}")
         }
 
-        val user: UserDom = userPersistence.findById(refreshTokenDom.userId)?: throw UserNotFoundException("User not found")
+        val user: UserDom = userPersistence.findById(refreshTokenDom.userId)
+            ?: throw UserNotFoundException("Token refresh failed - user not found with user id: ${refreshTokenDom.userId}")
+
+
         val authenticateUser: UserDom = authenticationService.loadAuthenticateUserByUsername(user.username)
 
         if (user.id != authenticateUser.id) {
-            throw InvalidCredentialsException()
+            throw InvalidCredentialsException("Token refresh failed - user id mismatch during authentication")
         }
 
         val accessToken: String = jwtTokenService.createAccessToken(user.id.toString(), user.username, user.roles)
+        LOG.debug("New access token $accessToken generated for user id: ${user.id}")
 
+        LOG.info("Token refresh successful for user id: ${user.id}")
         return AuthResponseDom(authenticateUser, accessToken)
     }
 
@@ -111,29 +130,32 @@ class AuthenticationUseCaseImpl(
      * Logout a user by invalidating their refresh tokens
      */
     override fun logout(refreshToken: String?) {
+        LOG.debug("Logout attempt initiated with refresh token $refreshToken")
+
         refreshToken?.let { token ->
             refreshTokenPersistence.findByToken(token)?.let { storedToken ->
                 refreshTokenPersistence.deleteByUserId(storedToken.userId)
-            }
-        }
+                LOG.info("Logout successful - refresh tokens invalidated for user id: ${storedToken.userId}")
+            } ?: LOG.warn("Logout attempted with invalid refresh token")
+        } ?: LOG.debug("Logout attempted without refresh token")
     }
 
     /**
      * Request a password reset for a user
      */
     override fun requestPasswordReset(username: String) {
-        val user = userPersistence.findByUsername(username)
-            ?: throw UserNotFoundException("User not found with username: $username")
+        LOG.info("Password reset request initiated for user $username")
 
-        LOG.debug("Processing password reset request for user: ${user.username}")
+        val user = userPersistence.findByUsername(username)
+            ?: throw UserNotFoundException("Password reset request failed - user not found with username: $username")
 
         // Delete any existing tokens for this user
         passwordResetTokenPersistence.deleteByUserId(user.id)
 
         // Create a new token
-        val resetToken = authenticationService.generatePasswordResetToken(user.id)
+        val resetToken: PasswordResetTokenDom = authenticationService.generatePasswordResetToken(user.id)
         passwordResetTokenPersistence.save(resetToken)
-        LOG.debug("Created password reset token: {}", resetToken)
+        LOG.info("Password reset ${resetToken.token} successful for user $username")
 
         // Send email
         emailService.sendPasswordResetEmail(user.email, resetToken.token)
@@ -144,54 +166,66 @@ class AuthenticationUseCaseImpl(
      * Reset a user's password using a token
      */
     override fun resetPassword(token: String, newPassword: String) {
-        val resetToken = passwordResetTokenPersistence.findByToken(token)
-            ?: throw InvalidTokenException("Invalid password reset token")
+        LOG.info("Password reset attempt with token $token")
 
-        LOG.debug("Processing password reset with token: {}", resetToken)
+        val resetToken = passwordResetTokenPersistence.findByToken(token)
+            ?: throw InvalidTokenException("Password reset failed - invalid token provided")
+
+        LOG.debug("Password reset token found for user id: ${resetToken.userId}")
 
         // Check if token is expired
         if (resetToken.isExpired()) {
             passwordResetTokenPersistence.deleteById(resetToken.id)
-            throw TokenExpiredException("Password reset token has expired")
+            throw TokenExpiredException("Password reset failed - token expired for user id: ${resetToken.userId}")
         }
 
         // Check if token has been used
         if (resetToken.used) {
-            throw InvalidTokenException("Password reset token has already been used")
+            throw InvalidTokenException("Password reset failed - token already used for user id: ${resetToken.userId}")
         }
 
         // Find the user
         val user = userPersistence.findById(resetToken.userId)
-            ?: throw UserNotFoundException("User not found for password reset token")
+            ?: throw UserNotFoundException("Password reset failed - user not found for token user id: ${resetToken.userId}")
 
         // Update the password
         user.apply {
             password = authenticationService.generateHashedPassword(newPassword)
         }
         userPersistence.save(user)
-        LOG.info("Password reset successful for user: ${user.username}")
 
         // Delete all tokens for this user
         passwordResetTokenPersistence.deleteByUserId(user.id)
+
+        LOG.info("Password reset completed successfully for user ${user.username}")
     }
 
     /**
      * Validate a password reset token
      */
     override fun validateToken(token: String): Boolean {
-        val resetToken = passwordResetTokenPersistence.findByToken(token) ?: return false
+        LOG.debug("Token validation attempt with token $token")
+
+        val resetToken = passwordResetTokenPersistence.findByToken(token)
+        if (resetToken == null) {
+            LOG.debug("Token validation failed - token not found")
+            return false
+        }
 
         // Check if token is expired
         if (resetToken.isExpired()) {
+            LOG.debug("Token validation failed - token $token expired for user id: ${resetToken.userId}")
             passwordResetTokenPersistence.deleteById(resetToken.id)
             return false
         }
 
         // Check if token has been used
         if (resetToken.used) {
+            LOG.debug("Token validation failed - token $token already used for user id: ${resetToken.userId}")
             return false
         }
 
+        LOG.debug("Token validation successful for user id: ${resetToken.userId}")
         return true
     }
 }

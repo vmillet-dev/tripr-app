@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController
 /**
  * Controller for authentication endpoints
  */
+@Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "Authentication", description = "API for user authentication and token management")

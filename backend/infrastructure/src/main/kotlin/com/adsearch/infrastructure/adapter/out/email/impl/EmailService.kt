@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.email.impl
 
 import com.adsearch.common.exception.technical.MailSendException
-import com.adsearch.infrastructure.adapter.out.email.EmailServiceAdapter
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender
@@ -18,7 +18,9 @@ class EmailService(
     @Value("\${password-reset.from}") private val from: String
 ) {
 
-    private val logger = LoggerFactory.getLogger(EmailServiceAdapter::class.java)
+    companion object {
+        val LOG: Logger = LoggerFactory.getLogger(this::class.java)
+    }
 
     fun sendPasswordResetEmail(to: String, token: String) {
         try {
@@ -36,7 +38,7 @@ class EmailService(
             helper.setText(htmlContent, true)
 
             mailSender.send(message)
-            logger.info("Password reset email sent to: $to")
+            LOG.info("Password reset email sent to: $to")
         } catch (e: Exception) {
             throw MailSendException("Failed to send password reset email to: $to", cause = e)
         }
