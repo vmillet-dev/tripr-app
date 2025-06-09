@@ -72,7 +72,7 @@ class AuthenticationUseCaseImpl(
         LOG.info("Registration attempt initiated for user ${user.username}")
 
         if (userPersistence.findByUsername(user.username) != null) {
-            throw UsernameAlreadyExistsException("Registration failed - username  ${user.username} already exists")
+            throw UsernameAlreadyExistsException("Registration failed - username ${user.username} already exists")
         }
 
         if (userPersistence.findByEmail(user.email) != null) {
