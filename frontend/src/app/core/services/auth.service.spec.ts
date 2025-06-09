@@ -22,7 +22,10 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
-    const spy = jasmine.createSpyObj('JwtHelperService', ['isTokenExpired', 'decodeToken']);
+    const spy = {
+      isTokenExpired: jasmine.createSpy('isTokenExpired').and.returnValue(false),
+      decodeToken: jasmine.createSpy('decodeToken').and.returnValue({ username: 'testuser', roles: ['ROLE_USER'] })
+    };
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -34,7 +37,7 @@ describe('AuthService', () => {
 
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
-    jwtHelperSpy = TestBed.inject(JwtHelperService) as jasmine.SpyObj<JwtHelperService>;
+    jwtHelperSpy = TestBed.inject(JwtHelperService) as any;
   });
 
   afterEach(() => {
