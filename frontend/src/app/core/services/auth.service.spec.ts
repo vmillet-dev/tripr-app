@@ -22,7 +22,10 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
-    const spy = jasmine.createSpyObj('JwtHelperService', ['isTokenExpired', 'decodeToken']);
+    const spy = {
+      isTokenExpired: jasmine.createSpy('isTokenExpired').and.returnValue(false),
+      decodeToken: jasmine.createSpy('decodeToken').and.returnValue({ username: 'testuser', roles: ['ROLE_USER'] })
+    };
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -52,8 +55,8 @@ describe('AuthService', () => {
     const mockToken = 'valid-token';
     const mockDecodedToken = { username: 'testuser', roles: ['ROLE_USER'] };
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(false));
-    jwtHelperSpy.decodeToken.and.returnValue(mockDecodedToken);
+    (jwtHelperSpy.isTokenExpired as jasmine.Spy).and.returnValue(false);
+    (jwtHelperSpy.decodeToken as jasmine.Spy).and.returnValue(mockDecodedToken);
 
     const newService = TestBed.inject(AuthService);
 
@@ -65,7 +68,7 @@ describe('AuthService', () => {
   it('should not load token when token is expired', () => {
     const mockToken = 'expired-token';
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(true));
+    (jwtHelperSpy.isTokenExpired as jasmine.Spy).and.returnValue(true);
 
     const newService = TestBed.inject(AuthService);
 
@@ -155,7 +158,7 @@ describe('AuthService', () => {
   it('should check authentication status correctly', () => {
     const mockToken = 'valid-token';
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(false));
+    (jwtHelperSpy.isTokenExpired as jasmine.Spy).and.returnValue(false);
 
     const isAuthenticated = service.isAuthenticated();
 
@@ -166,7 +169,7 @@ describe('AuthService', () => {
   it('should return false for authentication when token is expired', () => {
     const mockToken = 'expired-token';
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(true));
+    (jwtHelperSpy.isTokenExpired as jasmine.Spy).and.returnValue(true);
 
     const isAuthenticated = service.isAuthenticated();
 

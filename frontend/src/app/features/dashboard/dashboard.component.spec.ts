@@ -16,7 +16,7 @@ describe('DashboardComponent', () => {
   };
 
   beforeEach(async () => {
-    const spy = jasmine.createSpyObj('AuthService', []);
+    const spy = jasmine.createSpyObj('AuthService', ['logout']);
     Object.defineProperty(spy, 'currentUser$', {
       value: of(mockUser),
       writable: true
