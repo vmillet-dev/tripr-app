@@ -18,12 +18,10 @@ import com.adsearch.domain.port.out.RefreshTokenPersistencePort
 import com.adsearch.domain.port.out.UserPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 
 /**
  * Service for authentication operations
  */
-@Service
 class AuthenticationUseCaseImpl(
     private val authenticationService: AuthenticationServicePort,
     private val userPersistence: UserPersistencePort,

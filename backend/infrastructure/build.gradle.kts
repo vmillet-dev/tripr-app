@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":domain"))
-    api(project(":application"))
-    api(project(":common"))
+    implementation(project(":domain"))
+    implementation(project(":application"))
+    implementation(project(":common"))
 
     runtimeOnly(libs.postgresql)
 

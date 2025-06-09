@@ -1,8 +1,28 @@
 package com.adsearch.infrastructure.config
 
+import com.adsearch.application.impl.AuthenticationUseCaseImpl
+import org.springframework.beans.factory.support.BeanDefinitionBuilder
+import org.springframework.beans.factory.support.BeanDefinitionRegistry
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableAsync
+import java.util.Map
 
 @Configuration
 @EnableAsync
-class AppConfig
+@EnableJpaRepositories(basePackages = ["com.adsearch.infrastructure.adapter.out.persistence.jpa"])
+@EntityScan(basePackages = ["com.adsearch.infrastructure.adapter.out.persistence.entity"])
+class AppConfig : BeanDefinitionRegistryPostProcessor {
+    override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
+        val beansToRegister: MutableMap<String, Class<*>> = Map.of<String, Class<*>>(
+            "authenticationUseCase", AuthenticationUseCaseImpl::class.java
+        )
+
+        beansToRegister.forEach { (beanName: String, beanClass: Class<*>) ->
+            val builder: BeanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass)
+            registry.registerBeanDefinition(beanName, builder.beanDefinition)
+        }
+    }
+}

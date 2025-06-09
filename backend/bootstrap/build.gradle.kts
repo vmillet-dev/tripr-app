@@ -10,7 +10,6 @@ dependencies {
     api(project(":infrastructure"))
 
     implementation(libs.springboot.starter.web)
-    implementation(libs.springboot.starter.data.jpa)
     implementation(libs.liquibase.core)
 
     developmentOnly(libs.springboot.docker.compose)

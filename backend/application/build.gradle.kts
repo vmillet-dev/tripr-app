@@ -1,10 +1,6 @@
-plugins {
-    alias(libs.plugins.kotlin.spring)
-}
-
 dependencies {
-    api(project(":domain"))
-    api(project(":common"))
+    implementation(project(":domain"))
+    implementation(project(":common"))
 
-    implementation(libs.springboot.starter.web)
+    implementation(libs.slf4j)
 }
