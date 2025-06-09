@@ -2,11 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PasswordResetService} from '../../../core/services/password-reset.service';
+import {TranslocoModule} from '@jsverse/transloco';
 
 @Component({
   selector: 'app-password-reset-request',
   templateUrl: './password-reset-request.component.html',
-  imports: [ReactiveFormsModule]
+  imports: [ReactiveFormsModule, TranslocoModule]
 })
 export class PasswordResetRequestComponent implements OnInit {
   resetForm!: FormGroup;
