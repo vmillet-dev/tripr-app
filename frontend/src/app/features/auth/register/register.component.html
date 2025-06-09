@@ -13,7 +13,7 @@
               @if (f['username'].touched && f['username'].errors) {
                 <div class="invalid-feedback">
                   @if (f['username'].errors['required']) {
-                    <div>Username is required</div>
+                    <div>{{ 'app.auth.validation.usernameRequired' | transloco }}</div>
                   }
                 </div>
               }
@@ -26,10 +26,10 @@
               @if (f['email'].touched && f['email'].errors) {
                 <div class="invalid-feedback">
                   @if (f['email'].errors['required']) {
-                    <div>Email is required</div>
+                    <div>{{ 'app.auth.validation.emailRequired' | transloco }}</div>
                   }
                   @if (f['email'].errors['email']) {
-                    <div>Email is invalid</div>
+                    <div>{{ 'app.auth.validation.emailInvalid' | transloco }}</div>
                   }
                 </div>
               }
@@ -42,10 +42,10 @@
               @if (f['password'].touched && f['password'].errors) {
                 <div class="invalid-feedback">
                   @if (f['password'].errors['required']) {
-                    <div>Password is required</div>
+                    <div>{{ 'app.auth.validation.passwordRequired' | transloco }}</div>
                   }
                   @if (f['password'].errors['minlength']) {
-                    <div>Password must be at least 6 characters</div>
+                    <div>{{ 'app.auth.validation.passwordMinLength' | transloco }}</div>
                   }
                 </div>
               }
@@ -58,10 +58,10 @@
               @if (f['confirmPassword'].touched && f['confirmPassword'].errors) {
                 <div class="invalid-feedback">
                   @if (f['confirmPassword'].errors['required']) {
-                    <div>Confirm Password is required</div>
+                    <div>{{ 'app.auth.validation.confirmPasswordRequired' | transloco }}</div>
                   }
                   @if (f['confirmPassword'].errors['passwordMismatch']) {
-                    <div>Passwords do not match</div>
+                    <div>{{ 'app.auth.validation.passwordMismatch' | transloco }}</div>
                   }
                 </div>
               }

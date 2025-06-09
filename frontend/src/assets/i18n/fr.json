@@ -28,11 +28,54 @@
         "submit": "S'inscrire",
         "haveAccount": "Vous avez déjà un compte?",
         "login": "Connexion"
+      },
+      "passwordReset": {
+        "title": "Réinitialiser votre mot de passe",
+        "description": "Entrez votre nom d'utilisateur et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+        "newPasswordDescription": "Entrez votre nouveau mot de passe ci-dessous.",
+        "username": "Nom d'utilisateur",
+        "newPassword": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "sendResetLink": "Envoyer le lien de réinitialisation",
+        "resetPassword": "Réinitialiser le mot de passe",
+        "backToLogin": "Retour à la connexion",
+        "validatingLink": "Validation de votre lien de réinitialisation...",
+        "loading": "Chargement..."
+      },
+      "validation": {
+        "usernameRequired": "Le nom d'utilisateur est requis",
+        "passwordRequired": "Le mot de passe est requis",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "L'email est invalide",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+        "passwordMinLength8": "Le mot de passe doit contenir au moins 8 caractères",
+        "confirmPasswordRequired": "La confirmation du mot de passe est requise",
+        "confirmPasswordRequired2": "La confirmation du mot de passe est requise",
+        "passwordMismatch": "Les mots de passe ne correspondent pas"
       }
     },
     "dashboard": {
       "title": "Tableau de bord",
-      "welcome": "Bienvenue"
+      "welcome": "Bienvenue, {{username}}!",
+      "myTrips": "Mes voyages",
+      "noTripsYet": "Vous n'avez pas encore de voyages planifiés.",
+      "createNewTrip": "Créer un nouveau voyage",
+      "recentActivity": "Activité récente",
+      "noRecentActivity": "Aucune activité récente à afficher.",
+      "recommendations": "Recommandations",
+      "personalizedRecommendations": "Les recommandations personnalisées apparaîtront ici."
+    },
+    "home": {
+      "heroTitle": "Application de démarrage (k3s fonctionne)",
+      "heroSubtitle": "Votre compagnon ultime de planification de voyage",
+      "getStarted": "Commencer",
+      "signUp": "S'inscrire",
+      "planTripsTitle": "Planifiez vos voyages",
+      "planTripsDescription": "Créez des itinéraires détaillés pour vos prochaines aventures",
+      "discoverPlacesTitle": "Découvrez des lieux",
+      "discoverPlacesDescription": "Trouvez des destinations passionnantes et des joyaux cachés",
+      "shareExperiencesTitle": "Partagez vos expériences",
+      "shareExperiencesDescription": "Connectez-vous avec d'autres voyageurs et partagez votre parcours"
     }
   }
 }
