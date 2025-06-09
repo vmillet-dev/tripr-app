@@ -13,7 +13,7 @@
               @if (f['username'].touched && f['username'].errors) {
                 <div class="invalid-feedback">
                   @if (f['username'].errors['required']) {
-                    <div>Username is required</div>
+                    <div>{{ 'app.auth.validation.usernameRequired' | transloco }}</div>
                   }
                 </div>
               }
@@ -26,7 +26,7 @@
               @if (f['password'].touched && f['password'].errors) {
                 <div class="invalid-feedback">
                   @if (f['password'].errors['required']) {
-                    <div>Password is required</div>
+                    <div>{{ 'app.auth.validation.passwordRequired' | transloco }}</div>
                   }
                 </div>
               }

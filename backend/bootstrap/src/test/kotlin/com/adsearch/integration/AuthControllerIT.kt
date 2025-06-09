@@ -79,7 +79,12 @@ class AuthControllerIT : BaseIT() {
                 .isNotNull()
                 .isNotEmpty()
                 .extracting("status", "error", "message", "path")
-                .containsExactly(401, "FUNC_001", "Invalid username or password", "/api/auth/login")
+                .containsExactly(
+                    401,
+                    "FUNC_001",
+                    "Authentication failed for user testuser - invalid credentials provided",
+                    "/api/auth/login"
+                )
         }
 
         @Test
@@ -101,7 +106,12 @@ class AuthControllerIT : BaseIT() {
                 .isNotNull()
                 .isNotEmpty()
                 .extracting("status", "error", "message", "path")
-                .containsExactly(401, "FUNC_001", "Invalid username or password", "/api/auth/login")
+                .containsExactly(
+                    401,
+                    "FUNC_001",
+                    "Authentication failed for user nonexistentuser - invalid credentials provided",
+                    "/api/auth/login"
+                )
         }
     }
 
@@ -160,7 +170,12 @@ class AuthControllerIT : BaseIT() {
                 .isNotNull()
                 .isNotEmpty()
                 .extracting("status", "error", "message", "path")
-                .containsExactly(400, "FUNC_004", "Username already exists", "/api/auth/register")
+                .containsExactly(
+                    400,
+                    "FUNC_004",
+                    "Registration failed - username testuser already exists",
+                    "/api/auth/register"
+                )
         }
 
         @Test
@@ -183,7 +198,12 @@ class AuthControllerIT : BaseIT() {
                 .isNotNull()
                 .isNotEmpty()
                 .extracting("status", "error", "message", "path")
-                .containsExactly(400, "FUNC_006", "Email already exists", "/api/auth/register")
+                .containsExactly(
+                    400,
+                    "FUNC_006",
+                    "Registration failed - email testuser@mail.com already exists",
+                    "/api/auth/register"
+                )
         }
     }
 
@@ -390,7 +410,12 @@ class AuthControllerIT : BaseIT() {
                 .isNotNull()
                 .isNotEmpty()
                 .extracting("status", "error", "message", "path")
-                .containsExactly(401, "FUNC_003", "Invalid password reset token", "/api/auth/password/reset")
+                .containsExactly(
+                    401,
+                    "FUNC_003",
+                    "Password reset failed - invalid token provided",
+                    "/api/auth/password/reset"
+                )
         }
     }
 

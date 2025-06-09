@@ -28,11 +28,54 @@
         "submit": "Sign Up",
         "haveAccount": "Already have an account?",
         "login": "Login"
+      },
+      "passwordReset": {
+        "title": "Reset Your Password",
+        "description": "Enter your username and we'll send you a link to reset your password.",
+        "newPasswordDescription": "Enter your new password below.",
+        "username": "Username",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "sendResetLink": "Send Reset Link",
+        "resetPassword": "Reset Password",
+        "backToLogin": "Back to Login",
+        "validatingLink": "Validating your reset link...",
+        "loading": "Loading..."
+      },
+      "validation": {
+        "usernameRequired": "Username is required",
+        "passwordRequired": "Password is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Email is invalid",
+        "passwordMinLength": "Password must be at least 6 characters",
+        "passwordMinLength8": "Password must be at least 8 characters",
+        "confirmPasswordRequired": "Confirm Password is required",
+        "confirmPasswordRequired2": "Confirm password is required",
+        "passwordMismatch": "Passwords do not match"
       }
     },
     "dashboard": {
       "title": "Dashboard",
-      "welcome": "Welcome, {{username}}!"
+      "welcome": "Welcome, {{username}}!",
+      "myTrips": "My Trips",
+      "noTripsYet": "You have no trips planned yet.",
+      "createNewTrip": "Create New Trip",
+      "recentActivity": "Recent Activity",
+      "noRecentActivity": "No recent activity to display.",
+      "recommendations": "Recommendations",
+      "personalizedRecommendations": "Personalized recommendations will appear here."
+    },
+    "home": {
+      "heroTitle": "Starter app (k3s works)",
+      "heroSubtitle": "Your ultimate travel planning companion",
+      "getStarted": "Get Started",
+      "signUp": "Sign Up",
+      "planTripsTitle": "Plan Your Trips",
+      "planTripsDescription": "Create detailed itineraries for your upcoming adventures",
+      "discoverPlacesTitle": "Discover Places",
+      "discoverPlacesDescription": "Find exciting destinations and hidden gems",
+      "shareExperiencesTitle": "Share Experiences",
+      "shareExperiencesDescription": "Connect with fellow travelers and share your journey"
     }
   }
 }
