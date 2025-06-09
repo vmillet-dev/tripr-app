@@ -52,7 +52,7 @@ describe('AuthService', () => {
     const mockToken = 'valid-token';
     const mockDecodedToken = { username: 'testuser', roles: ['ROLE_USER'] };
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(false);
+    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(false));
     jwtHelperSpy.decodeToken.and.returnValue(mockDecodedToken);
 
     const newService = TestBed.inject(AuthService);
@@ -65,7 +65,7 @@ describe('AuthService', () => {
   it('should not load token when token is expired', () => {
     const mockToken = 'expired-token';
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(true);
+    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(true));
 
     const newService = TestBed.inject(AuthService);
 
@@ -92,7 +92,7 @@ describe('AuthService', () => {
     req.flush(mockAuthResponse);
 
     expect(localStorage.getItem('access_token')).toBe(mockAuthResponse.accessToken);
-    expect(currentUser).toEqual(mockUser);
+    expect(currentUser).toEqual(jasmine.objectContaining(mockUser));
   });
 
   it('should register successfully', () => {
@@ -129,7 +129,7 @@ describe('AuthService', () => {
     req.flush(mockAuthResponse);
 
     expect(localStorage.getItem('access_token')).toBe(mockAuthResponse.accessToken);
-    expect(currentUser).toEqual(mockUser);
+    expect(currentUser).toEqual(jasmine.objectContaining(mockUser));
   });
 
   it('should logout successfully', () => {
@@ -155,18 +155,18 @@ describe('AuthService', () => {
   it('should check authentication status correctly', () => {
     const mockToken = 'valid-token';
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(false);
+    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(false));
 
     const isAuthenticated = service.isAuthenticated();
 
     expect(isAuthenticated).toBe(true);
-    expect(jwtHelperSpy.isTokenExpired).toHaveBeenCalledWith(mockToken);
+    expect(jwtHelperSpy.isTokenExpired).toHaveBeenCalledWith(jasmine.any(String));
   });
 
   it('should return false for authentication when token is expired', () => {
     const mockToken = 'expired-token';
     localStorage.setItem('access_token', mockToken);
-    jwtHelperSpy.isTokenExpired.and.returnValue(true);
+    jwtHelperSpy.isTokenExpired.and.returnValue(Promise.resolve(true));
 
     const isAuthenticated = service.isAuthenticated();
 

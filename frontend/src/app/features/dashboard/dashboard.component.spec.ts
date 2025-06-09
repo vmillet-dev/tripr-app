@@ -16,8 +16,10 @@ describe('DashboardComponent', () => {
   };
 
   beforeEach(async () => {
-    const spy = jasmine.createSpyObj('AuthService', [], {
-      currentUser$: of(mockUser)
+    const spy = jasmine.createSpyObj('AuthService', []);
+    Object.defineProperty(spy, 'currentUser$', {
+      value: of(mockUser),
+      writable: true
     });
 
     await TestBed.configureTestingModule({
@@ -46,7 +48,10 @@ describe('DashboardComponent', () => {
   });
 
   it('should set username to null when no user', () => {
-    authServiceSpy.currentUser$ = of(null);
+    Object.defineProperty(authServiceSpy, 'currentUser$', {
+      value: of(null),
+      writable: true
+    });
 
     component.ngOnInit();
 

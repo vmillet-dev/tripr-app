@@ -18,8 +18,10 @@ describe('HeaderComponent', () => {
   };
 
   beforeEach(async () => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['logout'], {
-      currentUser$: of(mockUser)
+    const authSpy = jasmine.createSpyObj('AuthService', ['logout']);
+    Object.defineProperty(authSpy, 'currentUser$', {
+      value: of(mockUser),
+      writable: true
     });
     const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -52,7 +54,10 @@ describe('HeaderComponent', () => {
   });
 
   it('should set authentication state to false when no user', () => {
-    authServiceSpy.currentUser$ = of(null);
+    Object.defineProperty(authServiceSpy, 'currentUser$', {
+      value: of(null),
+      writable: true
+    });
 
     component.ngOnInit();
 
