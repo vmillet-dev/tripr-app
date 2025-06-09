@@ -24,6 +24,7 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     const authSpy = jasmine.createSpyObj('AuthService', ['login']);
+    authSpy.login.and.returnValue(of(mockAuthResponse));
     const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
     const routeSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       snapshot: {
