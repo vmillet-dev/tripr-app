@@ -22,10 +22,7 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
-    const spy = {
-      isTokenExpired: jasmine.createSpy('isTokenExpired').and.returnValue(false),
-      decodeToken: jasmine.createSpy('decodeToken').and.returnValue({ username: 'testuser', roles: ['ROLE_USER'] })
-    };
+    const spy = jasmine.createSpyObj('JwtHelperService', ['isTokenExpired', 'decodeToken']);
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
