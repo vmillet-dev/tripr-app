@@ -16,7 +16,8 @@
         "submit": "Login",
         "forgotPassword": "Forgot Password?",
         "noAccount": "Don't have an account?",
-        "signUp": "Sign Up"
+        "signUp": "Sign Up",
+        "registrationSuccess": "Registration completed successfully"
       },
       "register": {
         "title": "Sign Up",

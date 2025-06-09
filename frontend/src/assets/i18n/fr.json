@@ -16,7 +16,8 @@
         "submit": "Connexion",
         "forgotPassword": "Mot de passe oublié?",
         "noAccount": "Vous n'avez pas de compte?",
-        "signUp": "S'inscrire"
+        "signUp": "S'inscrire",
+        "registrationSuccess": "Inscription effectuée avec succès"
       },
       "register": {
         "title": "S'inscrire",
@@ -31,7 +32,7 @@
     },
     "dashboard": {
       "title": "Tableau de bord",
-      "welcome": "Bienvenue, {{username}}!"
+      "welcome": "Bienvenue"
     }
   }
 }

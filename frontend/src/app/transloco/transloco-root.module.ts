@@ -1,15 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, isDevMode, inject } from '@angular/core';
-import {
-  TRANSLOCO_LOADER,
-  Translation,
-  TranslocoLoader,
-  TRANSLOCO_CONFIG,
-  translocoConfig,
-  TranslocoModule,
-  provideTransloco
-} from '@jsverse/transloco';
-import { environment } from '../../environments/environment';
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable, isDevMode} from '@angular/core';
+import {getBrowserLang, provideTransloco, Translation, TranslocoLoader} from '@jsverse/transloco';
 
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
@@ -21,16 +12,13 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 }
 
 export const translocoProviders = [
-  provideTransloco({
-    config: {
-      availableLangs: ['en', 'fr'],
-      defaultLang: 'en',
-      reRenderOnLangChange: true,
-      prodMode: !isDevMode(),
-    },
-    loader: TranslocoHttpLoader
-  })
+    provideTransloco({
+        config: {
+            availableLangs: ['en', 'fr'],
+            defaultLang: getBrowserLang() || 'en',
+            reRenderOnLangChange: true,
+            prodMode: !isDevMode(),
+        },
+        loader: TranslocoHttpLoader
+    })
 ];
-
-// Keep this for backward compatibility
-export class TranslocoRootModule {}
