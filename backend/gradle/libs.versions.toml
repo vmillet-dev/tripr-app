@@ -1,32 +1,34 @@
 [versions]
-archunit = "1.4.0"
+archunit = "1.4.1"
 auth0-jwt = "4.5.0"
-httpclient5 = "5.4.3"
-jackson-kotlin = "2.18.3"
+httpclient5 = "5.5"
+jackson-kotlin = "2.19.0"
+konvert = "4.1.0"
 kotlin = "2.1.21"
 ksp = "2.1.21-2.0.1"
-liquibase = "4.31.1"
-mockk = "1.13.17"
-postgresql = "42.7.5"
-spring-boot = "3.4.4"
-spring-dependency-management = "1.1.7"
-springdoc-openapi = "2.8.6"
-testcontainers = "1.20.6"
-updater = "1.0.0"
-konvert = "4.0.1"
+liquibase = "4.32.0"
+mockk = "1.14.2"
+postgresql = "42.7.6"
 slf4j = "2.0.17"
+spring-boot = "3.5.0"
+springdoc-openapi = "2.8.8"
+testcontainers = "1.21.1"
 
 [libraries]
 apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
+konvert-api = { module = "io.mcarle:konvert-api", version.ref = "konvert" }
+konvert-spring = { module = "io.mcarle:konvert-spring-annotations", version.ref = "konvert" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+ksp-konvert = { module = "io.mcarle:konvert", version.ref = "konvert" }
+ksp-konvert-spring = { module = "io.mcarle:konvert-spring-injector", version.ref = "konvert" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
-slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" } # No need to add version.ref because we'll use the one from springboot package
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 springboot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose", version.ref = "spring-boot" }
 springboot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
@@ -40,10 +42,6 @@ springboot-starter-webflux = { module = "org.springframework.boot:spring-boot-st
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
-konvert-api = { module = "io.mcarle:konvert-api", version.ref = "konvert" }
-konvert-spring = { module = "io.mcarle:konvert-spring-annotations", version.ref = "konvert" }
-ksp-konvert = { module = "io.mcarle:konvert", version.ref = "konvert" }
-ksp-konvert-spring = { module = "io.mcarle:konvert-spring-injector", version.ref = "konvert" }
 
 [plugins]
 kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
@@ -52,7 +50,6 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "updater" }
 
 [bundles]
 springboot = [
