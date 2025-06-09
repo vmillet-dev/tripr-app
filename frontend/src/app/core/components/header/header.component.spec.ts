@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { HeaderComponent } from './header.component';
 import { AuthService } from '../../services/auth.service';
@@ -24,12 +24,16 @@ describe('HeaderComponent', () => {
       writable: true
     });
     const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
+    const activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      snapshot: { queryParams: {} }
+    });
 
     await TestBed.configureTestingModule({
       imports: [HeaderComponent, getTranslocoModule()],
       providers: [
         { provide: AuthService, useValue: authSpy },
-        { provide: Router, useValue: routerSpyObj }
+        { provide: Router, useValue: routerSpyObj },
+        { provide: ActivatedRoute, useValue: activatedRouteSpy }
       ]
     }).compileComponents();
 

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { DashboardComponent } from './dashboard.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -21,11 +22,15 @@ describe('DashboardComponent', () => {
       value: of(mockUser),
       writable: true
     });
+    const activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      snapshot: { queryParams: {} }
+    });
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent, getTranslocoModule()],
       providers: [
-        { provide: AuthService, useValue: spy }
+        { provide: AuthService, useValue: spy },
+        { provide: ActivatedRoute, useValue: activatedRouteSpy }
       ]
     }).compileComponents();
 
