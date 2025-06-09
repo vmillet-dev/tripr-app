@@ -30,7 +30,12 @@ subprojects {
 
     kotlin {
         compilerOptions {
-            freeCompilerArgs.addAll("-Xjsr305=strict", "-Werror", "-Xemit-jvm-type-annotations")
+            freeCompilerArgs.addAll(
+                "-Xjsr305=strict",
+                "-Werror",
+                "-Wextra",
+                "-Xsuppress-warning=REDUNDANT_VISIBILITY_MODIFIER" //needed because of Konvert generated code
+            )
         }
     }
 
