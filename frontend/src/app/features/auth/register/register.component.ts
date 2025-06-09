@@ -1,9 +1,12 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router, RouterLink} from '@angular/router';
-import {AuthService} from '../../../core/services/auth.service';
-import {NgClass} from '@angular/common';
-import {TranslocoPipe} from '@jsverse/transloco';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../../core/services/auth.service';
+import { NgClass } from '@angular/common';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { RegisterRequest } from '../../../core/models/auth.model';
+import { passwordMatchValidator } from '../../../shared/validators/password-match.validator';
 
 @Component({
   selector: 'app-register',
@@ -13,35 +16,27 @@ import {TranslocoPipe} from '@jsverse/transloco';
 export class RegisterComponent implements OnInit {
   loading = false;
   error = '';
+  registerForm: FormGroup;
 
-  private formBuilder = inject(FormBuilder);
-  private router = inject(Router);
-  private authService = inject(AuthService);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  registerForm = this.formBuilder.group({
-    username: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
-  }, {
-    validators: this.passwordMatchValidator
-  });
+  constructor() {
+    this.registerForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, {
+      validators: passwordMatchValidator()
+    });
+  }
 
   ngOnInit(): void {}
 
-  get f() { return this.registerForm.controls; }
-
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get('password')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-
-    if (password !== confirmPassword) {
-      formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
-    } else {
-      formGroup.get('confirmPassword')?.setErrors(null);
-    }
-
-    return null;
+  get f() { 
+    return this.registerForm.controls; 
   }
 
   onSubmit(): void {
@@ -52,15 +47,17 @@ export class RegisterComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    this.authService.register({
+    const registerData: RegisterRequest = {
       username: this.f['username'].value as string,
       password: this.f['password'].value as string,
       email: this.f['email'].value as string
-    }).subscribe({
+    };
+
+    this.authService.register(registerData).subscribe({
       next: () => {
         this.router.navigate(['/login'], { queryParams: { registered: true } });
       },
-      error: error => {
+      error: (error: HttpErrorResponse) => {
         this.error = error.error?.message || 'Registration failed';
         this.loading = false;
       }
