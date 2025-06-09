@@ -12,8 +12,8 @@ import java.util.Map
 
 @Configuration
 @EnableAsync
-@EnableJpaRepositories(basePackages = ["com.adsearch.infrastructure.adapter.out.persistence.jpa"])
-@EntityScan(basePackages = ["com.adsearch.infrastructure.adapter.out.persistence.entity"])
+@EnableJpaRepositories(basePackages = ["**.infrastructure.adapter.out.persistence.jpa"])
+@EntityScan(basePackages = ["**.infrastructure.adapter.out.persistence.entity"])
 class AppConfig : BeanDefinitionRegistryPostProcessor {
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
         val beansToRegister: MutableMap<String, Class<*>> = Map.of<String, Class<*>>(
