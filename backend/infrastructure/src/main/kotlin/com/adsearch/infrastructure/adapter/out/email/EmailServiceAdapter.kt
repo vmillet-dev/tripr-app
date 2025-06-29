@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.email
 
 import com.adsearch.domain.port.out.EmailServicePort
-import com.adsearch.infrastructure.adapter.out.email.service.EmailService
+import com.adsearch.infrastructure.service.EmailService
 import org.springframework.stereotype.Component
 
 /**

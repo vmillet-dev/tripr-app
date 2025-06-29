@@ -2,7 +2,7 @@ package com.adsearch.infrastructure.adapter.`in`.security
 
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.AuthenticationServicePort
-import com.adsearch.infrastructure.adapter.`in`.security.service.AuthenticationService
+import com.adsearch.infrastructure.service.AuthenticationService
 import org.springframework.stereotype.Component
 
 @Component

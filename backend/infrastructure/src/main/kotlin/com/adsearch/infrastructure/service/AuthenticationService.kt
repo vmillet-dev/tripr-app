@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.`in`.security.service
+package com.adsearch.infrastructure.service
 
 import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.security.model.JwtUserDetails

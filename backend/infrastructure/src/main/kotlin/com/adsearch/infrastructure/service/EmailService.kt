@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.out.email.service
+package com.adsearch.infrastructure.service
 
 import com.adsearch.common.exception.technical.MailSendException
 import org.slf4j.Logger
