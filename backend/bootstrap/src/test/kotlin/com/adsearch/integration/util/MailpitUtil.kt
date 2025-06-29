@@ -7,20 +7,20 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 data class MailpitMessage(
-    @JsonProperty("ID")
+    @param:JsonProperty("ID")
     val id: String,
-    @JsonProperty("Subject")
+    @param:JsonProperty("Subject")
     val subject: String,
-    @JsonProperty("Text")
+    @param:JsonProperty("Text")
     val text: String,
-    @JsonProperty("From")
+    @param:JsonProperty("From")
     val from: MailpitAddress,
-    @JsonProperty("To")
+    @param:JsonProperty("To")
     val to: List<MailpitAddress>,
 )
 
 data class MailpitAddress(
-    @JsonProperty("Address")
+    @param:JsonProperty("Address")
     val address: String
 )
 

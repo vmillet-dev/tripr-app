@@ -14,8 +14,8 @@ import org.thymeleaf.context.Context
 class EmailService(
     private val mailSender: JavaMailSender,
     private val templateEngine: TemplateEngine,
-    @Value("\${password-reset.base-url}") private val baseUrl: String,
-    @Value("\${password-reset.from}") private val from: String
+    @param:Value("\${password-reset.base-url}") private val baseUrl: String,
+    @param:Value("\${password-reset.from}") private val from: String
 ) {
 
     companion object {

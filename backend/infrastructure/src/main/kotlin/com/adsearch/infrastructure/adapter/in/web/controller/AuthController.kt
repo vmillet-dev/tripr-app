@@ -36,8 +36,8 @@ import org.springframework.web.bind.annotation.RestController
 @PreAuthorize("permitAll()")
 class AuthController(
     private val authenticationUseCase: AuthenticationUseCase,
-    @Value("\${jwt.refresh-token.cookie-name}") private val cookieName: String,
-    @Value("\${jwt.refresh-token.expiration}") private val cookieMaxAge: Int
+    @param:Value("\${jwt.refresh-token.cookie-name}") private val cookieName: String,
+    @param:Value("\${jwt.refresh-token.expiration}") private val cookieMaxAge: Int
 ) {
 
     companion object {

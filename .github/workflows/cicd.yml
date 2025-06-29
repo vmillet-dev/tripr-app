@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '24'
   JAVA_DISTRIBUTION: 'temurin'
   NODE_VERSION: '22'
 

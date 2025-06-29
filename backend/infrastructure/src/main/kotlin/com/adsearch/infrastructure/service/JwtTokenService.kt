@@ -10,9 +10,9 @@ import java.time.Instant
 
 @Service
 class JwtTokenService(
-    @Value("\${jwt.secret}") private val secret: String,
-    @Value("\${jwt.expiration}") private val jwtExpiration: Long,
-    @Value("\${jwt.issuer}") private val issuer: String
+    @param:Value("\${jwt.secret}") private val secret: String,
+    @param:Value("\${jwt.expiration}") private val jwtExpiration: Long,
+    @param:Value("\${jwt.issuer}") private val issuer: String
 ) {
     private val algorithm: Algorithm = Algorithm.HMAC256(secret)
     private val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()

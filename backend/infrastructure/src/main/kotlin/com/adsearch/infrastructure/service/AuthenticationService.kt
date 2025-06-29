@@ -13,8 +13,8 @@ class AuthenticationService(
     private val authenticationManager: AuthenticationManager,
     private val jwtUserDetailsService: JwtUserDetailsService,
     private val passwordEncoder: PasswordEncoder,
-    @Value("\${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long,
-    @Value("\${password-reset.token-expiration}") private val passwordResetTokenExpiration: Long,
+    @param:Value("\${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long,
+    @param:Value("\${password-reset.token-expiration}") private val passwordResetTokenExpiration: Long,
 ) {
     fun authenticate(username: String, password: String) {
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
