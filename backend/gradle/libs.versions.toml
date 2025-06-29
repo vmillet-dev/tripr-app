@@ -5,8 +5,8 @@ httpclient5 = "5.5"
 jackson-kotlin = "2.19.0"
 konvert = "4.1.0"
 kotlin = "2.1.21"
-ksp = "2.1.21-2.0.1"
 liquibase = "4.32.0"
+mapstruct = "1.6.3"
 mockk = "1.14.2"
 postgresql = "42.7.6"
 slf4j = "2.0.17"
@@ -19,13 +19,11 @@ apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-t
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
-konvert-api = { module = "io.mcarle:konvert-api", version.ref = "konvert" }
-konvert-spring = { module = "io.mcarle:konvert-spring-annotations", version.ref = "konvert" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
-ksp-konvert = { module = "io.mcarle:konvert", version.ref = "konvert" }
-ksp-konvert-spring = { module = "io.mcarle:konvert-spring-injector", version.ref = "konvert" }
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+mapstruct-api = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-kapt = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
@@ -48,7 +46,7 @@ kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 
 [bundles]

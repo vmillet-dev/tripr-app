@@ -4,26 +4,26 @@ import com.adsearch.domain.enum.UserRoleEnum
 import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.out.persistence.entity.RoleEntity
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
-import io.mcarle.konvert.api.Konvert
-import io.mcarle.konvert.api.Konverter
-import io.mcarle.konvert.api.Mapping
-import io.mcarle.konvert.injector.spring.KComponent
+import org.mapstruct.Mapper
+import org.mapstruct.Mapping
+import org.mapstruct.Named
 
 /**
  * Mapper for User entity and domain model
  */
-@Konverter
-@KComponent
+@Mapper(componentModel = "spring")
 interface UserEntityMapper {
-    @Konvert(mappings=[Mapping(target = "roles", expression = "it.roles.map { it.type }")])
+    @Mapping(target = "roles", qualifiedByName = ["map"])
     fun toDomain(entity: UserEntity): UserDom
-    @Konvert(mappings=[Mapping(target = "roles", expression = "rolesToEntities(it)")])
     fun fromDomain(domain: UserDom): UserEntity
 
-    fun rolesToEntities(domain: UserDom): MutableSet<RoleEntity>  {
-        return domain.roles
-            .map { it -> UserRoleEnum.valueOf(it) }
-            .map { it -> RoleEntity(it.id, it.type) }
-            .toMutableSet()
+    fun map(value: String): RoleEntity {
+        val roleEnum = UserRoleEnum.valueOf(value)
+        return RoleEntity(roleEnum.id, roleEnum.type)
+    }
+
+    @Named("map")
+    fun map(value: RoleEntity): String {
+        return value.type
     }
 }

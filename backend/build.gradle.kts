@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.jpa) apply false
     alias(libs.plugins.kotlin.noarg) apply false
     alias(libs.plugins.spring.boot) apply false
-    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
 }
 
 java {
@@ -34,7 +34,7 @@ subprojects {
                 "-Xjsr305=strict",
                 "-Werror",
                 "-Wextra",
-                "-Xsuppress-warning=REDUNDANT_VISIBILITY_MODIFIER" //needed because of Konvert generated code
+                "-Xjvm-default=all-compatibility"
             )
         }
     }

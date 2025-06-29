@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.kotlin.jpa)
     alias(libs.plugins.kotlin.noarg)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 dependencies {
@@ -23,9 +23,11 @@ dependencies {
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.auth0.java.jwt)
     implementation(libs.jackson.module.kotlin)
-    implementation(libs.konvert.api)
-    implementation(libs.konvert.spring)
+    implementation(libs.mapstruct.api)
 
-    ksp(libs.ksp.konvert)
-    ksp(libs.ksp.konvert.spring)
+    kapt(libs.mapstruct.kapt)
+}
+
+kapt {
+    keepJavacAnnotationProcessors = true
 }
