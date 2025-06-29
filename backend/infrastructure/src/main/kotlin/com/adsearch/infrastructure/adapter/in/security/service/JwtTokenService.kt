@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.`in`.security.impl
+package com.adsearch.infrastructure.adapter.`in`.security.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm

@@ -1,17 +1,12 @@
-package com.adsearch.infrastructure.adapter.`in`.security.impl
+package com.adsearch.infrastructure.adapter.`in`.security.service
 
-import com.adsearch.domain.model.PasswordResetTokenDom
-import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
-import com.adsearch.infrastructure.security.model.JwtUserDetails
-import com.adsearch.infrastructure.security.service.JwtUserDetailsService
+import com.adsearch.infrastructure.adapter.`in`.security.model.JwtUserDetails
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.time.Instant
-import java.util.UUID
 
 @Service
 class AuthenticationService(
@@ -37,21 +32,7 @@ class AuthenticationService(
         )
     }
 
-    fun generateHashedPassword(password: String): String {
-        return passwordEncoder.encode(password)
-    }
-
-    fun generatePasswordResetToken(userId: Long): PasswordResetTokenDom =
-        PasswordResetTokenDom(
-            userId = userId,
-            token = UUID.randomUUID().toString(),
-            expiryDate = Instant.now().plusSeconds(passwordResetTokenExpiration)
-        )
-
-    fun generateRefreshToken(userId: Long): RefreshTokenDom =
-        RefreshTokenDom(
-            userId = userId,
-            token = UUID.randomUUID().toString(),
-            expiryDate = Instant.now().plusSeconds(refreshTokenExpiration)
-        )
+    fun generateHashedPassword(password: String): String = passwordEncoder.encode(password)
+    fun getPasswordResetTokenExpiration(): Long = passwordResetTokenExpiration
+    fun getRefreshTokenExpiration(): Long = refreshTokenExpiration
 }

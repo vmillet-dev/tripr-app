@@ -19,6 +19,8 @@ import com.adsearch.domain.port.out.RefreshTokenPersistencePort
 import com.adsearch.domain.port.out.UserPersistencePort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.Instant
+import java.util.UUID
 
 /**
  * Service for authentication operations
@@ -54,7 +56,11 @@ class AuthenticationUseCaseImpl(
         // Clean up existing refresh tokens
         refreshTokenPersistence.deleteByUserId(user.id)
 
-        val refreshToken: RefreshTokenDom = authenticationService.generateRefreshToken(user.id)
+        val refreshToken = RefreshTokenDom(
+            userId = user.id,
+            token = UUID.randomUUID().toString(),
+            expiryDate = Instant.now().plusSeconds(authenticationService.getRefreshTokenExpiration())
+        )
         refreshTokenPersistence.save(refreshToken)
         LOG.debug("Access token ${refreshToken.token} created for user $username with id: ${user.id}")
 
@@ -153,7 +159,12 @@ class AuthenticationUseCaseImpl(
         passwordResetTokenPersistence.deleteByUserId(user.id)
 
         // Create a new token
-        val resetToken: PasswordResetTokenDom = authenticationService.generatePasswordResetToken(user.id)
+        val resetToken = PasswordResetTokenDom(
+            userId = user.id,
+            token = UUID.randomUUID().toString(),
+            expiryDate = Instant.now().plusSeconds(authenticationService.getPasswordResetTokenExpiration())
+        )
+
         passwordResetTokenPersistence.save(resetToken)
         LOG.info("Password reset ${resetToken.token} successful for user $username")
 

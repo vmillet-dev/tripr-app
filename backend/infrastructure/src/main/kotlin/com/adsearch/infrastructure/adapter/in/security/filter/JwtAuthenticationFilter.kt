@@ -1,7 +1,7 @@
-package com.adsearch.infrastructure.security
+package com.adsearch.infrastructure.adapter.`in`.security.filter
 
 import com.adsearch.domain.port.`in`.JwtTokenServicePort
-import com.adsearch.infrastructure.security.service.JwtUserDetailsService
+import com.adsearch.infrastructure.adapter.`in`.security.service.JwtUserDetailsService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -29,7 +29,11 @@ class JwtAuthenticationFilter(
         val LOG: Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
     }
 
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
 
         val authHeader: String? = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

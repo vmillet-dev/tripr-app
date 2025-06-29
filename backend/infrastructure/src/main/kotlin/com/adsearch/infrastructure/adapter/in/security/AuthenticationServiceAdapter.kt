@@ -1,10 +1,8 @@
 package com.adsearch.infrastructure.adapter.`in`.security
 
-import com.adsearch.domain.model.PasswordResetTokenDom
-import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.AuthenticationServicePort
-import com.adsearch.infrastructure.adapter.`in`.security.impl.AuthenticationService
+import com.adsearch.infrastructure.adapter.`in`.security.service.AuthenticationService
 import org.springframework.stereotype.Component
 
 @Component
@@ -24,11 +22,11 @@ class AuthenticationServiceAdapter(
         return authenticationService.generateHashedPassword(password)
     }
 
-    override fun generatePasswordResetToken(userId: Long): PasswordResetTokenDom {
-        return authenticationService.generatePasswordResetToken(userId)
+    override fun getPasswordResetTokenExpiration(): Long {
+        return authenticationService.getPasswordResetTokenExpiration()
     }
 
-    override fun generateRefreshToken(userId: Long): RefreshTokenDom {
-        return authenticationService.generateRefreshToken(userId)
+    override fun getRefreshTokenExpiration(): Long {
+        return authenticationService.getRefreshTokenExpiration()
     }
 }

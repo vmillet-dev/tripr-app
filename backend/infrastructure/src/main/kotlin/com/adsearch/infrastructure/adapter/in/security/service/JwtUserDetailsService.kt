@@ -1,15 +1,13 @@
-package com.adsearch.infrastructure.security.service
-
+package com.adsearch.infrastructure.adapter.`in`.security.service
 
 import com.adsearch.domain.port.out.UserPersistencePort
-import com.adsearch.infrastructure.security.model.JwtUserDetails
+import com.adsearch.infrastructure.adapter.`in`.security.model.JwtUserDetails
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-
 
 @Service
 class JwtUserDetailsService(
