@@ -1,25 +1,19 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
 import com.adsearch.domain.model.RefreshTokenDom
-import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.out.RefreshTokenPersistencePort
-import com.adsearch.infrastructure.adapter.out.persistence.entity.RefreshTokenEntity
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.RefreshTokenRepository
-import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.RefreshTokenEntityMapper
 import org.springframework.stereotype.Component
 
 @Component
 class RefreshTokenPersistenceAdapter(
     private val refreshTokenRepository: RefreshTokenRepository,
-    private val refreshTokenEntityMapper: RefreshTokenEntityMapper,
-    private val userRepository: UserRepository
+    private val refreshTokenEntityMapper: RefreshTokenEntityMapper
 ) : RefreshTokenPersistencePort {
 
     override fun save(refreshTokenDom: RefreshTokenDom) {
-        val entity: RefreshTokenEntity = refreshTokenEntityMapper.toEntity(refreshTokenDom)
-        entity.user = userRepository.findByUsername(refreshTokenDom.user.username)!!
-        refreshTokenRepository.save(entity)
+        refreshTokenRepository.save(refreshTokenEntityMapper.toEntity(refreshTokenDom))
     }
 
     override fun findByToken(token: String): RefreshTokenDom? {
@@ -30,7 +24,7 @@ class RefreshTokenPersistenceAdapter(
         refreshTokenRepository.deleteByToken(token)
     }
 
-    override fun deleteByUser(user: UserDom) {
-        refreshTokenRepository.deleteByUserUsername(user.username)
+    override fun deleteByUserId(userId: Long) {
+        refreshTokenRepository.deleteByUserId(userId)
     }
 }

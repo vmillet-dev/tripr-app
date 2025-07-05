@@ -12,6 +12,8 @@ interface UserPersistencePort {
      */
     fun findByUsername(username: String): UserDom?
 
+    fun findById(id: Long): UserDom?
+
     /**
      * Find a user by email
      */
@@ -22,5 +24,5 @@ interface UserPersistencePort {
      */
     fun save(userDom: UserDom)
 
-    fun updatePassword(username: String, password: String)
+    fun updatePassword(username: Long, password: String)
 }

@@ -18,6 +18,6 @@ interface RefreshTokenRepository : JpaRepository<RefreshTokenEntity, Long> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM RefreshTokenEntity rf WHERE rf.user.username = ?1")
-    fun deleteByUserUsername(username: String)
+    @Query("DELETE FROM RefreshTokenEntity rf WHERE rf.userId = ?1")
+    fun deleteByUserId(userId: Long)
 }

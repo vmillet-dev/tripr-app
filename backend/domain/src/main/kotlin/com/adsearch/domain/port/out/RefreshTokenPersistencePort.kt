@@ -1,7 +1,6 @@
 package com.adsearch.domain.port.out
 
 import com.adsearch.domain.model.RefreshTokenDom
-import com.adsearch.domain.model.UserDom
 
 /**
  * Port for refresh token repository operations
@@ -26,5 +25,5 @@ interface RefreshTokenPersistencePort {
     /**
      * Delete all refresh tokens for a user
      */
-    fun deleteByUser(user: UserDom)
+    fun deleteByUserId(userId: Long)
 }

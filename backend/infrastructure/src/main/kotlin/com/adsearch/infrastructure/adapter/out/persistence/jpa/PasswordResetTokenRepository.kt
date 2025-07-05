@@ -18,6 +18,6 @@ interface PasswordResetTokenRepository : JpaRepository<PasswordResetTokenEntity,
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM PasswordResetTokenEntity prt WHERE prt.user.username = ?1")
-    fun deleteByUserUsername(username: String)
+    @Query("DELETE FROM PasswordResetTokenEntity prt WHERE prt.userId = ?1")
+    fun deleteByUserId(userId: Long)
 }

@@ -6,7 +6,7 @@ import java.time.Instant
  * Domain model representing a password reset token
  */
 data class PasswordResetTokenDom(
-    val user: UserDom,
+    val userId: Long,
     val token: String,
     val expiryDate: Instant,
     val used: Boolean

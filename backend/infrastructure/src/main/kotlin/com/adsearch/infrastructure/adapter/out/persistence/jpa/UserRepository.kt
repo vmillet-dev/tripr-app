@@ -15,6 +15,6 @@ interface UserRepository : JpaRepository<UserEntity, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE UserEntity u SET u.password = :password WHERE u.username = :username")
-    fun updatePassword(@Param("username") username: String, @Param("password") password: String): Int
+    @Query("UPDATE UserEntity u SET u.password = :password WHERE u.id = :id")
+    fun updatePassword(@Param("id") id: Long, @Param("password") password: String): Int
 }

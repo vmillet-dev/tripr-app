@@ -1,6 +1,5 @@
 package com.adsearch.infrastructure.adapter.out.persistence.entity
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -10,7 +9,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
@@ -29,12 +27,6 @@ data class UserEntity(
 
     @Column(name = "USR_PASSWORD", nullable = false, length = 255)
     val password: String,
-
-    @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val refreshToken: RefreshTokenEntity? = null,
-
-    @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val passwordResetToken: PasswordResetTokenEntity? = null,
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

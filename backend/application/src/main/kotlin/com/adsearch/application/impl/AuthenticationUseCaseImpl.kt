@@ -59,10 +59,10 @@ class AuthenticationUseCaseImpl(
             )
         }
             // Clean up existing refresh tokens
-            refreshTokenPersistence.deleteByUser(user)
+        refreshTokenPersistence.deleteByUserId(user.id)
 
             val expiryDate = Instant.now().plusSeconds(configProperties.getRefreshTokenExpiration())
-            val refreshToken = RefreshTokenDom(user, UUID.randomUUID().toString(), expiryDate, false)
+        val refreshToken = RefreshTokenDom(user.id, UUID.randomUUID().toString(), expiryDate, false)
 
             refreshTokenPersistence.save(refreshToken)
             LOG.debug("Refresh token ${refreshToken.token} created for user ${loginCommand.username}")
@@ -111,11 +111,11 @@ class AuthenticationUseCaseImpl(
 
         if (refreshTokenDom.isExpired() || refreshTokenDom.revoked) {
             refreshTokenPersistence.deleteByToken(refreshTokenDom.token)
-            throw TokenExpiredException("Token refresh failed - refresh token expired or revoked for username: ${refreshTokenDom.user.username}")
+            throw TokenExpiredException("Token refresh failed - refresh token expired or revoked for user id: ${refreshTokenDom.userId}")
         }
 
-        val user: UserDom = userPersistence.findByUsername(refreshTokenDom.user.username)
-            ?: throw UserNotFoundException("Token refresh failed - user not found with username: ${refreshTokenDom.user.username}")
+        val user: UserDom = userPersistence.findById(refreshTokenDom.userId)
+            ?: throw UserNotFoundException("Token refresh failed - user not found with user id: ${refreshTokenDom.userId}")
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
         LOG.debug("New access token $accessToken generated for user ${user.username}")
@@ -146,11 +146,11 @@ class AuthenticationUseCaseImpl(
             ?: throw UserNotFoundException("Password reset request failed - user not found with username: $username")
 
         // Delete any existing tokens for this user
-        passwordResetTokenPersistence.deleteByUser(user)
+        passwordResetTokenPersistence.deleteByUserId(user.id)
 
         // Create a new token
         val expiryDate = Instant.now().plusSeconds(configProperties.getPasswordResetTokenExpiration())
-        val resetToken = PasswordResetTokenDom(user, UUID.randomUUID().toString(), expiryDate, false)
+        val resetToken = PasswordResetTokenDom(user.id, UUID.randomUUID().toString(), expiryDate, false)
 
         passwordResetTokenPersistence.save(resetToken)
         LOG.info("Password reset ${resetToken.token} successful for user $username")
@@ -169,23 +169,23 @@ class AuthenticationUseCaseImpl(
         val resetToken = passwordResetTokenPersistence.findByToken(token)
             ?: throw InvalidTokenException("Password reset failed - invalid token provided")
 
-        LOG.debug("Password reset token found for username: ${resetToken.user.username}")
+        LOG.debug("Password reset token found for user id: ${resetToken.userId}")
 
         if (resetToken.isExpired() || resetToken.used) {
             passwordResetTokenPersistence.deleteByToken(resetToken.token)
-            throw TokenExpiredException("Password reset failed - invalid token for user: ${resetToken.user.username}")
+            throw TokenExpiredException("Password reset failed - invalid token for user: ${resetToken.userId}")
         }
 
         // Update the password
         userPersistence.updatePassword(
-            resetToken.user.username,
+            resetToken.userId,
             authenticationService.generateHashedPassword(newPassword)
         )
 
         // Delete all tokens for this user
-        passwordResetTokenPersistence.deleteByUser(resetToken.user)
+        passwordResetTokenPersistence.deleteByUserId(resetToken.userId)
 
-        LOG.info("Password reset completed successfully for user ${resetToken.user.username}")
+        LOG.info("Password reset completed successfully for user ${resetToken.userId}")
     }
 
     /**
@@ -201,12 +201,12 @@ class AuthenticationUseCaseImpl(
         }
 
         if (resetToken.isExpired() || resetToken.used) {
-            LOG.debug("Token validation failed - token $token expired for username: ${resetToken.user.username}")
+            LOG.debug("Token validation failed - token $token expired for user id: ${resetToken.userId}")
             passwordResetTokenPersistence.deleteByToken(resetToken.token)
             return false
         }
 
-        LOG.debug("Token validation successful for username: ${resetToken.user.username}")
+        LOG.debug("Token validation successful for user id: ${resetToken.userId}")
         return true
     }
 }
