@@ -1,6 +1,7 @@
 package com.adsearch.domain.port.out
 
 import com.adsearch.domain.model.PasswordResetTokenDom
+import com.adsearch.domain.model.UserDom
 
 /**
  * Port for password reset token repository operations
@@ -13,22 +14,17 @@ interface PasswordResetTokenPersistencePort {
     fun findByToken(token: String): PasswordResetTokenDom?
 
     /**
-     * Find all tokens for a user
-     */
-    fun findByUserId(userId: Long): List<PasswordResetTokenDom>
-
-    /**
      * Save a token
      */
-    fun save(token: PasswordResetTokenDom): PasswordResetTokenDom
+    fun save(dom: PasswordResetTokenDom)
 
     /**
      * Delete a token by ID
      */
-    fun deleteById(id: Long)
+    fun deleteByToken(token: String)
 
     /**
      * Delete all tokens for a user
      */
-    fun deleteByUserId(userId: Long)
+    fun deleteByUser(user: UserDom)
 }

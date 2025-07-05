@@ -46,7 +46,7 @@ class AuthorizationAccessIT : BaseIT() {
         )
 
         assertThat(response!!.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).isEqualTo("User content")
+        assertThat(response.body).isEqualTo("UserEntity content")
     }
 
     @Test
@@ -106,7 +106,7 @@ class TestController {
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
     fun userAccess(): ResponseEntity<String?> {
-        return ResponseEntity.ok<String?>("User content")
+        return ResponseEntity.ok<String?>("UserEntity content")
     }
 
     @GetMapping("/admin")

@@ -1,5 +1,6 @@
 package com.adsearch.infrastructure.service
 
+import com.adsearch.domain.model.UserDom
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -17,16 +18,14 @@ class JwtTokenService(
     private val algorithm: Algorithm = Algorithm.HMAC256(secret)
     private val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()
 
-    fun createAccessToken(userId: String, username: String, roles: List<String>): String
+    fun createAccessToken(user: UserDom): String
         = JWT.create()
-        .withSubject(username)
-        .withClaim("userId", userId)
-            .withArrayClaim("roles", roles.toTypedArray())
-            .withIssuedAt(Instant.now())
-            .withExpiresAt( Instant.now().plusSeconds(jwtExpiration))
-            .withIssuer(issuer)
-            .sign(algorithm)
-
+        .withSubject(user.username)
+        .withArrayClaim("roleEntities", user.roles.toTypedArray())
+        .withIssuedAt(Instant.now())
+        .withExpiresAt(Instant.now().plusSeconds(jwtExpiration))
+        .withIssuer(issuer)
+        .sign(algorithm)
 
     fun validateAccessTokenAndGetUsername(token: String): String? = try {
         verifier.verify(token).subject

@@ -1,6 +1,7 @@
 package com.adsearch.domain.port.out
 
 import com.adsearch.domain.model.RefreshTokenDom
+import com.adsearch.domain.model.UserDom
 
 /**
  * Port for refresh token repository operations
@@ -13,22 +14,17 @@ interface RefreshTokenPersistencePort {
     fun findByToken(token: String): RefreshTokenDom?
 
     /**
-     * Find all refresh tokens for a user
-     */
-    fun findByUserId(userId: Long): List<RefreshTokenDom>
-
-    /**
      * Save a refresh token
      */
-    fun save(refreshTokenDom: RefreshTokenDom): RefreshTokenDom
+    fun save(refreshTokenDom: RefreshTokenDom)
 
     /**
      * Delete a refresh token
      */
-    fun deleteById(id: Long)
+    fun deleteByToken(token: String)
 
     /**
      * Delete all refresh tokens for a user
      */
-    fun deleteByUserId(userId: Long)
+    fun deleteByUser(user: UserDom)
 }

@@ -9,17 +9,11 @@ import org.springframework.stereotype.Component
 @Component
 class UserPersistenceAdapter(
     private val userRepository: UserRepository,
-    private val userEntityMapper: UserEntityMapper
+    private val userEntityMapper: UserEntityMapper,
 ) : UserPersistencePort {
 
-    override fun save(userDom: UserDom): UserDom {
-        return userRepository
-            .save(userEntityMapper.fromDomain(userDom))
-            .let { userEntityMapper.toDomain(it) }
-    }
-
-    override fun findById(id: Long): UserDom? {
-        return userRepository.findById(id).orElse(null)?.let { userEntityMapper.toDomain(it) }
+    override fun save(userDom: UserDom) {
+        userRepository.save(userEntityMapper.fromDomain(userDom))
     }
 
     override fun findByUsername(username: String): UserDom? {

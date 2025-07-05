@@ -21,8 +21,8 @@ import java.util.UUID
  * Tests authentication flows including login, registration, refresh token, and logout.
  *
  * These tests verify:
- * - User login with valid and invalid credentials
- * - User registration with new and existing usernames
+ * - UserEntity login with valid and invalid credentials
+ * - UserEntity registration with new and existing usernames
  * - Token refresh functionality
  * - Logout functionality
  * - Error handling for authentication failures
@@ -56,7 +56,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
             assertThat(response.body).extracting("username").isEqualTo(testUsername)
-            assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST)
+            assertThat(response.body).extracting("roleEntities").asInstanceOf(InstanceOfAssertFactories.LIST)
                 .contains("ROLE_USER")
         }
 
@@ -143,7 +143,7 @@ class AuthControllerIT : BaseIT() {
             // Then
             assertThat(registerResponse.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(registerResponse.body).isNotNull().extracting("message")
-                .isEqualTo("User registered successfully")
+                .isEqualTo("UserEntity registered successfully")
 
             assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(loginResponse.body).isNotNull().extracting("accessToken").isNotNull()
@@ -229,7 +229,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
             assertThat(response.body).extracting("username").isEqualTo("john_doe")
-            assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST)
+            assertThat(response.body).extracting("roleEntities").asInstanceOf(InstanceOfAssertFactories.LIST)
                 .contains("ROLE_USER")
         }
 

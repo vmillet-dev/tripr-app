@@ -1,95 +1,92 @@
 databaseChangeLog:
   - changeSet:
-      id: create-roles-table
-      author: system
+      id: 20250705-04.1
+      author: init
       preConditions:
         - onFail: MARK_RAN
         - not:
           - tableExists:
-            tableName: roles
+            tableName: T_ROLE
       changes:
         - createTable:
-            tableName: roles
+            tableName: T_ROLE
             columns:
               - column:
-                  name: id
+                  name: ROLE_ID
                   type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
-                  name: type
+                  name: ROLE_TYPE
                   type: varchar(50)
                   constraints:
-                    nullable: false
                     unique: true
         - createIndex:
-            indexName: idx_roles_type
-            tableName: roles
+            indexName: IDX_ROLE_TYPE
+            tableName: T_ROLE
             columns:
               - column:
-                  name: type
+                  name: ROLE_TYPE
             unique: true
 
   - changeSet:
-      id: create-user-roles-table
-      author: system
+      id: 20250705-04.2
+      author: init
       preConditions:
         - onFail: MARK_RAN
         - not:
           - tableExists:
-            tableName: user_roles
+            tableName: T_USER_ROLE
       changes:
         - createTable:
-            tableName: user_roles
+            tableName: T_USER_ROLE
             columns:
               - column:
-                  name: user_id
+                  name: USR_ID
                   type: bigint
-                  constraints:
-                    nullable: false
               - column:
-                  name: role_id
+                  name: ROLE_ID
                   type: bigint
-                  constraints:
-                    nullable: false
         - addPrimaryKey:
-            tableName: user_roles
-            columnNames: user_id, role_id
-            constraintName: pk_user_roles
+            tableName: T_USER_ROLE
+            columnNames: USR_ID, ROLE_ID
+            constraintName: PK_USER_ROLE
         - addForeignKeyConstraint:
-            baseTableName: user_roles
-            baseColumnNames: user_id
-            referencedTableName: users
-            referencedColumnNames: id
-            constraintName: fk_user_roles_user
+            baseTableName: T_USER_ROLE
+            baseColumnNames: USR_ID
+            referencedTableName: T_USER
+            referencedColumnNames: USR_ID
+            constraintName: FK_USER_ROLE_USER
             onDelete: CASCADE
+            onUpdate: CASCADE
         - addForeignKeyConstraint:
-            baseTableName: user_roles
-            baseColumnNames: role_id
-            referencedTableName: roles
-            referencedColumnNames: id
-            constraintName: fk_user_roles_role
+            baseTableName: T_USER_ROLE
+            baseColumnNames: ROLE_ID
+            referencedTableName: T_ROLE
+            referencedColumnNames: ROLE_ID
+            constraintName: FK_USER_ROLE_ROLE
+            onDelete: RESTRICT
+            onUpdate: CASCADE
         - createIndex:
-            indexName: idx_user_roles_user_id
-            tableName: user_roles
+            indexName: IDX_USER_ROLE_USER
+            tableName: T_USER_ROLE
             columns:
               - column:
-                  name: user_id
+                  name: USR_ID
         - createIndex:
-            indexName: idx_user_roles_role_id
-            tableName: user_roles
+            indexName: IDX_USER_ROLE_ROLE
+            tableName: T_USER_ROLE
             columns:
               - column:
-                  name: role_id
+                  name: ROLE_ID
 
   - changeSet:
-      id: insert-default-roles
-      author: system
+      id: 20250705-04.3
+      author: init
       changes:
         - loadData:
-            tableName: roles
+            tableName: T_ROLE
             file: classpath:db/data/init_roles.csv
             separator: ','
             encoding: UTF-8

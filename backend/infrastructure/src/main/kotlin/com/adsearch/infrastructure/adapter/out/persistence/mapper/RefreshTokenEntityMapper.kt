@@ -5,9 +5,9 @@ import com.adsearch.infrastructure.adapter.out.persistence.entity.RefreshTokenEn
 import org.mapstruct.Mapper
 
 /**
- * Mapper for RefreshToken entity and domain model
+ * Mapper for RefreshTokenEntity entity and domain model
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = [RoleEntityMapper::class])
 interface RefreshTokenEntityMapper {
     fun toDomain(entity: RefreshTokenEntity): RefreshTokenDom
     fun fromDomain(domain: RefreshTokenDom): RefreshTokenEntity

@@ -1,30 +1,31 @@
 package com.adsearch.infrastructure.service
 
-import com.adsearch.domain.port.out.UserPersistencePort
-import com.adsearch.infrastructure.adapter.`in`.security.model.JwtUserDetails
+import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
 class JwtUserDetailsService(
-    private val userPersistencePort: UserPersistencePort
+    private val userRepository: UserRepository
 ) : UserDetailsService {
 
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(JwtUserDetailsService::class.java)
     }
 
-    override fun loadUserByUsername(username: String): JwtUserDetails {
-        val user = userPersistencePort.findByUsername(username)
+    override fun loadUserByUsername(username: String): UserDetails {
+        val user = userRepository.findByUsername(username)
         if (user == null) {
             LOG.warn("user not found: {}", username)
-            throw UsernameNotFoundException("User $username not found")
+            throw UsernameNotFoundException("UserEntity $username not found")
         }
-        val authorities = user.roles.flatMap { listOf(SimpleGrantedAuthority(it)) }
-        return JwtUserDetails(user.id, username, user.password, authorities)
+        val authorities = user.roles.flatMap { listOf(SimpleGrantedAuthority(it.type)) }
+        return User(username, user.password, authorities)
     }
 }

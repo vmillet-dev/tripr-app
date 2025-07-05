@@ -1,8 +1,9 @@
 package com.adsearch.infrastructure.adapter.`in`.web.controller
 
 import com.adsearch.application.AuthenticationUseCase
+import com.adsearch.domain.command.LoginUserCommand
+import com.adsearch.domain.command.RegisterUserCommand
 import com.adsearch.domain.model.AuthResponseDom
-import com.adsearch.domain.model.UserDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthResponseDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
@@ -50,7 +51,13 @@ class AuthController(
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
     fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
-        val authResponse: AuthResponseDom = authenticationUseCase.login(request.username, request.password)
+
+        val authResponse: AuthResponseDom = authenticationUseCase.login(
+            LoginUserCommand(
+                request.username,
+                request.password
+            )
+        )
 
         authResponse.refreshToken?.let { token ->
             Cookie(cookieName, token).apply {
@@ -77,15 +84,15 @@ class AuthController(
     @PostMapping("/register")
     @Operation(summary = "Register new user", description = "Registers a new user with username, password, and email")
     fun register(@Valid @RequestBody request: RegisterRequestDto): ResponseEntity<Map<String, String>> {
-        val user = UserDom(
-            username = request.username,
-            email = request.email,
-            password = request.password
+        authenticationUseCase.register(
+            RegisterUserCommand(
+                request.username,
+                request.email,
+                request.password
+            )
         )
 
-        authenticationUseCase.register(user)
-
-        return ResponseEntity.ok(mapOf("message" to "User registered successfully"))
+        return ResponseEntity.ok(mapOf("message" to "UserEntity registered successfully"))
     }
 
     /**

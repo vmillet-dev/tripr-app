@@ -1,5 +1,6 @@
 package com.adsearch.infrastructure.adapter.`in`.security
 
+import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.JwtTokenServicePort
 import com.adsearch.infrastructure.service.JwtTokenService
 import org.springframework.stereotype.Component
@@ -9,8 +10,8 @@ class JwtTokenServiceAdapter(
     private val jwtTokenService: JwtTokenService
 ) : JwtTokenServicePort {
 
-    override fun createAccessToken(userId: String, username: String, roles: List<String>): String {
-        return jwtTokenService.createAccessToken(userId, username, roles)
+    override fun createAccessToken(user: UserDom): String {
+        return jwtTokenService.createAccessToken(user)
     }
 
     override fun validateAccessTokenAndGetUsername(token: String): String? {

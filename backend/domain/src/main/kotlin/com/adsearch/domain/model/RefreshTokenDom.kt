@@ -6,11 +6,10 @@ import java.time.Instant
  * Domain model representing a refresh token
  */
 data class RefreshTokenDom(
-    val id: Long = 0,
-    val userId: Long,
+    val user: UserDom,
     val token: String,
     val expiryDate: Instant,
-    val revoked: Boolean = false
+    val revoked: Boolean
 ) {
     fun isExpired(): Boolean = expiryDate.isBefore(Instant.now())
 }

@@ -1,7 +1,8 @@
 package com.adsearch.application
 
+import com.adsearch.domain.command.LoginUserCommand
+import com.adsearch.domain.command.RegisterUserCommand
 import com.adsearch.domain.model.AuthResponseDom
-import com.adsearch.domain.model.UserDom
 
 /**
  * Use case for authentication operations
@@ -11,12 +12,12 @@ interface AuthenticationUseCase {
     /**
      * Authenticate a user with username and password
      */
-    fun login(username: String, password: String): AuthResponseDom
+    fun login(loginCommand: LoginUserCommand): AuthResponseDom
 
     /**
      * Register a new user
      */
-    fun register(user: UserDom)
+    fun register(registerCommand: RegisterUserCommand)
 
     /**
      * Refresh an access token using a refresh token

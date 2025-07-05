@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface PasswordResetTokenRepository : JpaRepository<PasswordResetTokenEntity, Long> {
     fun findByToken(token: String): PasswordResetTokenEntity?
-    fun findByUserId(userId: Long): List<PasswordResetTokenEntity>
-    fun deleteByUserId(userId: Long)
+    fun deleteByToken(token: String)
+    fun deleteByUserUsername(username: String)
 }

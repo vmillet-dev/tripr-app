@@ -5,9 +5,9 @@ import com.adsearch.infrastructure.adapter.out.persistence.entity.PasswordResetT
 import org.mapstruct.Mapper
 
 /**
- * Mapper for PasswordResetToken entity and domain model
+ * Mapper for PasswordResetTokenEntity entity and domain model
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = [RoleEntityMapper::class])
 interface PasswordResetTokenEntityMapper {
     fun toDomain(entity: PasswordResetTokenEntity): PasswordResetTokenDom
     fun fromDomain(domain: PasswordResetTokenDom): PasswordResetTokenEntity

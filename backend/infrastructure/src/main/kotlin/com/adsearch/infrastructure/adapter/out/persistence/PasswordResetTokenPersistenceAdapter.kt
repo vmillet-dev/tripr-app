@@ -1,6 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
 import com.adsearch.domain.model.PasswordResetTokenDom
+import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.out.PasswordResetTokenPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.PasswordResetTokenRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.PasswordResetTokenEntityMapper
@@ -12,24 +13,19 @@ class PasswordResetTokenPersistenceAdapter(
     private val passwordResetTokenEntityMapper: PasswordResetTokenEntityMapper
 ) : PasswordResetTokenPersistencePort {
 
-    override fun save(token: PasswordResetTokenDom): PasswordResetTokenDom {
-        val entity = passwordResetTokenEntityMapper.fromDomain(token)
-        return passwordResetTokenEntityMapper.toDomain(passwordResetTokenRepository.save(entity))
+    override fun save(dom: PasswordResetTokenDom) {
+        passwordResetTokenRepository.save(passwordResetTokenEntityMapper.fromDomain(dom))
     }
 
     override fun findByToken(token: String): PasswordResetTokenDom? {
         return passwordResetTokenRepository.findByToken(token)?.let(passwordResetTokenEntityMapper::toDomain)
     }
 
-    override fun findByUserId(userId: Long): List<PasswordResetTokenDom> {
-        return passwordResetTokenRepository.findByUserId(userId).map(passwordResetTokenEntityMapper::toDomain)
+    override fun deleteByToken(token: String) {
+        passwordResetTokenRepository.deleteByToken(token)
     }
 
-    override fun deleteById(id: Long) {
-        passwordResetTokenRepository.deleteById(id)
-    }
-
-    override fun deleteByUserId(userId: Long) {
-        passwordResetTokenRepository.deleteByUserId(userId)
+    override fun deleteByUser(user: UserDom) {
+        passwordResetTokenRepository.deleteByUserUsername(user.username)
     }
 }

@@ -1,37 +1,38 @@
 databaseChangeLog:
   - changeSet:
-      id: 01
-      author: devin
+      id: 20250705-01.1
+      author: init
       preConditions:
         - onFail: MARK_RAN
         - not:
-          - tableExists:
-            tableName: users
+            - tableExists:
+                tableName: T_USER
       changes:
         - createTable:
-            tableName: users
+            tableName: T_USER
             columns:
               - column:
-                  name: id
+                  name: USR_ID
                   type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
-                  name: username
+                  name: USR_USERNAME
                   type: varchar(255)
                   constraints:
                     unique: true
-                    nullable: false
               - column:
-                  name: email
+                  name: USR_EMAIL
                   type: varchar(255)
                   constraints:
-                      unique: true
-                      nullable: false
+                    unique: true
               - column:
-                  name: password
+                  name: USR_PASSWORD
                   type: varchar(255)
-                  constraints:
-                    nullable: false
+        - createIndex:
+            tableName: T_USER
+            indexName: IDX_USER_USERNAME
+            columns:
+              - column:
+                  name: USR_USERNAME

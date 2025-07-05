@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.`in`.security.filter
+package com.adsearch.infrastructure.adapter.`in`.security
 
 import com.adsearch.domain.port.`in`.JwtTokenServicePort
 import com.adsearch.infrastructure.service.JwtUserDetailsService
@@ -56,7 +56,7 @@ class JwtAuthenticationFilter(
             userDetails = jwtUserDetailsService.loadUserByUsername(username)
         } catch (_: UsernameNotFoundException) {
             // user not found
-            LOG.warn("User $username not found")
+            LOG.warn("UserEntity $username not found")
             filterChain.doFilter(request, response)
             return
         }
