@@ -16,10 +16,6 @@ class UserPersistenceAdapter(
         userRepository.save(userEntityMapper.fromDomain(userDom))
     }
 
-    override fun updatePassword(username: Long, password: String) {
-        userRepository.updatePassword(username, password)
-    }
-
     override fun findByUsername(username: String): UserDom? {
         return userRepository.findByUsername(username)?.let { userEntityMapper.toDomain(it) }
     }

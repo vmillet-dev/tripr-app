@@ -14,6 +14,11 @@ data class UserDom(
     val roles: Set<String>,
     val enabled: Boolean
 ) {
+    fun changePassword(newPassword: String): UserDom {
+        val updatedUser = UserDom(id, username, email, newPassword, roles, enabled)
+        return updatedUser
+    }
+
     companion object {
         fun register(registerCommand: RegisterUserCommand): UserDom {
             return UserDom(

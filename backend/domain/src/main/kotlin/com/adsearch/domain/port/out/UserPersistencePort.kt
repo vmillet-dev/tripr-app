@@ -23,6 +23,4 @@ interface UserPersistencePort {
      * Save a user
      */
     fun save(userDom: UserDom)
-
-    fun updatePassword(username: Long, password: String)
 }
