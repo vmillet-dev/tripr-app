@@ -10,7 +10,7 @@ import java.time.Instant
 
 @Entity
 @Table(name = "T_PASSWORD_RESET_TOKEN")
-data class PasswordResetTokenEntity(
+class PasswordResetTokenEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PRT_ID")

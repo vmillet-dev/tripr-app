@@ -7,7 +7,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "T_ROLE")
-data class RoleEntity(
+class RoleEntity(
     @Id
     @Column(name = "ROLE_ID")
     val id: Long = 0,
