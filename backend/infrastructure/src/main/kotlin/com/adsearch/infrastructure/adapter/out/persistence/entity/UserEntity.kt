@@ -36,7 +36,7 @@ data class UserEntity(
     @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val passwordResetToken: PasswordResetTokenEntity? = null,
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "T_USER_ROLE",
         joinColumns = [JoinColumn(name = "USR_ID")],

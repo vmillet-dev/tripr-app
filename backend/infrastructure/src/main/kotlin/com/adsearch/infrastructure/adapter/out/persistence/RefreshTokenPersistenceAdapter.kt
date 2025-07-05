@@ -3,18 +3,23 @@ package com.adsearch.infrastructure.adapter.out.persistence
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.out.RefreshTokenPersistencePort
+import com.adsearch.infrastructure.adapter.out.persistence.entity.RefreshTokenEntity
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.RefreshTokenRepository
+import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.RefreshTokenEntityMapper
 import org.springframework.stereotype.Component
 
 @Component
 class RefreshTokenPersistenceAdapter(
     private val refreshTokenRepository: RefreshTokenRepository,
-    private val refreshTokenEntityMapper: RefreshTokenEntityMapper
+    private val refreshTokenEntityMapper: RefreshTokenEntityMapper,
+    private val userRepository: UserRepository
 ) : RefreshTokenPersistencePort {
 
     override fun save(refreshTokenDom: RefreshTokenDom) {
-        refreshTokenRepository.save(refreshTokenEntityMapper.fromDomain(refreshTokenDom))
+        val entity: RefreshTokenEntity = refreshTokenEntityMapper.toEntity(refreshTokenDom)
+        entity.user = userRepository.findByUsername(refreshTokenDom.user.username)!!
+        refreshTokenRepository.save(entity)
     }
 
     override fun findByToken(token: String): RefreshTokenDom? {

@@ -92,8 +92,8 @@ databaseChangeLog:
             encoding: UTF-8
             columns:
               - column:
-                  name: id
+                  name: ROLE_ID
                   type: NUMERIC
               - column:
-                  name: type
+                  name: ROLE_TYPE
                   type: STRING

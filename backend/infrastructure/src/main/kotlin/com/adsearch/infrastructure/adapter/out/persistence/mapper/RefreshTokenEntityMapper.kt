@@ -10,5 +10,5 @@ import org.mapstruct.Mapper
 @Mapper(componentModel = "spring", uses = [RoleEntityMapper::class])
 interface RefreshTokenEntityMapper {
     fun toDomain(entity: RefreshTokenEntity): RefreshTokenDom
-    fun fromDomain(domain: RefreshTokenDom): RefreshTokenEntity
+    fun toEntity(domain: RefreshTokenDom): RefreshTokenEntity
 }

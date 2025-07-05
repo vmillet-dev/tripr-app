@@ -48,10 +48,16 @@ class AuthenticationUseCaseImpl(
     override fun login(loginCommand: LoginUserCommand): AuthResponseDom {
         LOG.info("Login attempt for user ${loginCommand.username}")
 
+        val user: UserDom
         try {
-            val user: UserDom = authenticationService.authenticate(loginCommand.username, loginCommand.password)
+            user = authenticationService.authenticate(loginCommand.username, loginCommand.password)
             LOG.debug("User ${loginCommand.username} authentication successful ")
-
+        } catch (e: Exception) {
+            throw InvalidCredentialsException(
+                "Authentication failed for user ${loginCommand.username} - invalid credentials provided",
+                cause = e
+            )
+        }
             // Clean up existing refresh tokens
             refreshTokenPersistence.deleteByUser(user)
 
@@ -66,9 +72,6 @@ class AuthenticationUseCaseImpl(
 
             LOG.info("Login successful for user ${loginCommand.username}")
             return AuthResponseDom(user, accessToken, refreshToken.token)
-        } catch (_: Exception) {
-            throw InvalidCredentialsException("Authentication failed for user ${loginCommand.username} - invalid credentials provided")
-        }
     }
 
     /**
@@ -85,7 +88,7 @@ class AuthenticationUseCaseImpl(
             throw EmailAlreadyExistsException("Registration failed - email ${registerCommand.email} already exists")
         }
 
-        registerCommand.apply { password = authenticationService.generateHashedPassword(password) }
+        registerCommand.apply { password = authenticationService.generateHashedPassword(registerCommand.password) }
         userPersistence.save(UserDom.register(registerCommand))
 
         LOG.info("User ${registerCommand.username} registration successful")

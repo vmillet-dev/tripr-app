@@ -21,7 +21,7 @@ data class RefreshTokenEntity(
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USR_ID", nullable = false, unique = true)
-    val user: UserEntity,
+    var user: UserEntity,
 
     @Column(name = "RT_TOKEN", unique = true, nullable = false, length = 255)
     val token: String,

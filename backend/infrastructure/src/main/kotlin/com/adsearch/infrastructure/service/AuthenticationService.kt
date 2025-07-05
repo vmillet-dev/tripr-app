@@ -12,8 +12,9 @@ class AuthenticationService(
     private val passwordEncoder: PasswordEncoder,
 ) {
     fun authenticate(username: String, password: String): String {
-        val authToken = UsernamePasswordAuthenticationToken(username, password)
-        val authentication: Authentication = authenticationManager.authenticate(authToken)
+        val authentication: Authentication = authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(username, password)
+        )
         return authentication.name
     }
 
