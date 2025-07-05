@@ -176,16 +176,16 @@ class AuthenticationUseCaseImpl(
             throw TokenExpiredException("Password reset failed - invalid token for user: ${resetToken.user.username}")
         }
 
-        val user: UserDom = userPersistence.findByUsername(resetToken.user.username)
-            ?: throw UserNotFoundException("Password reset failed - user not found for token username: ${resetToken.user.username}")
-
         // Update the password
-        userPersistence.save(user.changePassword(newPassword))
+        userPersistence.updatePassword(
+            resetToken.user.username,
+            authenticationService.generateHashedPassword(newPassword)
+        )
 
         // Delete all tokens for this user
-        passwordResetTokenPersistence.deleteByUser(user)
+        passwordResetTokenPersistence.deleteByUser(resetToken.user)
 
-        LOG.info("Password reset completed successfully for user ${user.username}")
+        LOG.info("Password reset completed successfully for user ${resetToken.user.username}")
     }
 
     /**

@@ -10,5 +10,5 @@ import org.mapstruct.Mapper
 @Mapper(componentModel = "spring", uses = [RoleEntityMapper::class])
 interface PasswordResetTokenEntityMapper {
     fun toDomain(entity: PasswordResetTokenEntity): PasswordResetTokenDom
-    fun fromDomain(domain: PasswordResetTokenDom): PasswordResetTokenEntity
+    fun toEntity(domain: PasswordResetTokenDom): PasswordResetTokenEntity
 }

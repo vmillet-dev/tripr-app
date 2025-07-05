@@ -21,7 +21,7 @@ class JwtTokenService(
     fun createAccessToken(user: UserDom): String
         = JWT.create()
         .withSubject(user.username)
-        .withArrayClaim("roleEntities", user.roles.toTypedArray())
+        .withArrayClaim("roles", user.roles.toTypedArray())
         .withIssuedAt(Instant.now())
         .withExpiresAt(Instant.now().plusSeconds(jwtExpiration))
         .withIssuer(issuer)

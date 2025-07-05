@@ -56,7 +56,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
             assertThat(response.body).extracting("username").isEqualTo(testUsername)
-            assertThat(response.body).extracting("roleEntities").asInstanceOf(InstanceOfAssertFactories.LIST)
+            assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST)
                 .contains("ROLE_USER")
         }
 
@@ -229,7 +229,7 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
             assertThat(response.body).extracting("username").isEqualTo("john_doe")
-            assertThat(response.body).extracting("roleEntities").asInstanceOf(InstanceOfAssertFactories.LIST)
+            assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST)
                 .contains("ROLE_USER")
         }
 
