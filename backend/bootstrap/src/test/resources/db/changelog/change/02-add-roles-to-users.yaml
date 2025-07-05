@@ -6,7 +6,7 @@ databaseChangeLog:
         - sql:
             endDelimiter: ;
             splitStatements: true
-            sql: INSERT INTO user_roles (user_id, role_id) VALUES (1, 2); # testuser -> user role
+            sql: INSERT INTO T_USER_ROLE (USR_ID, ROLE_ID) VALUES (1, 2); # testuser -> user role
   - changeSet:
       id: 202505011715-02
       author: test
@@ -14,7 +14,7 @@ databaseChangeLog:
         - sql:
             endDelimiter: ;
             splitStatements: true
-            sql: INSERT INTO user_roles (user_id, role_id) VALUES (2, 1); # testadmin -> admin role
+            sql: INSERT INTO T_USER_ROLE (USR_ID, ROLE_ID) VALUES (2, 1); # testadmin -> admin role
   - changeSet:
       id: 202505011715-03
       author: test
@@ -22,7 +22,7 @@ databaseChangeLog:
         - sql:
             endDelimiter: ;
             splitStatements: true
-            sql: INSERT INTO user_roles (user_id, role_id) VALUES (3, 2); # john_doe -> user role
+            sql: INSERT INTO T_USER_ROLE (USR_ID, ROLE_ID) VALUES (3, 2); # john_doe -> user role
   - changeSet:
       id: 202505011715-04
       author: test
@@ -30,4 +30,4 @@ databaseChangeLog:
         - sql:
             endDelimiter: ;
             splitStatements: true
-            sql: INSERT INTO user_roles (user_id, role_id) VALUES (4, 2); # Bob -> user role
+            sql: INSERT INTO T_USER_ROLE (USR_ID, ROLE_ID) VALUES (4, 2); # Bob -> user role
