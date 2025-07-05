@@ -1,12 +1,11 @@
-package com.adsearch.common.exception.technical
+package com.adsearch.infrastructure.exception
 
-import com.adsearch.common.enum.HttpStatusEnum
-import com.adsearch.common.enum.TechnicalErrorCodeEnum
-import com.adsearch.common.exception.BaseTechnicalException
+import com.adsearch.domain.model.enum.HttpStatusEnum
+import com.adsearch.domain.model.enum.TechnicalErrorCodeEnum
 
 class MailSendException(
     message: String = TechnicalErrorCodeEnum.MAIL_SEND_EXCEPTION.defaultMessage,
     errorCode: String = TechnicalErrorCodeEnum.MAIL_SEND_EXCEPTION.code,
     httpStatusEnum: HttpStatusEnum = HttpStatusEnum.INTERNAL_SERVER_ERROR,
     cause: Throwable? = null
-) : BaseTechnicalException(message, errorCode, httpStatusEnum, cause)
+) : BaseTechnicalException(message, cause, errorCode, httpStatusEnum)

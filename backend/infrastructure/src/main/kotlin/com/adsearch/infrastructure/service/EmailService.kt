@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.service
 
-import com.adsearch.common.exception.technical.MailSendException
+import com.adsearch.infrastructure.exception.MailSendException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

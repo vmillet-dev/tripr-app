@@ -1,6 +1,6 @@
 package com.adsearch.domain.model
 
-import com.adsearch.domain.enum.UserRoleEnum
+import com.adsearch.domain.model.enum.UserRoleEnum
 
 /**
  * Domain model representing a user in the system

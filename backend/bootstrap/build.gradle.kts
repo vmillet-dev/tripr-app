@@ -6,7 +6,6 @@ plugins {
 dependencies {
     api(project(":domain"))
     api(project(":application"))
-    api(project(":common"))
     api(project(":infrastructure"))
 
     implementation(libs.springboot.starter.web)

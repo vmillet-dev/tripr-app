@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync
 @EnableJpaRepositories(basePackages = ["**.infrastructure.adapter.out.persistence.jpa"])
 @EntityScan(basePackages = ["**.infrastructure.adapter.out.persistence.entity"])
 class AppConfig : BeanDefinitionRegistryPostProcessor {
+
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
         val beansToRegister: MutableMap<String, Class<*>> = mutableMapOf(
             "authenticationUseCase" to AuthenticationUseCaseImpl::class.java

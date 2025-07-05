@@ -30,12 +30,7 @@ subprojects {
 
     kotlin {
         compilerOptions {
-            freeCompilerArgs.addAll(
-                "-Xjsr305=strict",
-                "-Werror",
-                "-Wextra",
-                "-Xjvm-default=all-compatibility"
-            )
+            freeCompilerArgs.addAll("-Xjsr305=strict", "-Werror", "-Wextra", "-Xjvm-default=all-compatibility")
         }
     }
 

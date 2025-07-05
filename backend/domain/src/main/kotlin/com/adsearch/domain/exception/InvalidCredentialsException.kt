@@ -1,8 +1,7 @@
-package com.adsearch.common.exception.functional
+package com.adsearch.domain.exception
 
-import com.adsearch.common.enum.FunctionalErrorCodeEnum
-import com.adsearch.common.enum.HttpStatusEnum
-import com.adsearch.common.exception.BaseFunctionalException
+import com.adsearch.domain.model.enum.FunctionalErrorCodeEnum
+import com.adsearch.domain.model.enum.HttpStatusEnum
 
 /**
  * Exception thrown when authentication fails
@@ -12,4 +11,4 @@ class InvalidCredentialsException(
     errorCode: String = FunctionalErrorCodeEnum.INVALID_CREDENTIALS.code,
     httpStatusEnum: HttpStatusEnum = HttpStatusEnum.UNAUTHORIZED,
     cause: Throwable? = null
-) : BaseFunctionalException(message, errorCode, httpStatusEnum, cause)
+) : BaseFunctionalException(message, cause, errorCode, httpStatusEnum)

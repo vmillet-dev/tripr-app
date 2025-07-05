@@ -1,9 +1,9 @@
 package com.adsearch.infrastructure.adapter.`in`.web.handler
 
-import com.adsearch.common.enum.HttpStatusEnum
-import com.adsearch.common.enum.LogLevelEnum
-import com.adsearch.common.exception.BaseException
+import com.adsearch.domain.exception.BaseFunctionalException
+import com.adsearch.domain.model.enum.HttpStatusEnum
 import com.adsearch.infrastructure.adapter.`in`.web.dto.ErrorResponseDto
+import com.adsearch.infrastructure.exception.BaseTechnicalException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -20,9 +20,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class GlobalExceptionHandler {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    @ExceptionHandler(BaseException::class)
-    fun handleBaseException(ex: BaseException, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
-        logBaseException(ex)
+    @ExceptionHandler(BaseTechnicalException::class)
+    fun handleBBaseTechnicalException(
+        ex: BaseTechnicalException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponseDto> {
+        log.error("Exception occurred: ${ex.message}", ex)
+
+        return createErrorResponse(
+            status = ex.httpStatusEnum.toSpringHttpStatus(),
+            error = ex.errorCode,
+            message = ex.message,
+            path = request.requestURI
+        )
+    }
+
+    @ExceptionHandler(BaseFunctionalException::class)
+    fun handleBBaseFunctionalException(
+        ex: BaseFunctionalException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponseDto> {
+        log.warn("Exception occurred: ${ex.message}", ex)
 
         return createErrorResponse(
             status = ex.httpStatusEnum.toSpringHttpStatus(),
@@ -72,14 +90,6 @@ class GlobalExceptionHandler {
 
         log.error("Error occurred: ${errorResponse.body?.message}", ex)
         return errorResponse
-    }
-
-    private fun logBaseException(exception: BaseException) {
-        val logMessage = "Exception occurred: ${exception.message}"
-        when (exception.logLevelEnum) {
-            LogLevelEnum.ERROR -> log.error(logMessage, exception)
-            LogLevelEnum.WARN -> log.warn(logMessage, exception)
-        }
     }
 
     private fun createErrorResponse(status: HttpStatus, error: String, message: String, path: String): ResponseEntity<ErrorResponseDto> {

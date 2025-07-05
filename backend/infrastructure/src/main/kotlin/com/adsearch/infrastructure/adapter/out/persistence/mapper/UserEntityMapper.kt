@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.persistence.mapper
 
-import com.adsearch.domain.enum.UserRoleEnum
 import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.enum.UserRoleEnum
 import com.adsearch.infrastructure.adapter.out.persistence.entity.RoleEntity
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import org.mapstruct.Mapper

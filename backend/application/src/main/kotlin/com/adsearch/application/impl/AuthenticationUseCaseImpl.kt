@@ -1,12 +1,12 @@
 package com.adsearch.application.impl
 
 import com.adsearch.application.AuthenticationUseCase
-import com.adsearch.common.exception.functional.EmailAlreadyExistsException
-import com.adsearch.common.exception.functional.InvalidCredentialsException
-import com.adsearch.common.exception.functional.InvalidTokenException
-import com.adsearch.common.exception.functional.TokenExpiredException
-import com.adsearch.common.exception.functional.UserNotFoundException
-import com.adsearch.common.exception.functional.UsernameAlreadyExistsException
+import com.adsearch.domain.exception.EmailAlreadyExistsException
+import com.adsearch.domain.exception.InvalidCredentialsException
+import com.adsearch.domain.exception.InvalidTokenException
+import com.adsearch.domain.exception.TokenExpiredException
+import com.adsearch.domain.exception.UserNotFoundException
+import com.adsearch.domain.exception.UsernameAlreadyExistsException
 import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.PasswordResetTokenDom
 import com.adsearch.domain.model.RefreshTokenDom

@@ -1,4 +1,4 @@
-package com.adsearch.common.enum
+package com.adsearch.domain.model.enum
 
 enum class FunctionalErrorCodeEnum(val code: String, val defaultMessage: String) {
     INVALID_CREDENTIALS("FUNC_001", "Invalid username or password"),
