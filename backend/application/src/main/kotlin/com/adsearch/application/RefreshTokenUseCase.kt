@@ -1,7 +1,7 @@
 package com.adsearch.application
 
-import com.adsearch.domain.model.AuthResponseDom
+import com.adsearch.domain.auth.AuthResponse
 
 interface RefreshTokenUseCase {
-    fun refreshAccessToken(token: String?): AuthResponseDom
+    fun refreshAccessToken(token: String?): AuthResponse
 }

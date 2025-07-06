@@ -1,6 +1,6 @@
 package com.adsearch.domain.exception
 
-import com.adsearch.domain.enum.HttpStatusEnum
+import com.adsearch.domain.model.enum.HttpStatusEnum
 
 abstract class BaseFunctionalException(
     override val message: String,

@@ -2,9 +2,9 @@ package com.adsearch.application.impl
 
 import com.adsearch.application.LoginUseCase
 import com.adsearch.application.annotation.AutoRegister
+import com.adsearch.domain.auth.AuthResponse
 import com.adsearch.domain.command.LoginUserCommand
 import com.adsearch.domain.exception.InvalidCredentialsException
-import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.AuthenticationServicePort
@@ -30,7 +30,7 @@ class LoginUseCaseImpl(
     }
 
 
-    override fun login(cmd: LoginUserCommand): AuthResponseDom {
+    override fun login(cmd: LoginUserCommand): AuthResponse {
 
         val user: UserDom
         try {
@@ -49,6 +49,6 @@ class LoginUseCaseImpl(
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
 
-        return AuthResponseDom(accessToken, refreshToken.token)
+        return AuthResponse(accessToken, refreshToken.token)
     }
 }

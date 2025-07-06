@@ -2,10 +2,10 @@ package com.adsearch.application.impl
 
 import com.adsearch.application.RefreshTokenUseCase
 import com.adsearch.application.annotation.AutoRegister
+import com.adsearch.domain.auth.AuthResponse
 import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
-import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.port.`in`.JwtTokenServicePort
@@ -26,7 +26,7 @@ class RefreshTokenUseCaseImpl(
         val LOG: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    override fun refreshAccessToken(token: String?): AuthResponseDom {
+    override fun refreshAccessToken(token: String?): AuthResponse {
 
         if (token == null) {
             throw InvalidTokenException("Token refresh failed - refresh token missing")
@@ -46,7 +46,7 @@ class RefreshTokenUseCaseImpl(
             ?: throw UserNotFoundException("Token refresh failed - user not found with user id: ${refreshTokenDom.userId}")
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
-        return AuthResponseDom(accessToken)
+        return AuthResponse(accessToken)
     }
 
 }

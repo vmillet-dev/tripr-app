@@ -31,6 +31,7 @@ class NamingConventionTest : BaseArchitecture() {
     fun domainModelClassesShouldEndWithDom() {
         val rule = classes()
             .that().resideInAPackage("..domain.model..")
+            .and().areNotEnums()
             .should().haveSimpleNameEndingWith("Dom")
             .orShould().haveSimpleNameEndingWith("Companion")
 

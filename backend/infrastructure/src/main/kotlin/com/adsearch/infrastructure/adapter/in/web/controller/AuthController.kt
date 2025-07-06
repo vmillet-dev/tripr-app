@@ -5,9 +5,9 @@ import com.adsearch.application.LogoutUseCase
 import com.adsearch.application.PasswordResetUseCase
 import com.adsearch.application.RefreshTokenUseCase
 import com.adsearch.application.RegisterUseCase
+import com.adsearch.domain.auth.AuthResponse
 import com.adsearch.domain.command.LoginUserCommand
 import com.adsearch.domain.command.RegisterUserCommand
-import com.adsearch.domain.model.AuthResponseDom
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthResponseDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
@@ -60,7 +60,7 @@ class AuthController(
     @Operation(summary = "Authenticate user", description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie")
     fun login(@Valid @RequestBody request: AuthRequestDto, response: HttpServletResponse): ResponseEntity<AuthResponseDto> {
 
-        val authResponse: AuthResponseDom = loginUseCase.login(
+        val authResponse: AuthResponse = loginUseCase.login(
             LoginUserCommand(
                 request.username,
                 request.password
