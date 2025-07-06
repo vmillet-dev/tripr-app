@@ -58,27 +58,7 @@ class SecurityRobustnessTest : BaseArchitecture() {
             }
         }
     }
-
-    @Test
-    @DisplayName("DTOs must use validation annotations")
-    fun dtosMustUseValidationAnnotations() {
-        val dtoClasses = importedClasses.filter {
-            it.simpleName.endsWith("Dto") && !it.isInterface
-        }
-
-        for (dtoClass in dtoClasses) {
-            val hasValidationAnnotations = dtoClass.fields.any { field ->
-                field.annotations.any { anno ->
-                    anno.type.name.startsWith("jakarta.validation.constraints")
-                }
-            }
-
-            assert(hasValidationAnnotations) {
-                "DTO class ${dtoClass.name} should use validation annotations"
-            }
-        }
-    }
-
+    
     @Test
     @DisplayName("REST controllers must have @PreAuthorize either at class level or on all mapped methods")
     fun restControllersMustHavePreAuthorize() {

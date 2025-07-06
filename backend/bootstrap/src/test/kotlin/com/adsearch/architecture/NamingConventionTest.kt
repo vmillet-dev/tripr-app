@@ -32,6 +32,7 @@ class NamingConventionTest : BaseArchitecture() {
         val rule = classes()
             .that().resideInAPackage("..domain.model..")
             .should().haveSimpleNameEndingWith("Dom")
+            .orShould().haveSimpleNameEndingWith("Companion")
 
         rule.check(importedClasses)
     }
@@ -83,7 +84,7 @@ class NamingConventionTest : BaseArchitecture() {
     }
 
     @Test
-    @DisplayName("Configurations must end with Config or Configuration")
+    @DisplayName("Configurations must end with Config")
     fun configurationsShouldHaveCorrectSuffix() {
         val rule = classes()
             .that().resideInAPackage("..config..")

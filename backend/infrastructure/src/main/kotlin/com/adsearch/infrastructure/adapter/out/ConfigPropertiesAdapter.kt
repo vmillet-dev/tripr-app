@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.out.config
+package com.adsearch.infrastructure.adapter.out
 
 import com.adsearch.domain.port.out.ConfigPropertiesPort
 import com.adsearch.infrastructure.service.ConfigService

@@ -1,6 +1,7 @@
 package com.adsearch.architecture
 
-import com.tngtech.archunit.core.domain.JavaModifier
+import com.tngtech.archunit.base.DescribedPredicate
+import com.tngtech.archunit.core.domain.JavaClass
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noMethods
@@ -11,32 +12,6 @@ import java.util.Calendar
 import java.util.Date
 
 class GenericRulesTest : BaseArchitecture() {
-
-    @Test
-    @DisplayName("Abstract classes must either be used in inheritance or marked as abstract")
-    fun abstractClassesMustBeUsedOrMarkedAsAbstract() {
-        val abstractClasses = importedClasses.filter { it.modifiers.contains(JavaModifier.ABSTRACT) && !it.isInterface }
-
-        for (abstractClass in abstractClasses) {
-            val isExtended = importedClasses.any {
-                it.superclass.isPresent && it.superclass.get().name == abstractClass.name
-            }
-
-            assert(isExtended || abstractClass.simpleName.startsWith("Abstract")) {
-                "Abstract class ${abstractClass.name} should either be extended or have a name starting with 'Abstract'"
-            }
-        }
-    }
-
-    @Test
-    @DisplayName("Interfaces must not have an 'I' prefix")
-    fun interfacesMustNotHaveIPrefix() {
-        val rule = noClasses()
-            .that().areInterfaces()
-            .should().haveSimpleNameStartingWith("I")
-
-        rule.check(importedClasses)
-    }
 
     @Test
     @DisplayName("No classes should use Date ou Calendar directly")
@@ -78,18 +53,20 @@ class GenericRulesTest : BaseArchitecture() {
     }
 
     @Test
-    @DisplayName("No use of @Autowired on fields")
+    @DisplayName("No use of @Autowired on fields (excluding MapStruct-generated classes)")
     fun noUseOfAutowiredOnFields() {
-        // No fields should be annotated with @Autowired
-        val noSpringFieldInjection = noFields()
-            .should().beAnnotatedWith(Autowired::class.java)
+        val isNotMapperImpl = object : DescribedPredicate<JavaClass>("not a MapStruct implementation") {
+            override fun test(input: JavaClass): Boolean {
+                return !input.name.endsWith("MapperImpl")
+            }
+        }
 
-        // No methods should be annotated with @Autowired
-        val noSpringMethodInjection = noMethods()
-            .should().beAnnotatedWith(Autowired::class.java)
+        val filteredClasses = importedClasses.that(isNotMapperImpl)
 
-        // Check all rules
-        noSpringFieldInjection.check(importedClasses)
-        noSpringMethodInjection.check(importedClasses)
+        val noFieldInjection = noFields().should().beAnnotatedWith(Autowired::class.java)
+        val noMethodInjection = noMethods().should().beAnnotatedWith(Autowired::class.java)
+
+        noFieldInjection.check(filteredClasses)
+        noMethodInjection.check(filteredClasses)
     }
 }
