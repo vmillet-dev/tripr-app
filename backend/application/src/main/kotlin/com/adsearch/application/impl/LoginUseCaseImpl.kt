@@ -49,6 +49,6 @@ class LoginUseCaseImpl(
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
 
-        return AuthResponseDom(user, accessToken, refreshToken.token)
+        return AuthResponseDom(accessToken, refreshToken.token)
     }
 }

@@ -77,13 +77,7 @@ class AuthController(
             }
         }
 
-        return ResponseEntity.ok(
-            AuthResponseDto(
-                accessToken = authResponse.accessToken,
-                username = authResponse.user.username,
-                roles = authResponse.user.roles
-            )
-        )
+        return ResponseEntity.ok(AuthResponseDto(authResponse.accessToken))
     }
 
     /**
@@ -112,13 +106,7 @@ class AuthController(
         val cookies: String? = request.cookies?.find { it.name == cookieName }?.value
         val authResponse = refreshTokenUseCase.refreshAccessToken(cookies)
 
-        return ResponseEntity.ok(
-            AuthResponseDto(
-                accessToken = authResponse.accessToken,
-                username = authResponse.user.username,
-                roles = authResponse.user.roles
-            )
-        )
+        return ResponseEntity.ok(AuthResponseDto(authResponse.accessToken))
     }
 
     /**
@@ -154,9 +142,7 @@ class AuthController(
 
         passwordResetUseCase.requestPasswordReset(request.username)
 
-        return ResponseEntity.ok(mapOf(
-            "message" to "If the username exists, a password reset email has been sent"
-        ))
+        return ResponseEntity.ok(mapOf("message" to "If the username exists, a password reset email has been sent"))
     }
 
     /**
@@ -169,9 +155,7 @@ class AuthController(
 
         passwordResetUseCase.resetPassword(request.token, request.newPassword)
 
-        return ResponseEntity.ok(mapOf(
-            "message" to "Password has been reset successfully"
-        ))
+        return ResponseEntity.ok(mapOf("message" to "Password has been reset successfully"))
     }
 
     /**
@@ -184,8 +168,6 @@ class AuthController(
 
         val isValid = passwordResetUseCase.validateToken(token)
 
-        return ResponseEntity.ok(mapOf(
-            "valid" to isValid
-        ))
+        return ResponseEntity.ok(mapOf("valid" to isValid))
     }
 }

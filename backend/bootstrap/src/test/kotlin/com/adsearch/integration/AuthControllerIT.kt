@@ -4,11 +4,13 @@ import com.adsearch.infrastructure.adapter.`in`.web.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.PasswordResetRequestDto
 import com.adsearch.infrastructure.adapter.`in`.web.dto.RegisterRequestDto
+import com.adsearch.infrastructure.service.JwtTokenService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.InstanceOfAssertFactories
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -34,6 +36,9 @@ class AuthControllerIT : BaseIT() {
     private val testUsername = "testuser"
     private val testPassword = "password"
 
+    @Autowired
+    private lateinit var jwtTokenService: JwtTokenService
+
     @Nested
     @DisplayName("Login Tests")
     inner class LoginTests {
@@ -55,9 +60,8 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
-            assertThat(response.body).extracting("username").isEqualTo(testUsername)
-            assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST)
-                .contains("ROLE_USER")
+            assertThat(jwtTokenService.validateAccessTokenAndGetUsername(response.body!!["accessToken"].toString()))
+                .isEqualTo(testUsername)
         }
 
         @Test
@@ -147,7 +151,8 @@ class AuthControllerIT : BaseIT() {
 
             assertThat(loginResponse.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(loginResponse.body).isNotNull().extracting("accessToken").isNotNull()
-            assertThat(loginResponse.body).extracting("username").isEqualTo("newuser")
+            assertThat(jwtTokenService.validateAccessTokenAndGetUsername(loginResponse.body!!["accessToken"].toString()))
+                .isEqualTo("newuser")
         }
 
         @Test
@@ -228,9 +233,8 @@ class AuthControllerIT : BaseIT() {
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body).isNotNull().isNotEmpty()
             assertThat(response.body).extracting("accessToken").isNotNull()
-            assertThat(response.body).extracting("username").isEqualTo("john_doe")
-            assertThat(response.body).extracting("roles").asInstanceOf(InstanceOfAssertFactories.LIST)
-                .contains("ROLE_USER")
+            assertThat(jwtTokenService.validateAccessTokenAndGetUsername(response.body!!["accessToken"].toString()))
+                .isEqualTo("john_doe")
         }
 
         @Test

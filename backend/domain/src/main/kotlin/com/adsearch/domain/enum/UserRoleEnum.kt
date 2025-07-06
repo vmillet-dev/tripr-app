@@ -1,4 +1,4 @@
-package com.adsearch.domain.model.enum
+package com.adsearch.domain.enum
 
 
 enum class UserRoleEnum(val id: Long, val type: String)  {

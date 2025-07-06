@@ -46,7 +46,7 @@ class RefreshTokenUseCaseImpl(
             ?: throw UserNotFoundException("Token refresh failed - user not found with user id: ${refreshTokenDom.userId}")
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
-        return AuthResponseDom(user, accessToken)
+        return AuthResponseDom(accessToken)
     }
 
 }

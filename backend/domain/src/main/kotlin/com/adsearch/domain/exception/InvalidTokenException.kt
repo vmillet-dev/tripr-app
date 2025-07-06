@@ -1,7 +1,7 @@
 package com.adsearch.domain.exception
 
-import com.adsearch.domain.model.enum.FunctionalErrorCodeEnum
-import com.adsearch.domain.model.enum.HttpStatusEnum
+import com.adsearch.domain.enum.FunctionalErrorCodeEnum
+import com.adsearch.domain.enum.HttpStatusEnum
 
 /**
  * Exception thrown when a token is invalid
