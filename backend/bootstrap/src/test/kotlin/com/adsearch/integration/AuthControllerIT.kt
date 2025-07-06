@@ -413,7 +413,7 @@ class AuthControllerIT : BaseIT() {
                 .containsExactly(
                     401,
                     "FUNC_003",
-                    "Password reset failed - invalid token provided",
+                    "Password reset failed - token not found",
                     "/api/auth/password/reset"
                 )
         }

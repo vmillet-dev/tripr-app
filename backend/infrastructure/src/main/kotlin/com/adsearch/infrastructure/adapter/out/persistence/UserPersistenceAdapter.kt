@@ -13,7 +13,7 @@ class UserPersistenceAdapter(
 ) : UserPersistencePort {
 
     override fun save(userDom: UserDom) {
-        userRepository.save(userEntityMapper.fromDomain(userDom))
+        userRepository.save(userEntityMapper.toEntity(userDom))
     }
 
     override fun findByUsername(username: String): UserDom? {

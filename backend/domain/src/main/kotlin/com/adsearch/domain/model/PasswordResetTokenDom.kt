@@ -8,8 +8,7 @@ import java.time.Instant
 data class PasswordResetTokenDom(
     val userId: Long,
     val token: String,
-    val expiryDate: Instant,
-    val used: Boolean
+    val expiryDate: Instant
 ) {
     fun isExpired(): Boolean = expiryDate.isBefore(Instant.now())
 }

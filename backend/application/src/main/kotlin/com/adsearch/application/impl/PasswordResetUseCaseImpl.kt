@@ -35,8 +35,6 @@ class PasswordResetUseCaseImpl(
      * Request a password reset for a user
      */
     override fun requestPasswordReset(username: String) {
-        LOG.info("Password reset request initiated for user $username")
-
         val user: UserDom = userPersistence.findByUsername(username)
             ?: throw UserNotFoundException("Password reset request failed - user not found with username: $username")
 
@@ -45,30 +43,24 @@ class PasswordResetUseCaseImpl(
 
         // Create a new token
         val expiryDate = Instant.now().plusSeconds(configProperties.getPasswordResetTokenExpiration())
-        val resetToken = PasswordResetTokenDom(user.id, UUID.randomUUID().toString(), expiryDate, false)
+        val resetToken = PasswordResetTokenDom(user.id, UUID.randomUUID().toString(), expiryDate)
 
         passwordResetTokenPersistence.save(resetToken)
-        LOG.info("Password reset ${resetToken.token} successful for user $username")
 
         // Send email
         emailService.sendPasswordResetEmail(user.email, resetToken.token)
-        LOG.info("Password reset email sent to: $username")
     }
 
     /**
      * Reset a user's password using a token
      */
     override fun resetPassword(token: String, newPassword: String) {
-        LOG.info("Password reset attempt with token $token")
-
         val resetToken = passwordResetTokenPersistence.findByToken(token)
-            ?: throw InvalidTokenException("Password reset failed - invalid token provided")
+            ?: throw InvalidTokenException("Password reset failed - token not found")
 
-        LOG.debug("Password reset token found for user id: ${resetToken.userId}")
-
-        if (resetToken.isExpired() || resetToken.used) {
+        if (resetToken.isExpired()) {
             passwordResetTokenPersistence.deleteByToken(resetToken.token)
-            throw TokenExpiredException("Password reset failed - invalid token for user: ${resetToken.userId}")
+            throw TokenExpiredException("Password reset failed - expired token for user id: ${resetToken.userId}")
         }
 
         val user: UserDom = userPersistence.findById(resetToken.userId)
@@ -79,29 +71,23 @@ class PasswordResetUseCaseImpl(
 
         // Delete all tokens for this user
         passwordResetTokenPersistence.deleteByUserId(resetToken.userId)
-
-        LOG.info("Password reset completed successfully for user ${resetToken.userId}")
     }
 
     /**
      * Validate a password reset token
      */
     override fun validateToken(token: String): Boolean {
-        LOG.debug("Token validation attempt with token $token")
 
         val resetToken = passwordResetTokenPersistence.findByToken(token)
         if (resetToken == null) {
-            LOG.debug("Token validation failed - token not found")
             return false
         }
 
-        if (resetToken.isExpired() || resetToken.used) {
-            LOG.debug("Token validation failed - token $token expired for user id: ${resetToken.userId}")
+        if (resetToken.isExpired()) {
             passwordResetTokenPersistence.deleteByToken(resetToken.token)
             return false
         }
 
-        LOG.debug("Token validation successful for user id: ${resetToken.userId}")
         return true
     }
 }

@@ -1,5 +1,6 @@
 package com.adsearch.infrastructure.adapter.`in`.security
 
+import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.port.`in`.JwtTokenServicePort
 import com.adsearch.infrastructure.service.JwtUserDetailsService
 import jakarta.servlet.FilterChain
@@ -34,9 +35,15 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        val method = request.method
+        val uri = request.requestURI
+        val ip = request.remoteAddr
+        val userAgent = request.getHeader("User-Agent") ?: "unknown"
 
         val authHeader: String? = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            LOG.info("$method $uri | User: anonymous | IP: $ip | UA: $userAgent")
+
             filterChain.doFilter(request, response)
             return
         }
@@ -46,17 +53,14 @@ class JwtAuthenticationFilter(
 
         val username: String? = jwtTokenService.validateAccessTokenAndGetUsername(jwt)
         if (username == null) {
-            // validation failed or token expired
-            filterChain.doFilter(request, response)
-            return
+            throw TokenExpiredException("Access token expired")
         }
 
         val userDetails: UserDetails
         try {
             userDetails = jwtUserDetailsService.loadUserByUsername(username)
         } catch (_: UsernameNotFoundException) {
-            // user not found
-            LOG.warn("UserEntity $username not found")
+            LOG.info("$method $uri | User: $username (not found) | IP: $ip | UA: $userAgent")
             filterChain.doFilter(request, response)
             return
         }
@@ -67,6 +71,7 @@ class JwtAuthenticationFilter(
         SecurityContextHolder.getContext().authentication = authentication
 
         // continue with authenticated user
+        LOG.info("$method $uri | User: $username | IP: $ip | UA: $userAgent")
         filterChain.doFilter(request, response)
     }
 }

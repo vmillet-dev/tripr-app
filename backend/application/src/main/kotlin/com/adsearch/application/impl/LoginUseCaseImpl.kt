@@ -31,16 +31,13 @@ class LoginUseCaseImpl(
 
 
     override fun login(cmd: LoginUserCommand): AuthResponseDom {
-        LOG.info("Login attempt for user ${cmd.username}")
 
         val user: UserDom
         try {
             user = authenticationService.authenticate(cmd.username, cmd.password)
-            LOG.debug("User ${cmd.username} authentication successful ")
         } catch (e: Exception) {
             throw InvalidCredentialsException(
-                "Authentication failed for user ${cmd.username} - invalid credentials provided",
-                cause = e
+                "Authentication failed for user ${cmd.username} - invalid credentials provided", cause = e
             )
         }
         // Clean up existing refresh tokens
@@ -48,14 +45,10 @@ class LoginUseCaseImpl(
 
         val expiryDate = Instant.now().plusSeconds(configProperties.getRefreshTokenExpiration())
         val refreshToken = RefreshTokenDom(user.id, UUID.randomUUID().toString(), expiryDate, false)
-
         refreshTokenPersistence.save(refreshToken)
-        LOG.debug("Refresh token ${refreshToken.token} created for user ${cmd.username}")
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
-        LOG.debug("Access token $accessToken created for user ${cmd.username}")
 
-        LOG.info("Login successful for user ${cmd.username}")
         return AuthResponseDom(user, accessToken, refreshToken.token)
     }
 }

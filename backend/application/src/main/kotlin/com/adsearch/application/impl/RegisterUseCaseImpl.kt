@@ -23,7 +23,6 @@ class RegisterUseCaseImpl(
     }
 
     override fun register(cmd: RegisterUserCommand) {
-        LOG.info("Registration attempt initiated for user ${cmd.username}")
 
         if (userPersistence.findByUsername(cmd.username) != null) {
             throw UsernameAlreadyExistsException("Registration failed - username ${cmd.username} already exists")
@@ -35,7 +34,5 @@ class RegisterUseCaseImpl(
 
         cmd.apply { password = authenticationService.generateHashedPassword(cmd.password) }
         userPersistence.save(UserDom.register(cmd))
-
-        LOG.info("User ${cmd.username} registration successful")
     }
 }

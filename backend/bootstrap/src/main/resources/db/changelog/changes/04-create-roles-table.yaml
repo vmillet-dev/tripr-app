@@ -22,6 +22,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     unique: true
+                    nullable: false
         - createIndex:
             indexName: IDX_ROLE_TYPE
             tableName: T_ROLE

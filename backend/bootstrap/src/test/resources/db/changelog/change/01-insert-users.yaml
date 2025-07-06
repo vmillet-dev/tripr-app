@@ -7,7 +7,7 @@ databaseChangeLog:
             endDelimiter: ;
             stripComments: true
             splitStatements: true
-            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD) VALUES ('testuser', 'testuser@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6');
+            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD, USR_ENABLED) VALUES ('testuser', 'testuser@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6', true);
   - changeSet:
       id: 202505011700-02
       author: test
@@ -16,7 +16,7 @@ databaseChangeLog:
             endDelimiter: ;
             stripComments: true
             splitStatements: true
-            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD) VALUES ('testadmin', 'testadmin@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6');
+            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD, USR_ENABLED) VALUES ('testadmin', 'testadmin@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6', true);
   - changeSet:
       id: 202505011700-03
       author: test
@@ -25,7 +25,7 @@ databaseChangeLog:
             endDelimiter: ;
             stripComments: true
             splitStatements: true
-            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD) VALUES ('john_doe', 'john_doe@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6');
+            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD, USR_ENABLED) VALUES ('john_doe', 'john_doe@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6', true);
   - changeSet:
       id: 202505011700-04
       author: test
@@ -34,4 +34,4 @@ databaseChangeLog:
             endDelimiter: ;
             stripComments: true
             splitStatements: true
-            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD) VALUES ('Bob', 'bob@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6');
+            sql: INSERT INTO T_USER (USR_USERNAME, USR_EMAIL, USR_PASSWORD, USR_ENABLED) VALUES ('Bob', 'bob@mail.com', '$2a$10$bZWwXqSrtwEbDLcWwjZ8IOol0YbnBkp0FA5Zv3Z6fVQuXIzuHv/b6', true);

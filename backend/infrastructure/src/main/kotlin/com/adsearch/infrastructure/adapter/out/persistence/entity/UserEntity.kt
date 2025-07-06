@@ -28,6 +28,9 @@ class UserEntity(
     @Column(name = "USR_PASSWORD", nullable = false, length = 255)
     val password: String,
 
+    @Column(name = "USR_ENABLED", nullable = false)
+    val enabled: Boolean = false,
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "T_USER_ROLE",

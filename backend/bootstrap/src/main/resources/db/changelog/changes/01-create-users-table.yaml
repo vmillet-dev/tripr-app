@@ -17,19 +17,29 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
+                    nullable: false
               - column:
                   name: USR_USERNAME
                   type: varchar(255)
                   constraints:
                     unique: true
+                    nullable: false
               - column:
                   name: USR_EMAIL
                   type: varchar(255)
                   constraints:
                     unique: true
+                    nullable: false
               - column:
                   name: USR_PASSWORD
                   type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: USR_ENABLED
+                  type: boolean
+                  constraints:
+                    nullable: false
         - createIndex:
             tableName: T_USER
             indexName: IDX_USER_USERNAME

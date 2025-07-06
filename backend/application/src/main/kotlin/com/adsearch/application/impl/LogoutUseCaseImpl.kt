@@ -16,7 +16,6 @@ class LogoutUseCaseImpl(private val refreshTokenPersistence: RefreshTokenPersist
     }
 
     override fun logout(token: String?) {
-        LOG.debug("Logout attempt initiated with refresh token $token")
 
         if (token == null) {
             throw InvalidTokenException("Logout attempted without refresh token")

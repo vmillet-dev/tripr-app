@@ -1,75 +1,48 @@
-import {
-  HttpRequest,
-  HttpHandlerFn,
-  HttpInterceptorFn,
-  HttpErrorResponse
-} from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, filter, take, switchMap } from 'rxjs/operators';
-import { AuthService } from '../services/auth.service';
-
-let isRefreshing = false;
-const refreshTokenSubject = new BehaviorSubject<any>(null);
+import {HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {Observable, throwError} from 'rxjs';
+import {catchError, switchMap} from 'rxjs/operators';
+import {AuthService} from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (
-  request: HttpRequest<unknown>,
-  next: HttpHandlerFn
+    request: HttpRequest<unknown>,
+    next: HttpHandlerFn
 ): Observable<any> => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
+    const authService = inject(AuthService);
+    const token = authService.getToken();
 
-  if (token) {
-    request = addToken(request, token);
-  }
+    if (token) {
+        request = addToken(request, token);
+    }
 
-  return next(request).pipe(
-    catchError(error => {
-        console.log(error)
-      if (error instanceof HttpErrorResponse && error.status === 401 && error.error === 'FUNC_002') {
-        return handle401Error(request, next, authService);
-      }
-      return throwError(() => error);
-    })
-  );
+    return next(request).pipe(
+        catchError(error => {
+            if (error instanceof HttpErrorResponse && error.status === 401 && error.error === 'FUNC_002') {
+                return handle401Error(request, next, authService);
+            }
+            return throwError(() => error);
+        })
+    );
 };
 
 function addToken(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
-  return request.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+    return request.clone({
+        setHeaders: {Authorization: `Bearer ${token}`}
+    });
 }
 
 function handle401Error(
-  request: HttpRequest<unknown>,
-  next: HttpHandlerFn,
-  authService: AuthService
+    request: HttpRequest<unknown>,
+    next: HttpHandlerFn,
+    authService: AuthService
 ): Observable<any> {
-  if (!isRefreshing) {
-    isRefreshing = true;
-    refreshTokenSubject.next(null);
-
     return authService.refreshToken().pipe(
-      switchMap(token => {
-        isRefreshing = false;
-        refreshTokenSubject.next(token);
-        return next(addToken(request, token.accessToken));
-      }),
-      catchError(error => {
-        isRefreshing = false;
-        authService.logout();
-        return throwError(() => error);
-      })
+        switchMap(token => {
+            return next(addToken(request, token.accessToken));
+        }),
+        catchError(error => {
+            authService.logout();
+            return throwError(() => error);
+        })
     );
-  } else {
-    return refreshTokenSubject.pipe(
-      filter(token => token != null),
-      take(1),
-      switchMap(token => {
-        return next(addToken(request, token.accessToken));
-      })
-    );
-  }
 }

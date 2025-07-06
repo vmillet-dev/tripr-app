@@ -27,7 +27,6 @@ class RefreshTokenUseCaseImpl(
     }
 
     override fun refreshAccessToken(token: String?): AuthResponseDom {
-        LOG.debug("Access token refresh attempt with refresh token $token")
 
         if (token == null) {
             throw InvalidTokenException("Token refresh failed - refresh token missing")
@@ -47,9 +46,6 @@ class RefreshTokenUseCaseImpl(
             ?: throw UserNotFoundException("Token refresh failed - user not found with user id: ${refreshTokenDom.userId}")
 
         val accessToken: String = jwtTokenService.createAccessToken(user)
-        LOG.debug("New access token $accessToken generated for user ${user.username}")
-
-        LOG.info("Token refresh successful for username: ${user.username}")
         return AuthResponseDom(user, accessToken)
     }
 

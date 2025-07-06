@@ -20,18 +20,22 @@ databaseChangeLog:
               - column:
                   name: USR_ID
                   type: bigint
+                  constraints:
+                    nullable: false
               - column:
                   name: RT_TOKEN
                   type: varchar(255)
                   constraints:
                     unique: true
+                    nullable: false
               - column:
                   name: RT_EXPIRY_DATE
                   type: timestamp
               - column:
                   name: RT_REVOKED
                   type: boolean
-                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: T_REFRESH_TOKEN
             baseColumnNames: USR_ID
