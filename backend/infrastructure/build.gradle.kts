@@ -20,4 +20,10 @@ dependencies {
     implementation(libs.mapstruct.api)
 
     kapt(libs.mapstruct.kapt)
+
+    testImplementation(libs.springboot.starter.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.testcontainers.postgresql)
 }
