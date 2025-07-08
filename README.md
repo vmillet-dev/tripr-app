@@ -63,17 +63,17 @@ tripr-app/
 │   ├── application/            # Use cases and application services
 │   └── infrastructure/         # External integrations and adapters
 ├── frontend/                   # Angular frontend application
-│   ├── src/app/core/          # Singleton services and guards
-│   ├── src/app/features/      # Feature modules (auth, dashboard)
-│   └── src/assets/i18n/       # Translation files
+│   ├── src/app/core/           # Singleton services and guards
+│   ├── src/app/features/       # Feature modules (auth, dashboard)
+│   └── src/assets/i18n/        # Translation files
 ├── devops/                     # Infrastructure as Code
-│   ├── ansible/               # Deployment automation
-│   ├── Dockerfile             # Multi-stage container build
-│   └── compose-*.yaml         # Docker Compose configurations
-├── e2e/                       # End-to-end testing suite
-│   └── cypress/               # Cypress test specifications
-└── .github/workflows/         # CI/CD pipeline definitions
-```
+│   ├── ansible/                # Deployment automation
+│   ├── Dockerfile              # Multi-stage container build
+│   └── compose-*.yaml          # Docker Compose configurations
+├── e2e/                        # End-to-end testing suite
+│   └── cypress/                # Cypress test specifications
+└── .github/workflows/          # CI/CD pipeline definitions
+``` 
 
 ## Getting Started
 
