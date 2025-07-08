@@ -12,7 +12,6 @@ Spring Boot backend application built with Kotlin, implementing hexagonal archit
 - [Technical Details](#technical-details)
 - [Project Structure](#project-structure)
 - [Development Setup](#development-setup)
-- [Key Features](#key-features)
 - [Authentication](#authentication)
 - [Database](#database)
 - [Testing](#testing)
@@ -52,7 +51,6 @@ The backend implements **Hexagonal Architecture** (ports and adapters pattern) e
 - **Unit Tests** - Business logic validation with JUnit 5 and MockK
 - **Integration Tests** - Full application context testing with Testcontainers
 - **ArchUnit Tests** - Architecture rule enforcement and validation
-- **Test Coverage** - Comprehensive coverage reporting with JaCoCo
 
 ## Project Structure
 
@@ -64,32 +62,35 @@ The backend is organized as a multimodule Gradle project with clear separation o
 backend/
 ├── build.gradle.kts                    # Root build configuration
 ├── gradle/
-│   └── libs.versions.toml             # Centralized dependency versions
-├── bootstrap/                         # Application entry point
+│   └── libs.versions.toml              # Centralized dependency versions
+├── bootstrap/                          # Application entry point
 │   ├── build.gradle.kts
 │   └── src/main/kotlin/com/adsearch/
-│       ├── Application.kt             # Spring Boot main class
-│       └── config/                    # Application configuration
-├── domain/                            # Core business logic
+│       ├── Application.kt              # Spring Boot main class
+├── domain/                             # Core business logic
 │   ├── build.gradle.kts
 │   └── src/main/kotlin/com/adsearch/domain/
-│       ├── model/                     # Domain entities and value objects
-│       ├── port/                      # Domain interfaces (ports)
-│       └── service/                   # Domain services
-├── application/                       # Use cases and application services
+│       ├── model/                      # Domain entities and value objects
+│       ├── exception/                  # Business exception
+│       ├── port/                       # Domain interfaces (ports)
+│       └── command/                    # Command objects from 
+│       └── auth/                       # Specific objects that return auth token to controller
+├── application/                        # Use cases and application services
 │   ├── build.gradle.kts
 │   └── src/main/kotlin/com/adsearch/application/
-│       ├── usecase/                   # Application use cases
-│       ├── service/                   # Application services
-│       └── port/                      # Application ports
-└── infrastructure/                    # External integrations
+│       ├── /                           # Use cases interface
+│       ├── service/                    # Implementation of use case, 
+│       └── annotation/                 # Custom annotation to load theses implementations as beans without spring annotation (framework free)
+└── infrastructure/                     # External integrations
     ├── build.gradle.kts
     └── src/main/kotlin/com/adsearch/infrastructure/
         ├── adapter/
-        │   ├── in/web/                # REST controllers (driving adapters)
-        │   └── out/persistence/       # Database adapters (driven adapters)
-        ├── config/                    # Infrastructure configuration
-        └── security/                  # Security configuration
+        │   ├── in/web/                 # REST controllers (driving adapters)
+        │   └── out/
+        │        └── persistence/       # Database adapters (driven adapters)
+        │        └── email/             # Email adapters (driven adapters)
+        ├── config/                     # Infrastructure configuration
+        └── service/                    # Services classes that implement framework logic
 ```
 
 ### Hexagonal Architecture Layers
@@ -98,9 +99,9 @@ backend/
 **Purpose**: Contains pure business logic without external dependencies
 
 **Components:**
-- **Entities** - Core business objects with identity
+
+- **Dom objects** - Core business objects with identity
 - **Value Objects** - Immutable objects representing concepts
-- **Domain Services** - Business logic that doesn't belong to entities
 - **Ports** - Interfaces defining contracts with external systems
 
 #### Application Layer
@@ -108,9 +109,6 @@ backend/
 
 **Components:**
 - **Use Cases** - Application-specific business rules
-- **Application Services** - Coordinate domain objects
-- **DTOs** - Data transfer objects for application boundaries
-- **Mappers** - Convert between domain and application models
 
 #### Infrastructure Layer
 **Purpose**: Implements ports and provides technical capabilities
@@ -121,68 +119,23 @@ backend/
 - **Configuration** - Spring configuration and beans
 - **Security** - Authentication and authorization
 
-### Package Organization and Naming Conventions
-
-**Package Structure:**
-```
-com.adsearch
-├── domain
-│   ├── model.user          # User-related domain objects
-│   ├── model.auth          # Authentication domain objects
-│   ├── port.out            # Outbound ports (driven)
-│   └── service             # Domain services
-├── application
-│   ├── usecase.user        # User-related use cases
-│   ├── usecase.auth        # Authentication use cases
-│   ├── port.in             # Inbound ports (driving)
-│   └── service             # Application services
-└── infrastructure
-    ├── adapter.in.web      # REST controllers
-    ├── adapter.out.persistence  # Database repositories
-    ├── config              # Configuration classes
-    └── security            # Security configuration
-```
-
-**Naming Conventions:**
-- **Classes** - PascalCase (e.g., `UserService`, `AuthController`)
-- **Functions** - camelCase (e.g., `findByEmail`, `registerUser`)
-- **Constants** - UPPER_SNAKE_CASE (e.g., `MAX_LOGIN_ATTEMPTS`)
-- **Packages** - lowercase with dots (e.g., `com.adsearch.domain.model`)
-
 ## Development Setup
 
 ### Prerequisites
 
 Ensure you have the following tools installed:
 
-| Tool | Version | Purpose | Verification |
-|------|---------|---------|--------------|
-| **Java** | 24+ | Runtime platform | `java --version` |
-| **Docker** | 20.10+ | Database and services | `docker --version` |
-| **Docker Compose** | 2.0+ | Multi-container orchestration | `docker compose version` |
+| Tool               | Version | Purpose                       | Verification             |
+|--------------------|---------|-------------------------------|--------------------------|
+| **Java**           | 24+     | Runtime platform              | `java --version`         |
+| **Docker**         | 20.10+  | Database and services         | `docker --version`       |
+| **Docker Compose** | 2.0+    | Multi-container orchestration | `docker compose version` |
 
 **Note**: Gradle wrapper is included (`./gradlew`), so no separate Gradle installation is required.
 
 ### Running the Application
 
-#### 1. Start Infrastructure Services
-
-```bash
-# Start PostgreSQL and Mailpit
-docker compose -f devops/compose-dev.yaml up -d
-
-# Verify services are running
-docker compose -f devops/compose-dev.yaml ps
-```
-
-**Expected output:**
-```
-NAME                     IMAGE               STATUS
-devops-postgres-1        postgres:17.3       Up 30 seconds
-devops-mailpit-1         axllent/mailpit     Up 30 seconds
-```
-
-#### 2. Run the Spring Boot Application
+#### 1. Run the Spring Boot Application
 
 ```bash
 cd backend
@@ -207,16 +160,6 @@ cd backend
 2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Application is running on http://localhost:8081
 ```
 
-#### 3. Verify Application Health
-
-```bash
-# Check application health
-curl http://localhost:8081/actuator/health
-
-# Expected response
-{"status":"UP","groups":["liveness","readiness"]}
-```
-
 ### Docker Compose Setup for Development Environment
 
 The development environment uses Docker Compose to provide consistent infrastructure services:
@@ -229,9 +172,12 @@ The development environment uses Docker Compose to provide consistent infrastruc
 - **Database**: `localhost:5433` (postgres/P4ssword!)
 - **Email UI**: http://localhost:8026
 
+Every mail sent will be available in this UI interface like when resetting a pass word. API version
+is also available to get messages in json format (check MailPit doc).
+
 ### Profile Management
 
-The application supports multiple Spring profiles for different environments:
+By default, the dev profile is used when running bootRun command, but you can also do that:
 
 #### Development Profile (Default)
 ```bash
@@ -243,27 +189,12 @@ export SPRING_PROFILES_ACTIVE=dev
 ./gradlew bootRun
 ```
 
-**Development Profile Features:**
-- **Database**: Local PostgreSQL via Docker Compose
-- **Email**: Mailpit for email testing
-- **Logging**: Debug level for application packages
-- **Security**: Relaxed CORS settings for frontend development
-
 ### Database Setup
 
 #### Database Initialization
 
-The application automatically creates and migrates the database schema on startup:
-
-```bash
-# Start PostgreSQL
-docker compose -f devops/compose-dev.yaml up -d postgres
-
-# Run application (will create schema automatically)
-cd backend && ./gradlew bootRun
-```
-
-#### Manual Database Operations
+The application automatically creates and migrates the database schema on startup thanks to liquibase. If you need to do manual ops,
+you can do it like this:
 
 **Connect to Database:**
 ```bash
@@ -272,131 +203,6 @@ docker compose -f devops/compose-dev.yaml exec postgres psql -U postgres -d trip
 
 # Using local psql client
 psql -h localhost -p 5433 -U postgres -d tripr
-```
-
-### Configuration
-
-#### Environment Variables
-
-**Required Environment Variables:**
-
-```bash
-# Database Configuration
-DB_HOST=localhost                    # Database host
-DB_PORT=5433                        # Database port
-DB_NAME=tripr                       # Database name
-DB_USERNAME=postgres                # Database username
-DB_PASSWORD=P4ssword!               # Database password
-
-# JWT Configuration
-JWT_SECRET=your-256-bit-secret-key-minimum-32-characters  # JWT signing secret
-BASE_URL=http://localhost:8081      # Application base URL
-
-# Email Configuration (optional for development)
-MAIL_HOST=localhost                 # SMTP server host
-MAIL_PORT=1026                      # SMTP server port
-```
-
-## Key Features
-
-### MapStruct for Object Mapping
-
-**Purpose**: Efficient and type-safe mapping between domain objects and DTOs
-
-**Configuration** (`build.gradle.kts`):
-```kotlin
-dependencies {
-    implementation("org.mapstruct:mapstruct:1.6.3")
-    kapt("org.mapstruct:mapstruct-processor:1.6.3")
-}
-```
-
-**Benefits:**
-- **Compile-time Safety** - Mapping errors caught at build time
-- **Performance** - No reflection, generates efficient code
-- **Maintainability** - Clear mapping definitions
-- **IDE Support** - Full IntelliJ IDEA integration
-
-### Integration Testing Setup
-
-**Testcontainers Integration:**
-```kotlin
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
-class UserControllerIntegrationTest {
-    
-    companion object {
-        @Container
-        @JvmStatic
-        val postgres = PostgreSQLContainer<Nothing>("postgres:17.3").apply {
-            withDatabaseName("tripr_test")
-            withUsername("test")
-            withPassword("test")
-        }
-    }
-    
-    @Autowired
-    lateinit var testRestTemplate: TestRestTemplate
-    
-    @Test
-    fun `should register new user successfully`() {
-        // Given
-        val request = RegisterRequest(
-            email = "test@example.com",
-            password = "SecurePassword123!",
-            firstName = "John",
-            lastName = "Doe"
-        )
-        
-        // When
-        val response = testRestTemplate.postForEntity(
-            "/api/auth/register",
-            request,
-            UserResponse::class.java
-        )
-        
-        // Then
-        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body?.email).isEqualTo("test@example.com")
-    }
-}
-```
-
-### API Documentation
-
-**Swagger/OpenAPI Integration:**
-
-**Access Documentation:**
-- **Development**: http://localhost:8081/swagger-ui.html
-- **API Spec**: http://localhost:8081/v3/api-docs
-
-### Security Configuration Details
-
-**JWT Security Configuration:**
-```kotlin
-@Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
-class SecurityConfig {
-    
-    @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http
-            .csrf { it.disable() }
-            .sessionManagement { 
-                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
-            }
-            .authorizeHttpRequests { auth ->
-                auth
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/actuator/health").permitAll()
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .anyRequest().authenticated()
-            }
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .build()
-    }
-}
 ```
 
 ## Authentication
@@ -428,39 +234,20 @@ class JwtTokenService(
     @Value("\${jwt.expiration}") private val accessTokenExpiration: Long,
     @Value("\${jwt.refresh-expiration}") private val refreshTokenExpiration: Long
 ) {
-    
-    fun generateAccessToken(user: User): String {
-        val claims = mapOf(
-            "sub" to user.id.value,
-            "email" to user.email.value,
-            "roles" to user.roles.map { it.name }
-        )
-        
-        return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration))
-            .signWith(SignatureAlgorithm.HS256, secret)
-            .compact()
+
+    private val algorithm: Algorithm = Algorithm.HMAC256(secret)
+    private val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()
+
+    fun createAccessToken(user: UserDom): String = JWT.create()
+        .withSubject(user.username)
+        .withArrayClaim("roles", user.roles.toTypedArray())
+        .withIssuedAt(Instant.now())
+        .withExpiresAt(Instant.now().plusSeconds(jwtExpiration))
+        .withIssuer(issuer)
+        .sign(algorithm)
     }
 }
 ```
-
-## Database
-
-### Database Technology and ORM
-
-**PostgreSQL 17.3:**
-- **ACID Compliance** - Ensures data consistency and reliability
-- **Advanced Features** - JSON support, full-text search, advanced indexing
-- **Performance** - Optimized for concurrent read/write operations
-- **Scalability** - Supports horizontal scaling with read replicas
-
-**Spring Data JPA with Hibernate:**
-- **Object-Relational Mapping** - Seamless Java/Kotlin object persistence
-- **Query Generation** - Automatic query generation from method names
-- **Custom Queries** - Support for JPQL and native SQL queries
-- **Transaction Management** - Declarative transaction handling
 
 ## Testing
 
@@ -473,9 +260,6 @@ The backend implements a comprehensive testing strategy covering all architectur
 # Run all tests
 ./gradlew test
 
-# Run tests with coverage report
-./gradlew test jacocoTestReport
-
 # Run specific test class
 ./gradlew test --tests "UserServiceTest"
 ```
@@ -483,31 +267,14 @@ The backend implements a comprehensive testing strategy covering all architectur
 #### Integration Tests
 ```bash
 # Run only integration tests
-./gradlew test --tests "*IntegrationTest"
+./gradlew test --tests "*IT"
 ```
 
 #### ArchUnit Tests
 ```bash
 # Run only architecture tests
-./gradlew test --tests "*ArchTest"
+./gradlew test --tests "**.architecture.*""
 ```
-
-### Test Coverage and Reporting
-
-**Generate Coverage Report:**
-```bash
-# Generate coverage report
-./gradlew jacocoTestReport
-
-# View HTML report
-open backend/build/reports/jacoco/test/html/index.html
-```
-
-**Coverage Targets:**
-- **Overall Coverage**: 80% minimum
-- **Domain Layer**: 90% minimum (critical business logic)
-- **Application Layer**: 85% minimum
-- **Infrastructure Layer**: 70% minimum (external dependencies)
 
 ## API Documentation
 
@@ -530,10 +297,9 @@ POST /api/auth/register
 Content-Type: application/json
 
 {
+  "username": "John_doe",
   "email": "user@example.com",
-  "password": "SecurePassword123!",
-  "firstName": "John",
-  "lastName": "Doe"
+  "password": "SecurePassword123!"
 }
 ```
 
@@ -553,6 +319,8 @@ Content-Type: application/json
 POST /api/auth/refresh
 Cookie: refreshToken=550e8400-e29b-41d4-a716-446655440000
 ```
+
+Check the swagger to see others endpoints
 
 ## Configuration
 
@@ -635,13 +403,6 @@ cd backend && ./gradlew bootRun
 export SPRING_PROFILES_ACTIVE=dev
 ```
 
-### Getting Help
-
-**Development Resources:**
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
-- [Kotlin Documentation](https://kotlinlang.org/docs/)
-- [Gradle Documentation](https://docs.gradle.org/)
-
 ---
 
-**Built with ❤️ using Spring Boot and Kotlin. Happy coding! 🚀**
+**Built with ❤️ using Spring Boot and Kotlin.**
