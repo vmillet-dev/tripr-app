@@ -21,7 +21,7 @@ class UserPersistenceAdapter(
     }
 
     override fun findById(id: Long): UserDom? {
-        return userEntityMapper.toDomain(userRepository.findById(id).orElse(null))
+        return userRepository.findById(id).orElse(null)?.let { userEntityMapper.toDomain(it) }
     }
 
     override fun findByEmail(email: String): UserDom? {
