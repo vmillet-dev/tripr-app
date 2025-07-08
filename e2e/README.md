@@ -1,88 +1,196 @@
 # Tripr App E2E Testing
 
-End-to-end testing for the Tripr application using Cypress.
+[![Build Status](https://github.com/vmillet-dev/tripr-app/workflows/Build%20and%20Test/badge.svg)](https://github.com/vmillet-dev/tripr-app/actions)
+[![Cypress](https://img.shields.io/badge/Cypress-13.15.2-green.svg)](https://www.cypress.io/)
+[![Docker](https://img.shields.io/badge/Docker-Isolated%20Environment-blue.svg)](https://www.docker.com/)
 
-## Overview
+End-to-end testing suite for the Tripr App using Cypress with isolated Docker environment and comprehensive test coverage.
 
-This directory contains end-to-end tests that verify the integration between the Angular frontend and Spring Boot backend. The tests use Cypress to simulate user interactions and verify application behavior.
+## Table of Contents
 
-## Test Structure
-
-```
-cypress/
-├── e2e/                  # Test specifications
-│   ├── auth.cy.ts        # Authentication tests
-│   ├── end-to-end.cy.ts  # Full user flow tests
-│   └── password-reset.cy.ts # Password reset workflow tests
-└── support/              # Support files
-    ├── commands.ts       # Custom Cypress commands
-    └── e2e.ts            # Global configuration
-```
-
-## Key Test Scenarios
-
-- **Authentication**: Registration, login, and validation
-- **Password Reset**: Request password reset, validate token, and reset password
-- **End-to-End Flows**: Complete user journeys from registration to using core features
+- [Running Tests](#running-tests)
+- [Troubleshooting](#troubleshooting)
 
 ## Running Tests
 
-### Prerequisites
+### Isolated Docker Environment
 
-- Node.js 18+
-- npm 9+
-- Backend and frontend running
+The recommended approach for running E2E tests is using the isolated Docker environment to ensure consistency and avoid conflicts with local development.
 
-### Installation
+#### Prerequisites for Docker Environment
+
+| Tool               | Version | Purpose                       | Verification             |
+|--------------------|---------|-------------------------------|--------------------------|
+| **Docker**         | 20+     | Container runtime             | `docker --version`       |
+| **Docker Compose** | 2.0+    | Multi-container orchestration | `docker compose version` |
+| **Node.js**        | 22+     | Test runner dependencies      | `node --version`         |
+
+#### Running Tests in Docker
 
 ```bash
+# Navigate to e2e directory
+cd e2e
+
+# Start isolated test environment
+cypress:run:docker
+```
+
+### Local Development Environment
+
+For rapid development and debugging, tests can be run against a local development environment.
+
+```bash
+# Navigate to e2e directory
+cd e2e
+cypress:run
+```
+
+#### Prerequisites for Local Development
+
+```bash
+# Ensure backend is running
+cd backend
+./gradlew bootRun
+
+# Ensure frontend is running (in another terminal)
+cd frontend
+npm start
+
+# Verify services are accessible
+curl http://localhost:4200
+```
+
+#### Running Tests Locally
+
+```bash
+# Navigate to e2e directory
+cd e2e
+
+# Install dependencies
 npm install
-```
 
-### Running All Tests
+# Run all tests headlessly
+npm run test
+# or
+npx cypress run
 
-To run all tests headlessly:
+# Run tests in interactive mode
+npm run test:open
+# or
+npx cypress open
 
-```bash
-npm run cypress:run
-```
-
-### Running Tests in Interactive Mode
-
-To open the Cypress Test Runner:
-
-```bash
-npm run cypress:open
-```
-
-### Running Specific Tests
-
-To run a specific test file:
-
-```bash
+# Run specific test file
 npx cypress run --spec "cypress/e2e/auth.cy.ts"
+
+# Run tests with specific browser
+npx cypress run --browser chrome
+npx cypress run --browser firefox
+npx cypress run --browser edge
 ```
 
-## Automated Test Execution
+## Troubleshooting
 
-The repository includes a script to start both the backend and frontend, run the tests, and then shut down the services:
+### Common Test Issues
 
+#### Cypress Installation Problems
+
+**Problem**: Cypress fails to install or verify
+
+**Solution**:
 ```bash
-./start-app.sh
+# Clear npm cache
+npm cache clean --force
+
+# Remove node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Verify Cypress installation
+npx cypress verify
+
+# Install Cypress binary manually if needed
+npx cypress install
 ```
 
-This script:
-1. Starts the backend with the dev profile
-2. Waits for the backend to be ready
-3. Starts the frontend
-4. Waits for the frontend to be ready
-5. Runs the Cypress tests
-6. Shuts down both services
+#### Test Flakiness Issues
 
-## Best Practices
+**Problem**: Tests pass sometimes but fail other times
 
-- Use `data-cy` attributes for element selection
-- Create custom commands for common operations
-- Keep tests independent and idempotent
-- Use dynamic data generation to avoid test conflicts
-- Add proper waiting mechanisms for asynchronous operations
+**Solution**:
+```typescript
+// Add proper waits instead of fixed delays
+cy.get('[data-cy=submit-button]').should('be.enabled').click();
+
+// Use retry logic for unstable elements
+cy.get('[data-cy=dynamic-content]', { timeout: 10000 }).should('be.visible');
+
+// Wait for network requests to complete
+cy.intercept('POST', '/api/auth/login').as('loginRequest');
+cy.get('[data-cy=login-button]').click();
+cy.wait('@loginRequest');
+
+// Use cy.session for authentication state
+cy.session('user-session', () => {
+  cy.login('user@example.com', 'password');
+});
+```
+
+#### Browser Compatibility Issues
+
+**Problem**: Tests fail in specific browsers
+
+**Solution**:
+```bash
+# Test in different browsers
+npx cypress run --browser chrome
+npx cypress run --browser firefox
+npx cypress run --browser edge
+
+# Use browser-specific configurations
+# cypress.config.ts
+export default defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      if (config.browser?.name === 'firefox') {
+        config.defaultCommandTimeout = 15000;
+      }
+      return config;
+    }
+  }
+});
+```
+
+### Performance Issues
+
+#### Slow Test Execution
+
+**Problem**: Tests take too long to run
+
+**Solution**:
+```typescript
+// Optimize selectors
+cy.get('[data-cy=specific-element]'); // Good
+cy.get('.complex-css-selector:nth-child(3)'); // Avoid
+
+```
+
+### Getting Help
+
+**Testing Resources:**
+- [Cypress Documentation](https://docs.cypress.io/)
+- [Cypress Best Practices](https://docs.cypress.io/guides/references/best-practices)
+- [Testing Library Cypress](https://testing-library.com/docs/cypress-testing-library/intro/)
+
+**Community Support:**
+- [Cypress Discord](https://discord.gg/cypress)
+- [Cypress GitHub Discussions](https://github.com/cypress-io/cypress/discussions)
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/cypress)
+
+**Debugging Tools:**
+- [Cypress Debug](https://docs.cypress.io/guides/guides/debugging)
+- [Chrome DevTools](https://developer.chrome.com/docs/devtools/)
+- [Cypress Dashboard](https://dashboard.cypress.io/)
+
+---
+
+**Built with ❤️ using Cypress and Docker.**
