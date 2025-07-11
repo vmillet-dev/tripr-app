@@ -1,11 +1,11 @@
 /* Import custom variables first to override Bootstrap defaults */
-@import "assets/scss/variables";
+@use "assets/scss/_variables" as *;
 
 /* Import Bootstrap */
-@import "bootstrap/scss/bootstrap";
+@use "bootstrap/scss/bootstrap";
 
 /* Import Open Sans font */
-@import '@fontsource/open-sans/index.css';
+@use '@fontsource/open-sans/index.css';
 
 /* Global custom styles */
 html, body {
