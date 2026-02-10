@@ -10,14 +10,14 @@ RUN npm run build
 FROM gradle:8.14-jdk-21-and-24 AS backend-build
 WORKDIR /app
 COPY ./backend .
-COPY --from=frontend-build /app/dist/browser/ bootstrap/src/main/resources/static/
-COPY --from=frontend-build /app/public/ bootstrap/src/main/resources/static/
-RUN gradle :bootstrap:bootJar
+COPY --from=frontend-build /app/dist/browser/ application/src/main/resources/static/
+COPY --from=frontend-build /app/public/ application/src/main/resources/static/
+RUN gradle :application:bootJar
 
 # Step 3: Create the final image with the fat JAR (use multiarch image)
 FROM eclipse-temurin:24-jre-alpine
 WORKDIR /app
-COPY --from=backend-build /app/bootstrap/build/libs/app.jar app.jar
+COPY --from=backend-build /app/application/build/libs/app.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

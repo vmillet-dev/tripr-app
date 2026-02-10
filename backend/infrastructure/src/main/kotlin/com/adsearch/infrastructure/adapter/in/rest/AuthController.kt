@@ -1,13 +1,13 @@
-package com.adsearch.infrastructure.adapter.`in`.rest.controller
+package com.adsearch.infrastructure.adapter.`in`.rest
 
+import com.adsearch.domain.auth.AuthResponse
+import com.adsearch.domain.command.LoginUserCommand
+import com.adsearch.domain.command.RegisterUserCommand
+import com.adsearch.domain.port.`in`.CreateUserUseCase
 import com.adsearch.domain.port.`in`.LoginUserUseCase
 import com.adsearch.domain.port.`in`.LogoutUserUseCase
 import com.adsearch.domain.port.`in`.PasswordResetUseCase
 import com.adsearch.domain.port.`in`.RefreshTokenUseCase
-import com.adsearch.domain.port.`in`.CreateUserUseCase
-import com.adsearch.domain.auth.AuthResponse
-import com.adsearch.domain.command.LoginUserCommand
-import com.adsearch.domain.command.RegisterUserCommand
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthResponseDto
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetDto
