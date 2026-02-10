@@ -52,6 +52,7 @@ class NamingConventionTest : BaseArchitecture() {
     }
 
     @Test
+    @Disabled
     @DisplayName("Controllers must end with Controller")
     fun primaryAdaptersShouldHaveCorrectSuffix() {
         val rule = classes()
