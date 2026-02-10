@@ -1,8 +1,7 @@
 package com.adsearch.infrastructure.adapter.`in`.security
 
 import com.adsearch.domain.exception.TokenExpiredException
-import com.adsearch.domain.port.`in`.JwtTokenServicePort
-import com.adsearch.infrastructure.service.JwtUserDetailsService
+import com.adsearch.domain.port.out.security.TokenGeneratorPort
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -22,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 @Component
 class JwtAuthenticationFilter(
-    private val jwtTokenService: JwtTokenServicePort,
+    private val tokenGenerator: TokenGeneratorPort,
     private val jwtUserDetailsService: JwtUserDetailsService
 ) : OncePerRequestFilter() {
 
@@ -51,7 +50,7 @@ class JwtAuthenticationFilter(
         val jwt = authHeader.substring(7)
         LOG.debug("Processing JWT token")
 
-        val username: String? = jwtTokenService.validateAccessTokenAndGetUsername(jwt)
+        val username: String? = tokenGenerator.validateAccessTokenAndGetUsername(jwt)
         if (username == null) {
             throw TokenExpiredException("Access token expired")
         }

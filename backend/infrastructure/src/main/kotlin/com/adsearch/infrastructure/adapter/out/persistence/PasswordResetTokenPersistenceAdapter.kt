@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.persistence
 
 import com.adsearch.domain.model.PasswordResetTokenDom
-import com.adsearch.domain.port.out.PasswordResetTokenPersistencePort
+import com.adsearch.domain.port.out.persistence.PasswordResetTokenPersistencePort
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.PasswordResetTokenRepository
 import com.adsearch.infrastructure.adapter.out.persistence.mapper.PasswordResetTokenEntityMapper
 import org.springframework.stereotype.Component

@@ -3,16 +3,14 @@ archunit = "1.4.1"
 auth0-jwt = "4.5.0"
 httpclient5 = "5.5"
 jackson-kotlin = "2.19.0"
-konvert = "4.1.0"
 kotlin = "2.2.0"
 liquibase = "4.32.0"
 mapstruct = "1.6.3"
-mockk = "1.14.2"
 postgresql = "42.7.6"
 slf4j = "2.0.17"
 spring-boot = "3.5.0"
 springdoc-openapi = "2.8.8"
-testcontainers = "1.21.1"
+testcontainers = "1.21.4"
 
 [libraries]
 apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
@@ -24,7 +22,6 @@ kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", versi
 liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
 mapstruct-api = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
 mapstruct-kapt = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }

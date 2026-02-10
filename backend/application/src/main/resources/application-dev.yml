@@ -1,0 +1,48 @@
+spring:
+  mail:
+    host: localhost
+    port: 1026
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  datasource:
+    url: jdbc:postgresql://localhost:5433/tripr
+    username: postgres
+    password: P4ssword!
+    driver-class-name: org.postgresql.Driver
+  docker:
+    compose:
+      file: devops/compose-dev.yaml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    disable-swagger-default-url: true
+    path: /api/swagger-ui
+  api-docs:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.adsearch: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+jwt:
+  secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
+  expiration: 3600  # 1 hour in secondes
+  issuer: spring-ad-search
+  refresh-token:
+    cookie-name: refresh-token
+    expiration: 604800  # 7 days in secondes
+
+password-reset:
+  token-expiration: 86400  # 24 hours in secondes
+  base-url: http://localhost:4200
