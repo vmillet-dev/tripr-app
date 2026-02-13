@@ -10,12 +10,15 @@ dependencies {
 
     runtimeOnly(libs.postgresql)
 
-    implementation(libs.bundles.springboot) // springboot bundle
+    implementation(libs.springboot.security)
+    implementation(libs.springboot.tomcat)
+    implementation(libs.springboot.datajpa)
+    implementation(libs.springboot.thymeleaf)
+    implementation(libs.springboot.mail)
 
     implementation(libs.kotlin.reflect)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.auth0.java.jwt)
-    implementation(libs.jackson.module.kotlin)
     implementation(libs.mapstruct.api)
 
     kapt(libs.mapstruct.kapt)

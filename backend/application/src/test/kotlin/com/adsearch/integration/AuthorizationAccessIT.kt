@@ -1,117 +1,118 @@
 package com.adsearch.integration
 
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthRequestDto
-import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpEntity
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import kotlin.test.Test
+import java.util.function.Consumer
 
 class AuthorizationAccessIT : BaseIT() {
 
     @Test
     fun testPublicEndpoint() {
-        val response: ResponseEntity<String?> = restTemplate.getForEntity(
-            "http://localhost:$port/api/auth/test/public", String::class.java
-        )
-
-        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).isEqualTo("Public content")
+        restTemplate
+            .get()
+            .uri("/api/auth/test/public")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("value").isEqualTo("Public content")
     }
 
     @Test
     fun testRoleEndpoint_withAnonymousAccess() {
-        val response: ResponseEntity<String?> = restTemplate.getForEntity(
-            "http://localhost:$port/api/auth/test/user", String::class.java
-        )
+        obtainAccessToken("testuser")
 
-        assertThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+        restTemplate
+            .get()
+            .uri("/api/auth/test/user")
+            .exchange()
+            .expectStatus().isForbidden
     }
 
 
     @Test
     fun testUserEndpoint_WithUserRole() {
-        val response: ResponseEntity<String?>? = restTemplate.exchange(
-            "http://localhost:$port/api/auth/test/user",
-            HttpMethod.GET,
-            obtainAccessToken("testuser"),
-            String::class.java
-        )
-
-        assertThat(response!!.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).isEqualTo("UserEntity content")
+        restTemplate
+            .get()
+            .uri("/api/auth/test/user")
+            .headers(obtainAccessToken("testuser"))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("value").isEqualTo("UserEntity content")
     }
 
     @Test
     fun testAdminEndpoint_WithUserRole() {
-        val response: ResponseEntity<String?>? = restTemplate.exchange(
-            "http://localhost:$port/api/auth/test/admin",
-            HttpMethod.GET,
-            obtainAccessToken("testuser"),
-            String::class.java
-        )
-
-        assertThat(response!!.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
+        restTemplate
+            .get()
+            .uri("/api/auth/test/admin")
+            .headers(obtainAccessToken("testuser"))
+            .exchange()
+            .expectStatus().isForbidden
     }
 
     @Test
     fun testUserEndpoint_WithAdminRole() {
-        val response: ResponseEntity<String?>? = restTemplate.exchange(
-            "http://localhost:$port/api/auth/test/admin",
-            HttpMethod.GET,
-            obtainAccessToken("testadmin"),
-            String::class.java
-        )
-
-        assertThat(response!!.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body).isEqualTo("Admin content")
+        restTemplate
+            .get()
+            .uri("/api/auth/test/admin")
+            .headers(obtainAccessToken("testadmin"))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("value").isEqualTo("Admin content")
     }
 
-    private fun obtainAccessToken(username: String): HttpEntity<Void> {
+    private fun obtainAccessToken(username: String): Consumer<HttpHeaders> {
         // Given
         val request = AuthRequestDto(username, "password")
 
         // When
-        val response: ResponseEntity<Map<*, *>> = restTemplate.postForEntity(
-            "http://localhost:$port/api/auth/login",
-            httpUtil.buildJsonPayload(request),
-            Map::class.java
-        )
+        val response = restTemplate
+            .post()
+            .uri("/api/auth/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(request)
+            .exchange()
+            .expectBody(object : ParameterizedTypeReference<Map<String, Any>>() {})
+            .returnResult()
+            .responseBody
 
-        val authHeaders = HttpHeaders()
-        authHeaders.set("Authorization", "Bearer ${response.body!!["accessToken"] as String}")
-
-        return HttpEntity<Void>(authHeaders)
+        return Consumer { headers: HttpHeaders? ->
+            headers!!.set("Authorization", "Bearer ${response!!["accessToken"] as String}")
+        }
     }
-
-
 }
+
+data class MyResponse(val value: String)
 
 @RestController
 @RequestMapping("/auth/test")
 @Profile("test")
 class TestController {
     @GetMapping("/public")
-    fun publicAccess(): ResponseEntity<String?> {
-        return ResponseEntity.ok<String?>("Public content")
+    fun publicAccess(): ResponseEntity<MyResponse> {
+        return ResponseEntity.ok(MyResponse("Public content"))
     }
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
-    fun userAccess(): ResponseEntity<String?> {
-        return ResponseEntity.ok<String?>("UserEntity content")
+    fun userAccess(): ResponseEntity<MyResponse> {
+        return ResponseEntity.ok(MyResponse("UserEntity content"))
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    fun adminAccess(): ResponseEntity<String?> {
-        return ResponseEntity.ok<String?>("Admin content")
+    fun adminAccess(): ResponseEntity<MyResponse> {
+        return ResponseEntity.ok(MyResponse("Admin content"))
     }
 }

@@ -11,7 +11,7 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_24
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 allprojects {
@@ -24,13 +24,17 @@ allprojects {
     }
 }
 
-
 subprojects {
     apply(plugin = rootProject.libs.plugins.kotlin.jvm.get().pluginId)
 
     kotlin {
         compilerOptions {
-            freeCompilerArgs.addAll("-Xjsr305=strict", "-Werror", "-Wextra", "-Xjvm-default=all-compatibility")
+            freeCompilerArgs.addAll(
+                "-Xjsr305=strict",
+                "-Werror",
+                "-Wextra",
+                "-Xannotation-default-target=param-property"
+            )
         }
     }
 

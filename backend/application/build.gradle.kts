@@ -7,20 +7,24 @@ dependencies {
     api(project(":domain"))
     api(project(":infrastructure"))
 
-    implementation(libs.bundles.springboot)
-    implementation(libs.liquibase.core)
+    implementation(libs.springboot.logging)
+    implementation(libs.springboot.autoconfigure)
+    implementation(libs.springboot.webmvc)
+    implementation(libs.springboot.security)
+    implementation(libs.springboot.tomcat)
+    implementation(libs.springboot.liquibase)
+    implementation(libs.springboot.thymeleaf)
+    implementation(libs.springboot.datajpa)
+    implementation(libs.springboot.jdbc)
+    implementation(libs.springboot.jackson)
+
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
 
     developmentOnly(libs.springboot.docker.compose)
     developmentOnly(libs.springboot.devtools)
-
-
+    
     testImplementation(libs.springboot.starter.test)
-    testImplementation(libs.springboot.starter.security)
-    testImplementation(libs.springboot.starter.validation)
-    testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.archunit.junit5)
-    testImplementation(libs.apache.httpclient5)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
 }

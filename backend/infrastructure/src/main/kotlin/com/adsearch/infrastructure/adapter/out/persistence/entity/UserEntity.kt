@@ -17,19 +17,19 @@ class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USR_ID")
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(name = "USR_USERNAME", unique = true, nullable = false, length = 255)
-    val username: String,
+    var username: String,
 
     @Column(name = "USR_EMAIL", unique = true, nullable = false, length = 255)
-    val email: String,
+    var email: String,
 
     @Column(name = "USR_PASSWORD", nullable = false, length = 255)
-    val password: String,
+    var password: String,
 
     @Column(name = "USR_ENABLED", nullable = false)
-    val enabled: Boolean = false,
+    var enabled: Boolean = false,
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -37,5 +37,5 @@ class UserEntity(
         joinColumns = [JoinColumn(name = "USR_ID")],
         inverseJoinColumns = [JoinColumn(name = "ROLE_ID")]
     )
-    val roles: MutableSet<RoleEntity> = HashSet()
+    var roles: MutableSet<RoleEntity> = HashSet()
 )

@@ -14,14 +14,14 @@ class PasswordResetTokenEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PRT_ID")
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(name = "USR_ID", nullable = false, unique = true)
-    val userId: Long,
+    var userId: Long,
 
     @Column(name = "PRT_TOKEN", unique = true, nullable = false, length = 255)
-    val token: String,
+    var token: String,
 
     @Column(name = "PRT_EXPIRY_DATE", nullable = false)
-    val expiryDate: Instant
+    var expiryDate: Instant
 )

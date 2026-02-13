@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class PasswordEncoderAdapter(private val passwordEncoder: PasswordEncoder): PasswordEncoderPort {
-    override fun encode(rawPassword: String): String = passwordEncoder.encode(rawPassword)
+    override fun encode(rawPassword: String): String = passwordEncoder.encode(rawPassword)!!
 }

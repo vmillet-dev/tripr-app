@@ -14,17 +14,17 @@ class RefreshTokenEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RT_ID")
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(name = "USR_ID", nullable = false, unique = true)
-    val userId: Long,
+    var userId: Long,
 
     @Column(name = "RT_TOKEN", unique = true, nullable = false, length = 255)
-    val token: String,
+    var token: String,
 
     @Column(name = "RT_EXPIRY_DATE", nullable = false)
-    val expiryDate: Instant,
+    var expiryDate: Instant,
 
     @Column(name = "RT_REVOKED", nullable = false)
-    val revoked: Boolean = false
+    var revoked: Boolean = false
 )

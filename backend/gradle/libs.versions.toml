@@ -1,42 +1,48 @@
 [versions]
 archunit = "1.4.1"
 auth0-jwt = "4.5.0"
-httpclient5 = "5.5"
-jackson-kotlin = "2.19.0"
-kotlin = "2.2.0"
-liquibase = "4.32.0"
-mapstruct = "1.6.3"
+httpclient5 = "5.6"
+kotlin = "2.3.10"
+mapstruct = "1.7.0.Beta1"
 postgresql = "42.7.6"
 slf4j = "2.0.17"
-spring-boot = "3.5.0"
-springdoc-openapi = "2.8.8"
+spring-boot = "4.0.2"
+springdoc-openapi = "3.0.1"
 testcontainers = "1.21.4"
 
 [libraries]
-apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
-archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
-auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
-jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-kotlin" }
-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
-liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+# Spring Boot dependencies
+springboot-logging = { module = "org.springframework.boot:spring-boot-starter-logging", version.ref = "spring-boot" }
+springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
+springboot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose", version.ref = "spring-boot" }
+springboot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring-boot" }
+springboot-webmvc = { module = "org.springframework.boot:spring-boot-webmvc", version.ref = "spring-boot" }
+springboot-security = { module = "org.springframework.boot:spring-boot-security", version.ref = "spring-boot" }
+springboot-tomcat = { module = "org.springframework.boot:spring-boot-tomcat", version.ref = "spring-boot" }
+springboot-liquibase = { module = "org.springframework.boot:spring-boot-liquibase", version.ref = "spring-boot" }
+springboot-thymeleaf = { module = "org.springframework.boot:spring-boot-thymeleaf", version.ref = "spring-boot" }
+springboot-datajpa = { module = "org.springframework.boot:spring-boot-data-jpa", version.ref = "spring-boot" }
+springboot-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc", version.ref = "spring-boot" }
+springboot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "spring-boot" }
+springboot-jackson = { module = "org.springframework.boot:spring-boot-jackson", version.ref = "spring-boot" }
+
+# Other dependencies
 mapstruct-api = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
 mapstruct-kapt = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-springboot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
-springboot-docker-compose = { module = "org.springframework.boot:spring-boot-docker-compose", version.ref = "spring-boot" }
-springboot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
-springboot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "spring-boot" }
-springboot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
-springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
-springboot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "spring-boot" }
-springboot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
-springboot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
-springboot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "spring-boot" }
+auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
+# Test dependencies
+springboot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+springboot-resttestclient = { module = "org.springframework.boot:spring-boot-resttestclient", version.ref = "spring-boot" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+apache-httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5-testing", version.ref = "httpclient5" }
 
 [plugins]
 kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
@@ -45,14 +51,3 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-
-[bundles]
-springboot = [
-    "springboot-starter-data-jpa",
-    "springboot-starter-mail",
-    "springboot-starter-security",
-    "springboot-starter-thymeleaf",
-    "springboot-starter-validation",
-    "springboot-starter-web",
-    "springboot-starter-webflux",
-]

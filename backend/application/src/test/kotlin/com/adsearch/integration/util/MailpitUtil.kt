@@ -2,9 +2,15 @@ package com.adsearch.integration.util
 
 import com.adsearch.integration.BaseIT.Companion.MAILPIT_CONTAINER
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Profile
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
+import org.springframework.test.web.servlet.client.RestTestClient
+
+//inline fun <reified T> RestTestClient.ResponseSpec.body(): T? =
+//    this.expectBody(T::class.java)
+//        .returnResult()
+//        .responseBody
 
 data class MailpitMessage(
     @param:JsonProperty("ID")
@@ -26,13 +32,19 @@ data class MailpitAddress(
 
 @Component
 @Profile("test")
-class MailpitUtil(private val restTemplate: TestRestTemplate) {
+class MailpitUtil {
+
+    val restTestMailClient: RestTestClient = RestTestClient.bindToServer()
+        .baseUrl("http://localhost:${MAILPIT_CONTAINER.getMappedPort(8025)}")
+        .build()
 
     fun fetchLatestMail(): MailpitMessage? {
-        val mailpitResponse = restTemplate.getForEntity(
-            "http://localhost:${MAILPIT_CONTAINER.getMappedPort(8025)}/api/v1/message/latest",
-            MailpitMessage::class.java
-        )
-        return mailpitResponse.body
+        return restTestMailClient
+            .get()
+            .uri("/api/v1/message/latest")
+            .exchange()
+            .expectBody(object : ParameterizedTypeReference<MailpitMessage>() {})
+            .returnResult()
+            .responseBody
     }
 }

@@ -4,11 +4,11 @@ import com.adsearch.integration.util.HttpUtil
 import com.adsearch.integration.util.MailpitUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.web.servlet.client.RestTestClient
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -21,8 +21,11 @@ abstract class BaseIT {
     @LocalServerPort
     protected var port: Int = 0
 
-    @Autowired
-    protected lateinit var restTemplate: TestRestTemplate
+    protected val restTemplate: RestTestClient by lazy {
+        RestTestClient.bindToServer()
+            .baseUrl("http://localhost:$port")
+            .build()
+    }
 
     @Autowired
     protected lateinit var mailpitUtil: MailpitUtil

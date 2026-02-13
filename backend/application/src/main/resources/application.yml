@@ -3,8 +3,6 @@ spring:
   application:
     name: spring-ad-search
   jackson:
-    serialization:
-      write-dates-as-timestamps: false
     deserialization:
       fail-on-unknown-properties: false
   mail:
@@ -38,9 +36,6 @@ springdoc:
 
 server:
   port: 8081
-  error:
-    include-message: always
-    include-binding-errors: always
 
 logging:
   level:
