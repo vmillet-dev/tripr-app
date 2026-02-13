@@ -7,5 +7,5 @@ services:
       - POSTGRES_PASSWORD=P4ssword!
 
   mailpit-base:
-    image: axllent/mailpit:v1.23
+    image: axllent/mailpit:v1.29
     restart: unless-stopped
