@@ -19,7 +19,7 @@
     "@angular/platform-browser-dynamic": "^20.1.0",
     "@angular/router": "^20.1.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@fontsource/open-sans": "^5.2.6",
+    "@fontsource/open-sans": "^5.2.7",
     "@jsverse/transloco": "^7.6.1",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
