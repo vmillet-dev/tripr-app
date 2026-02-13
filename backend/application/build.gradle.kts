@@ -22,9 +22,15 @@ dependencies {
 
     developmentOnly(libs.springboot.docker.compose)
     developmentOnly(libs.springboot.devtools)
-    
-    testImplementation(libs.springboot.starter.test)
+
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.springboot.restclient)
+
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.springboot.resttestclient)
+    testImplementation(libs.assertJ)
     testImplementation(libs.archunit.junit5)
+    testImplementation(libs.jsonpath)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.testcontainers.postgresql)
 }
