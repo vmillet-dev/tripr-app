@@ -2,7 +2,7 @@
 archunit = "1.4.1"
 auth0-jwt = "4.5.0"
 httpclient5 = "5.5"
-jackson-kotlin = "2.19.0"
+jackson-kotlin = "2.21.0"
 kotlin = "2.2.0"
 liquibase = "4.32.0"
 mapstruct = "1.6.3"
