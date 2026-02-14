@@ -32,4 +32,10 @@ class JwtTokenGeneratorAdapter(
     } catch (_: JWTVerificationException) {
         null
     }
+
+    override fun getAuthoritiesFromToken(token: String): List<String> = try {
+        verifier.verify(token).getClaim("roles").asList(String::class.java) ?: emptyList()
+    } catch (_: JWTVerificationException) {
+        emptyList()
+    }
 }

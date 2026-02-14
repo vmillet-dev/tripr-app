@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.adapter.`in`.security
+package com.adsearch.security
 
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.port.out.security.TokenGeneratorPort
@@ -9,9 +9,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -21,8 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 @Component
 class JwtAuthenticationFilter(
-    private val tokenGenerator: TokenGeneratorPort,
-    private val jwtUserDetailsService: JwtUserDetailsService
+    private val tokenGenerator: TokenGeneratorPort
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -50,21 +49,14 @@ class JwtAuthenticationFilter(
         val jwt = authHeader.substring(7)
         LOG.debug("Processing JWT token")
 
-        val username: String? = tokenGenerator.validateAccessTokenAndGetUsername(jwt)
-        if (username == null) {
-            throw TokenExpiredException("Access token expired")
-        }
+        val username: String =
+            tokenGenerator.validateAccessTokenAndGetUsername(jwt) ?: throw TokenExpiredException("Access token expired")
 
-        val userDetails: UserDetails
-        try {
-            userDetails = jwtUserDetailsService.loadUserByUsername(username)
-        } catch (_: UsernameNotFoundException) {
-            LOG.info("$method $uri | User: $username (not found) | IP: $ip | UA: $userAgent")
-            filterChain.doFilter(request, response)
-            return
-        }
+        val roles = tokenGenerator.getAuthoritiesFromToken(jwt)
+        val authorities = roles.map { SimpleGrantedAuthority(it) }
+        val userDetails = User(username, "", authorities)
 
-        val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+        val authentication = UsernamePasswordAuthenticationToken(userDetails, null, authorities)
         authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
         // set user details on spring security context
         SecurityContextHolder.getContext().authentication = authentication

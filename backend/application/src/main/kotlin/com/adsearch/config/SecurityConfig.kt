@@ -1,6 +1,6 @@
 package com.adsearch.config
 
-import com.adsearch.infrastructure.adapter.`in`.security.JwtAuthenticationFilter
+import com.adsearch.security.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
