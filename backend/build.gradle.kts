@@ -42,6 +42,7 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        finalizedBy("jacocoTestReport")
     }
 
     tasks.withType<BootRun> {
@@ -53,11 +54,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = "0.8.14"
-    }
-
-    tasks.test {
-        finalizedBy("jacocoTestReport")
+        toolVersion = rootProject.libs.versions.jacoco.get()
     }
 
     afterEvaluate {
@@ -66,8 +63,6 @@ subprojects {
 
             reports {
                 xml.required.set(true)
-                html.required.set(true)
-                csv.required.set(false)
             }
 
             classDirectories.setFrom(
@@ -75,14 +70,12 @@ subprojects {
                     exclude(
                         "**/config/**",
                         "**/dto/**",
-                        "**/enum/**",
+                        "**/enums/**",
+                        "**/exception/**",
                         "**/annotation/**"
                     )
                 }
             )
-
-            sourceDirectories.setFrom(files("src/main/kotlin"))
-            executionData.setFrom(files("build/jacoco/test.exec"))
         }
     }
 }
