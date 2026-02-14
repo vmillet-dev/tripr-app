@@ -1,4 +1,4 @@
-package com.adsearch.domain.port.out.security
+package com.adsearch.domain.port.out.authentication
 
 import com.adsearch.domain.model.UserDom
 

@@ -1,4 +1,4 @@
-package com.adsearch.infrastructure.exception
+package com.adsearch.domain.exception
 
 import com.adsearch.domain.model.enums.HttpStatusEnum
 import com.adsearch.domain.model.enums.TechnicalErrorCodeEnum

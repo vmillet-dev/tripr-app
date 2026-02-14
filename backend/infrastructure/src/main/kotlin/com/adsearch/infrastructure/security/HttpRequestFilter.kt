@@ -1,7 +1,7 @@
-package com.adsearch.security
+package com.adsearch.infrastructure.security
 
 import com.adsearch.domain.exception.TokenExpiredException
-import com.adsearch.domain.port.out.security.TokenGeneratorPort
+import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -20,12 +20,12 @@ import org.springframework.web.filter.OncePerRequestFilter
  * Filter for JWT authentication
  */
 @Component
-class JwtAuthenticationFilter(
+class HttpRequestFilter(
     private val tokenGenerator: TokenGeneratorPort
 ) : OncePerRequestFilter() {
 
     companion object {
-        val LOG: Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(HttpRequestFilter::class.java)
     }
 
     override fun doFilterInternal(

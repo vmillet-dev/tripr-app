@@ -1,7 +1,7 @@
-package com.adsearch.infrastructure.adapter.out.security
+package com.adsearch.infrastructure.adapter.out.authentication
 
 import com.adsearch.domain.model.UserDom
-import com.adsearch.domain.port.out.security.TokenGeneratorPort
+import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
@@ -12,9 +12,9 @@ import java.time.Instant
 
 @Component
 class JwtTokenGeneratorAdapter(
-    @param:Value("\${jwt.secret}") private val secret: String,
-    @param:Value("\${jwt.expiration}") private val jwtExpiration: Long,
-    @param:Value("\${jwt.issuer}") private val issuer: String
+    @param:Value($$"${jwt.secret}") private val secret: String,
+    @param:Value($$"${jwt.expiration}") private val jwtExpiration: Long,
+    @param:Value($$"${jwt.issuer}") private val issuer: String
 ) : TokenGeneratorPort {
     private val algorithm: Algorithm = Algorithm.HMAC256(secret)
     private val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()

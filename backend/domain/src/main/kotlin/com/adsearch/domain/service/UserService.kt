@@ -1,20 +1,20 @@
 package com.adsearch.domain.service
 
 import com.adsearch.domain.annotation.AutoRegister
-import com.adsearch.domain.command.RegisterUserCommand
 import com.adsearch.domain.exception.EmailAlreadyExistsException
 import com.adsearch.domain.exception.UsernameAlreadyExistsException
 import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.command.RegisterUserCommand
 import com.adsearch.domain.port.`in`.CreateUserUseCase
+import com.adsearch.domain.port.out.authentication.PasswordEncoderPort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
-import com.adsearch.domain.port.out.security.PasswordEncoderPort
 
 @AutoRegister
 @Suppress("unused")
 class UserService(
     private val passwordEncoder: PasswordEncoderPort,
     private val userPersistence: UserPersistencePort
-): CreateUserUseCase {
+) : CreateUserUseCase {
     override fun createUser(cmd: RegisterUserCommand) {
 
         if (userPersistence.findByUsername(cmd.username) != null) {

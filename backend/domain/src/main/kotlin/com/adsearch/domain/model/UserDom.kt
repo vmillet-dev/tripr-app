@@ -1,6 +1,6 @@
 package com.adsearch.domain.model
 
-import com.adsearch.domain.command.RegisterUserCommand
+import com.adsearch.domain.model.command.RegisterUserCommand
 import com.adsearch.domain.model.enums.UserRoleEnum
 
 /**

@@ -1,6 +1,6 @@
-package com.adsearch.infrastructure.adapter.out.security
+package com.adsearch.infrastructure.adapter.out.authentication
 
-import com.adsearch.domain.port.out.security.AuthenticationProviderPort
+import com.adsearch.domain.port.out.authentication.AuthenticationProviderPort
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication

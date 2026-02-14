@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ConfigurationProviderAdapter(
-    @param:Value("\${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long,
-    @param:Value("\${password-reset.token-expiration}") private val passwordResetTokenExpiration: Long
+    @param:Value($$"${jwt.refresh-token.expiration}") private val refreshTokenExpiration: Long,
+    @param:Value($$"${password-reset.token-expiration}") private val passwordResetTokenExpiration: Long
 ) : ConfigurationProviderPort {
     override fun getPasswordResetTokenExpiration(): Long = refreshTokenExpiration
     override fun getRefreshTokenExpiration(): Long = passwordResetTokenExpiration

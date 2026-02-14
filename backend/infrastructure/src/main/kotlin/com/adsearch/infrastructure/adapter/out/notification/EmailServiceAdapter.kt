@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.adapter.out.notification
 
 import com.adsearch.domain.port.out.notification.EmailServicePort
-import com.adsearch.infrastructure.exception.MailSendException
+import com.adsearch.domain.exception.MailSendException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -18,8 +18,8 @@ import org.thymeleaf.context.Context
 class EmailServiceAdapter(
     private val mailSender: JavaMailSender,
     private val templateEngine: TemplateEngine,
-    @param:Value("\${password-reset.base-url}") private val baseUrl: String,
-    @param:Value("\${password-reset.from}") private val from: String
+    @param:Value($$"${password-reset.base-url}") private val baseUrl: String,
+    @param:Value($$"${password-reset.from}") private val from: String
 ): EmailServicePort {
 
     companion object {

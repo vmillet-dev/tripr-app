@@ -1,20 +1,20 @@
 package com.adsearch.domain.service
 
-import com.adsearch.domain.auth.AuthResponse
-import com.adsearch.domain.command.LoginUserCommand
 import com.adsearch.domain.exception.InvalidCredentialsException
 import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.auth.AuthResponse
+import com.adsearch.domain.model.command.LoginUserCommand
 import com.adsearch.domain.model.enums.TokenTypeEnum
 import com.adsearch.domain.model.enums.UserRoleEnum
 import com.adsearch.domain.port.out.ConfigurationProviderPort
+import com.adsearch.domain.port.out.authentication.AuthenticationProviderPort
+import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
-import com.adsearch.domain.port.out.security.AuthenticationProviderPort
-import com.adsearch.domain.port.out.security.TokenGeneratorPort
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

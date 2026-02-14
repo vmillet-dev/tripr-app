@@ -3,7 +3,7 @@ package com.adsearch.handler
 import com.adsearch.domain.exception.BaseFunctionalException
 import com.adsearch.domain.model.enums.HttpStatusEnum
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.ErrorResponseDto
-import com.adsearch.infrastructure.exception.BaseTechnicalException
+import com.adsearch.domain.exception.BaseTechnicalException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -21,7 +21,7 @@ class GlobalExceptionHandler {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(BaseTechnicalException::class)
-    fun handleBBaseTechnicalException(
+    fun handleBaseTechnicalException(
         ex: BaseTechnicalException,
         request: HttpServletRequest
     ): ResponseEntity<ErrorResponseDto> {
@@ -36,7 +36,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BaseFunctionalException::class)
-    fun handleBBaseFunctionalException(
+    fun handleBaseFunctionalException(
         ex: BaseFunctionalException,
         request: HttpServletRequest
     ): ResponseEntity<ErrorResponseDto> {

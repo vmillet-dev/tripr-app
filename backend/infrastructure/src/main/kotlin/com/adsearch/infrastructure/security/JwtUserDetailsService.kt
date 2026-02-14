@@ -1,4 +1,4 @@
-package com.adsearch.security
+package com.adsearch.infrastructure.security
 
 import com.adsearch.infrastructure.adapter.out.persistence.jpa.UserRepository
 import org.slf4j.Logger

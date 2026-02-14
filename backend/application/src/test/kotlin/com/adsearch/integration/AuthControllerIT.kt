@@ -1,6 +1,6 @@
 package com.adsearch.integration
 
-import com.adsearch.domain.port.out.security.TokenGeneratorPort
+import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthRequestDto
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetDto
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetRequestDto
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
-import java.util.UUID
+import java.util.*
 
 
 /**

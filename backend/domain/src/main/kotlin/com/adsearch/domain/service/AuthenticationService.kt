@@ -1,25 +1,25 @@
 package com.adsearch.domain.service
 
 import com.adsearch.domain.annotation.AutoRegister
-import com.adsearch.domain.auth.AuthResponse
-import com.adsearch.domain.command.LoginUserCommand
 import com.adsearch.domain.exception.InvalidCredentialsException
 import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.RefreshTokenDom
 import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.auth.AuthResponse
+import com.adsearch.domain.model.command.LoginUserCommand
 import com.adsearch.domain.model.enums.TokenTypeEnum
 import com.adsearch.domain.port.`in`.LoginUserUseCase
 import com.adsearch.domain.port.`in`.LogoutUserUseCase
 import com.adsearch.domain.port.`in`.RefreshTokenUseCase
 import com.adsearch.domain.port.out.ConfigurationProviderPort
+import com.adsearch.domain.port.out.authentication.AuthenticationProviderPort
+import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
-import com.adsearch.domain.port.out.security.AuthenticationProviderPort
-import com.adsearch.domain.port.out.security.TokenGeneratorPort
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @AutoRegister
 @Suppress("unused")
@@ -29,7 +29,7 @@ class AuthenticationService(
     private val configurationProvider: ConfigurationProviderPort,
     private val tokenPersistence: TokenPersistencePort,
     private val userPersistence: UserPersistencePort
-): LoginUserUseCase, LogoutUserUseCase, RefreshTokenUseCase {
+) : LoginUserUseCase, LogoutUserUseCase, RefreshTokenUseCase {
 
     override fun login(cmd: LoginUserCommand): AuthResponse {
 

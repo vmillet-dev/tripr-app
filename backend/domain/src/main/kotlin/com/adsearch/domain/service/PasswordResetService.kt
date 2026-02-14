@@ -9,14 +9,14 @@ import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.model.enums.TokenTypeEnum
 import com.adsearch.domain.port.`in`.PasswordResetUseCase
 import com.adsearch.domain.port.out.ConfigurationProviderPort
+import com.adsearch.domain.port.out.authentication.PasswordEncoderPort
 import com.adsearch.domain.port.out.notification.EmailServicePort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
-import com.adsearch.domain.port.out.security.PasswordEncoderPort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @AutoRegister
 @Suppress("unused")
@@ -27,7 +27,7 @@ class PasswordResetService(
     private val userPersistence: UserPersistencePort,
     private val tokenPersistence: TokenPersistencePort
 
-): PasswordResetUseCase {
+) : PasswordResetUseCase {
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(this::class.java)
     }

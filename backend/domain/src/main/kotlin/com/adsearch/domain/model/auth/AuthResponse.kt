@@ -1,4 +1,4 @@
-package com.adsearch.domain.auth
+package com.adsearch.domain.model.auth
 
 /**
  * An authentication response

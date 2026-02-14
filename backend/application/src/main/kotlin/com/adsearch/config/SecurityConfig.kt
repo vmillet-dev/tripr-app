@@ -1,6 +1,6 @@
 package com.adsearch.config
 
-import com.adsearch.security.JwtAuthenticationFilter
+import com.adsearch.infrastructure.security.HttpRequestFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -23,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(jsr250Enabled = true)
-class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
+class SecurityConfig(private val httpRequestFilter: HttpRequestFilter) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -39,7 +39,7 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
                     .requestMatchers("/api/**").authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(httpRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }

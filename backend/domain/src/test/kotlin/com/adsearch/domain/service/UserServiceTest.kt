@@ -1,12 +1,12 @@
 package com.adsearch.domain.service
 
-import com.adsearch.domain.command.RegisterUserCommand
 import com.adsearch.domain.exception.EmailAlreadyExistsException
 import com.adsearch.domain.exception.UsernameAlreadyExistsException
 import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.command.RegisterUserCommand
 import com.adsearch.domain.model.enums.UserRoleEnum
+import com.adsearch.domain.port.out.authentication.PasswordEncoderPort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
-import com.adsearch.domain.port.out.security.PasswordEncoderPort
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

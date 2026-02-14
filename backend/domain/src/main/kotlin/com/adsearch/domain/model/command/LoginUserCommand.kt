@@ -1,4 +1,4 @@
-package com.adsearch.domain.command
+package com.adsearch.domain.model.command
 
 data class LoginUserCommand(
     val username: String,

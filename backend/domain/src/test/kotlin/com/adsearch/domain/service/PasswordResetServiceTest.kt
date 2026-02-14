@@ -8,10 +8,10 @@ import com.adsearch.domain.model.UserDom
 import com.adsearch.domain.model.enums.TokenTypeEnum
 import com.adsearch.domain.model.enums.UserRoleEnum
 import com.adsearch.domain.port.out.ConfigurationProviderPort
+import com.adsearch.domain.port.out.authentication.PasswordEncoderPort
 import com.adsearch.domain.port.out.notification.EmailServicePort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
-import com.adsearch.domain.port.out.security.PasswordEncoderPort
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
