@@ -1,15 +1,15 @@
 package com.adsearch.domain.model
 
+import com.adsearch.domain.model.enums.TokenTypeEnum
 import java.time.Instant
 
 /**
  * Domain model representing a refresh token
  */
 data class RefreshTokenDom(
-    val userId: Long,
-    val token: String,
-    val expiryDate: Instant,
-    val revoked: Boolean
-) {
-    fun isExpired(): Boolean = expiryDate.isBefore(Instant.now())
-}
+    override val userId: Long,
+    override val token: String,
+    override val expiryDate: Instant,
+    override val revoked: Boolean,
+    override val type: TokenTypeEnum = TokenTypeEnum.REFRESH
+) : TokenDom

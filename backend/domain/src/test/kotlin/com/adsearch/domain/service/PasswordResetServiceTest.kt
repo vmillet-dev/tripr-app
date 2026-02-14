@@ -5,10 +5,11 @@ import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.PasswordResetTokenDom
 import com.adsearch.domain.model.UserDom
-import com.adsearch.domain.model.enum.UserRoleEnum
+import com.adsearch.domain.model.enums.TokenTypeEnum
+import com.adsearch.domain.model.enums.UserRoleEnum
 import com.adsearch.domain.port.out.ConfigurationProviderPort
 import com.adsearch.domain.port.out.notification.EmailServicePort
-import com.adsearch.domain.port.out.persistence.PasswordResetTokenPersistencePort
+import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
 import com.adsearch.domain.port.out.security.PasswordEncoderPort
 import io.mockk.every
@@ -25,14 +26,14 @@ class PasswordResetServiceTest {
     private val emailService = mockk<EmailServicePort>(relaxed = true)
     private val passwordEncoder = mockk<PasswordEncoderPort>(relaxed = true)
     private val userPersistence = mockk<UserPersistencePort>(relaxed = true)
-    private val passwordResetTokenPersistence = mockk<PasswordResetTokenPersistencePort>(relaxed = true)
+    private val tokenPersistence = mockk<TokenPersistencePort>(relaxed = true)
 
     private val service = PasswordResetService(
         configurationProvider,
         emailService,
         passwordEncoder,
         userPersistence,
-        passwordResetTokenPersistence
+        tokenPersistence
     )
 
     @Test
@@ -43,8 +44,8 @@ class PasswordResetServiceTest {
 
         service.requestPasswordReset("bob")
 
-        verify { passwordResetTokenPersistence.deleteByUserId(user.id) }
-        verify { passwordResetTokenPersistence.save(ofType(PasswordResetTokenDom::class)) }
+        verify { tokenPersistence.deleteByUserId(user.id, TokenTypeEnum.PASSWORD_RESET) }
+        verify { tokenPersistence.save(ofType(PasswordResetTokenDom::class)) }
         verify { emailService.sendPasswordResetEmail(user.email, any()) }
     }
 
@@ -59,30 +60,30 @@ class PasswordResetServiceTest {
     fun `resetPassword should update password when token valid`() {
         val user = UserDom(8, "c", "c@c.com", "old", setOf(UserRoleEnum.ROLE_USER.type), true)
         val tokenDom = PasswordResetTokenDom(user.id, "tok", Instant.now().plusSeconds(1000))
-        every { passwordResetTokenPersistence.findByToken("tok") } returns tokenDom
+        every { tokenPersistence.findByToken("tok", TokenTypeEnum.PASSWORD_RESET) } returns tokenDom
         every { userPersistence.findById(user.id) } returns user
         every { passwordEncoder.encode("new") } returns "hnew"
 
         service.resetPassword("tok", "new")
 
         verify { userPersistence.save(user.changePassword("hnew")) }
-        verify { passwordResetTokenPersistence.deleteByUserId(user.id) }
+        verify { tokenPersistence.deleteByUserId(user.id, TokenTypeEnum.PASSWORD_RESET) }
     }
 
     @Test
     fun `resetPassword should throw when token invalid or expired or user missing`() {
-        every { passwordResetTokenPersistence.findByToken("no") } returns null
+        every { tokenPersistence.findByToken("no", TokenTypeEnum.PASSWORD_RESET) } returns null
         assertThatThrownBy { service.resetPassword("no", "x") }
             .isInstanceOf(InvalidTokenException::class.java)
 
         val expired = PasswordResetTokenDom(1, "e", Instant.now().minusSeconds(10))
-        every { passwordResetTokenPersistence.findByToken("e") } returns expired
+        every { tokenPersistence.findByToken("e", TokenTypeEnum.PASSWORD_RESET) } returns expired
         assertThatThrownBy { service.resetPassword("e", "x") }
             .isInstanceOf(TokenExpiredException::class.java)
-        verify { passwordResetTokenPersistence.deleteByToken("e") }
+        verify { tokenPersistence.deleteByToken("e", TokenTypeEnum.PASSWORD_RESET) }
 
         val t = PasswordResetTokenDom(5, "t", Instant.now().plusSeconds(100))
-        every { passwordResetTokenPersistence.findByToken("t") } returns t
+        every { tokenPersistence.findByToken("t", TokenTypeEnum.PASSWORD_RESET) } returns t
         every { userPersistence.findById(5) } returns null
         assertThatThrownBy { service.resetPassword("t", "x") }
             .isInstanceOf(UserNotFoundException::class.java)
@@ -90,17 +91,16 @@ class PasswordResetServiceTest {
 
     @Test
     fun `validateToken should return false for missing or expired token and true otherwise`() {
-        every { passwordResetTokenPersistence.findByToken("no") } returns null
+        every { tokenPersistence.findByToken("no", TokenTypeEnum.PASSWORD_RESET) } returns null
         assertThat(service.validateToken("no")).isFalse()
 
         val expired = PasswordResetTokenDom(1, "e", Instant.now().minusSeconds(10))
-        every { passwordResetTokenPersistence.findByToken("e") } returns expired
+        every { tokenPersistence.findByToken("e", TokenTypeEnum.PASSWORD_RESET) } returns expired
         assertThat(service.validateToken("e")).isFalse()
-        verify { passwordResetTokenPersistence.deleteByToken("e") }
+        verify { tokenPersistence.deleteByToken("e", TokenTypeEnum.PASSWORD_RESET) }
 
         val ok = PasswordResetTokenDom(2, "ok", Instant.now().plusSeconds(100))
-        every { passwordResetTokenPersistence.findByToken("ok") } returns ok
+        every { tokenPersistence.findByToken("ok", TokenTypeEnum.PASSWORD_RESET) } returns ok
         assertThat(service.validateToken("ok")).isTrue()
     }
 }
-

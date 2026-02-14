@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.exception
 
-import com.adsearch.domain.model.enum.HttpStatusEnum
+import com.adsearch.domain.model.enums.HttpStatusEnum
 
 abstract class BaseTechnicalException(
     override val message: String,

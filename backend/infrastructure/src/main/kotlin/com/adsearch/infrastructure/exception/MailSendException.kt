@@ -1,7 +1,7 @@
 package com.adsearch.infrastructure.exception
 
-import com.adsearch.domain.model.enum.HttpStatusEnum
-import com.adsearch.domain.model.enum.TechnicalErrorCodeEnum
+import com.adsearch.domain.model.enums.HttpStatusEnum
+import com.adsearch.domain.model.enums.TechnicalErrorCodeEnum
 
 class MailSendException(
     message: String = TechnicalErrorCodeEnum.MAIL_SEND_EXCEPTION.defaultMessage,

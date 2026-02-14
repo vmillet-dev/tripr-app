@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202505011815-01-merged
+      author: test
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO T_TOKEN (USR_ID, TKN_VALUE, TKN_EXPIRY_DATE, TKN_TYPE, TKN_REVOKED) VALUES (3, 'e42f1f3e-ea56-47be-bc14-3b9bf1e5a58d', '2099-05-08 16:32:36.786274', 'REFRESH', false);
+  - changeSet:
+      id: 202505011815-02-merged
+      author: test
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO T_TOKEN (USR_ID, TKN_VALUE, TKN_EXPIRY_DATE, TKN_TYPE, TKN_REVOKED) VALUES (4, '0cb1f58c-ecf9-4501-bfcb-68c527139f4e', '2099-05-08 16:32:36.786274', 'REFRESH', false);
+  - changeSet:
+      id: 202505011915-01-merged
+      author: test
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO T_TOKEN (USR_ID, TKN_VALUE, TKN_EXPIRY_DATE, TKN_TYPE, TKN_REVOKED) VALUES (4, '2503c57c-a5df-43f5-823d-756a223f725f', '2099-05-02 17:43:28.681289', 'PASSWORD_RESET', false);
+  - changeSet:
+      id: 202505011915-02-merged
+      author: test
+      changes:
+        - sql:
+            endDelimiter: ;
+            splitStatements: true
+            sql: INSERT INTO T_TOKEN (USR_ID, TKN_VALUE, TKN_EXPIRY_DATE, TKN_TYPE, TKN_REVOKED) VALUES (3, 'ae03e5ea-0eb0-41d1-911c-491092da4798', '2099-05-02 17:43:28.681289', 'PASSWORD_RESET', false);

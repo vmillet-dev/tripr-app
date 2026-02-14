@@ -1,14 +1,15 @@
 package com.adsearch.domain.model
 
+import com.adsearch.domain.model.enums.TokenTypeEnum
 import java.time.Instant
 
 /**
  * Domain model representing a password reset token
  */
 data class PasswordResetTokenDom(
-    val userId: Long,
-    val token: String,
-    val expiryDate: Instant
-) {
-    fun isExpired(): Boolean = expiryDate.isBefore(Instant.now())
-}
+    override val userId: Long,
+    override val token: String,
+    override val expiryDate: Instant,
+    override val type: TokenTypeEnum = TokenTypeEnum.PASSWORD_RESET,
+    override val revoked: Boolean = false
+) : TokenDom

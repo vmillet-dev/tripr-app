@@ -11,3 +11,6 @@ databaseChangeLog:
     - include:
           file: changes/04-create-roles-table.yaml
           relativeToChangelogFile: true
+    - include:
+          file: changes/05-merge-token-tables.yaml
+          relativeToChangelogFile: true
