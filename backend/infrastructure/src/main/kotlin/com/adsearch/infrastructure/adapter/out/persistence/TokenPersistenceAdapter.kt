@@ -22,14 +22,11 @@ class TokenPersistenceAdapter(
 
     override fun findByToken(token: String, type: TokenTypeEnum): TokenDom? {
         val entity = tokenRepository.findByTokenAndType(token, type) ?: return null
-        return when (type) {
-            TokenTypeEnum.PASSWORD_RESET -> tokenEntityMapper.toPasswordResetDomain(entity)
-            TokenTypeEnum.REFRESH -> tokenEntityMapper.toRefreshDomain(entity)
-        }
+        return tokenEntityMapper.toDomain(entity)
     }
 
-    override fun deleteByToken(token: String, type: TokenTypeEnum) {
-        tokenRepository.deleteByTokenAndType(token, type)
+    override fun delete(dom: TokenDom) {
+        tokenRepository.deleteByTokenAndType(dom.token, dom.type)
     }
 
     override fun deleteByUserId(userId: Long, type: TokenTypeEnum) {

@@ -60,7 +60,7 @@ class PasswordResetService(
             ?: throw InvalidTokenException("Password reset failed - token not found")
 
         if (resetToken.isExpired()) {
-            tokenPersistence.deleteByToken(resetToken.token, TokenTypeEnum.PASSWORD_RESET)
+            tokenPersistence.delete(resetToken)
             throw TokenExpiredException("Password reset failed - expired token for user id: ${resetToken.userId}")
         }
 
@@ -79,13 +79,10 @@ class PasswordResetService(
      */
     override fun validateToken(token: String): Boolean {
 
-        val resetToken = tokenPersistence.findByToken(token, TokenTypeEnum.PASSWORD_RESET)
-        if (resetToken == null) {
-            return false
-        }
+        val resetToken = tokenPersistence.findByToken(token, TokenTypeEnum.PASSWORD_RESET) ?: return false
 
         if (resetToken.isExpired()) {
-            tokenPersistence.deleteByToken(resetToken.token, TokenTypeEnum.PASSWORD_RESET)
+            tokenPersistence.delete(resetToken)
             return false
         }
 

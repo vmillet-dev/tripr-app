@@ -85,8 +85,10 @@ class AuthenticationServiceTest {
     @Test
     fun `logout should delete token when provided`() {
         val token = "rt-token"
+        val rt = RefreshTokenDom(1, token, Instant.now().plusSeconds(100), false)
+        every { tokenPersistence.findByToken(token, TokenTypeEnum.REFRESH) } returns rt
         service.logout(token)
-        verify { tokenPersistence.deleteByToken(token, TokenTypeEnum.REFRESH) }
+        verify { tokenPersistence.delete(rt) }
     }
 
     @Test
@@ -119,8 +121,8 @@ class AuthenticationServiceTest {
         every { tokenPersistence.findByToken("t2", TokenTypeEnum.REFRESH) } returns rt2
         assertThatThrownBy { service.refreshAccessToken("t2") }
             .isInstanceOf(TokenExpiredException::class.java)
-        verify { tokenPersistence.deleteByToken(rt.token, TokenTypeEnum.REFRESH) }
-        verify { tokenPersistence.deleteByToken(rt2.token, TokenTypeEnum.REFRESH) }
+        verify { tokenPersistence.delete(rt) }
+        verify { tokenPersistence.delete(rt2) }
     }
 
     @Test

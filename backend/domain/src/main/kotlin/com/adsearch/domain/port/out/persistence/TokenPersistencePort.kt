@@ -9,6 +9,6 @@ import com.adsearch.domain.model.enums.TokenTypeEnum
 interface TokenPersistencePort {
     fun findByToken(token: String, type: TokenTypeEnum): TokenDom?
     fun save(dom: TokenDom)
-    fun deleteByToken(token: String, type: TokenTypeEnum)
+    fun delete(dom: TokenDom)
     fun deleteByUserId(userId: Long, type: TokenTypeEnum)
 }

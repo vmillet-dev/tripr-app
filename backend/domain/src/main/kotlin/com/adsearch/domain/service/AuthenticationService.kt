@@ -56,11 +56,13 @@ class AuthenticationService(
     }
 
     override fun logout(token: String?) {
-
         if (token == null) {
             throw InvalidTokenException("Logout attempted without refresh token")
         }
-        tokenPersistence.deleteByToken(token, TokenTypeEnum.REFRESH)
+        val refreshTokenDom = tokenPersistence.findByToken(token, TokenTypeEnum.REFRESH)
+        if (refreshTokenDom != null) {
+            tokenPersistence.delete(refreshTokenDom)
+        }
     }
 
     override fun refreshAccessToken(token: String?): AuthResponse {
@@ -73,7 +75,7 @@ class AuthenticationService(
             ?: throw InvalidTokenException("Token refresh failed - invalid refresh token provided")
 
         if (refreshTokenDom.isExpired() || refreshTokenDom.revoked) {
-            tokenPersistence.deleteByToken(refreshTokenDom.token, TokenTypeEnum.REFRESH)
+            tokenPersistence.delete(refreshTokenDom)
             throw TokenExpiredException("Token refresh failed - refresh token expired or revoked for user id: ${refreshTokenDom.userId}")
         }
 

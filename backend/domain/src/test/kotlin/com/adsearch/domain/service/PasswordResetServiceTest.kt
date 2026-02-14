@@ -80,7 +80,7 @@ class PasswordResetServiceTest {
         every { tokenPersistence.findByToken("e", TokenTypeEnum.PASSWORD_RESET) } returns expired
         assertThatThrownBy { service.resetPassword("e", "x") }
             .isInstanceOf(TokenExpiredException::class.java)
-        verify { tokenPersistence.deleteByToken("e", TokenTypeEnum.PASSWORD_RESET) }
+        verify { tokenPersistence.delete(expired) }
 
         val t = PasswordResetTokenDom(5, "t", Instant.now().plusSeconds(100))
         every { tokenPersistence.findByToken("t", TokenTypeEnum.PASSWORD_RESET) } returns t
@@ -97,7 +97,7 @@ class PasswordResetServiceTest {
         val expired = PasswordResetTokenDom(1, "e", Instant.now().minusSeconds(10))
         every { tokenPersistence.findByToken("e", TokenTypeEnum.PASSWORD_RESET) } returns expired
         assertThat(service.validateToken("e")).isFalse()
-        verify { tokenPersistence.deleteByToken("e", TokenTypeEnum.PASSWORD_RESET) }
+        verify { tokenPersistence.delete(expired) }
 
         val ok = PasswordResetTokenDom(2, "ok", Instant.now().plusSeconds(100))
         every { tokenPersistence.findByToken("ok", TokenTypeEnum.PASSWORD_RESET) } returns ok
