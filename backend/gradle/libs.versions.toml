@@ -1,6 +1,6 @@
 [versions]
 archunit = "1.4.1"
-auth0-jwt = "4.5.0"
+auth0-jwt = "4.5.1"
 assertJ = "3.27.7"
 jacoco = "0.8.14"
 junit = "6.0.3"
