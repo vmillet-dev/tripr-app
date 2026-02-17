@@ -1,106 +1,100 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-
+import {toSignal} from '@angular/core/rxjs-interop';
 import {PasswordResetService} from '../../../core/services/password-reset.service';
 import {TranslocoModule} from '@jsverse/transloco';
+import {map} from 'rxjs';
 
 @Component({
-  selector: 'app-password-reset',
-  templateUrl: './password-reset.component.html',
-  styleUrls: ['./password-reset.component.scss'],
-  imports: [ReactiveFormsModule, TranslocoModule]
+    selector: 'app-password-reset',
+    templateUrl: './password-reset.component.html',
+    styleUrls: ['./password-reset.component.scss'],
+    standalone: true,
+    imports: [ReactiveFormsModule, TranslocoModule]
 })
-export class PasswordResetComponent implements OnInit {
-  resetForm!: FormGroup;
-  token: string = '';
-  isSubmitting = false;
-  isValidatingToken = true;
-  isTokenValid = false;
-  successMessage = '';
-  errorMessage = '';
+export class PasswordResetComponent {
+    private fb = inject(FormBuilder);
+    private passwordResetService = inject(PasswordResetService);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private passwordResetService: PasswordResetService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+    isSubmitting = signal(false);
+    isValidatingToken = signal(true);
+    isTokenValid = signal(false);
+    successMessage = signal<string | null>(null);
+    errorMessage = signal<string | null>(null);
 
-  ngOnInit(): void {
-    this.resetForm = this.formBuilder.group({
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required]]
+    private token$ = this.route.queryParams.pipe(map(params => params['token'] || ''));
+    token = toSignal(this.token$, {initialValue: ''});
+
+    resetForm = this.fb.group({
+        newPassword: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]]
     }, {
         validators: this.passwordMatchValidator
     });
 
-    this.route.queryParams.subscribe(params => {
-      if (params['token']) {
-        this.token = params['token'];
-        this.validateToken();
-      } else {
-        this.isValidatingToken = false;
-        this.isTokenValid = false;
-        this.errorMessage = 'Invalid or missing token. Please request a new password reset link.';
-      }
-    });
-  }
-
-  validateToken(): void {
-    this.passwordResetService.validateToken(this.token)
-      .subscribe({
-        next: (response) => {
-          this.isValidatingToken = false;
-          this.isTokenValid = response.valid;
-          if (!response.valid) {
-            this.errorMessage = 'This password reset link has expired or is invalid. Please request a new one.';
-          }
-        },
-          error: (_) => {
-          this.isValidatingToken = false;
-          this.isTokenValid = false;
-          this.errorMessage = 'Failed to validate token. Please request a new password reset link.';
+    constructor() {
+        const currentToken = this.token();
+        if (currentToken) {
+            this.validateToken(currentToken);
+        } else {
+            this.isValidatingToken.set(false);
+            this.isTokenValid.set(false);
+            this.errorMessage.set('Invalid or missing token. Please request a new password reset link.');
         }
-      });
-  }
-
-  passwordMatchValidator(group: FormGroup): { [key: string]: boolean } | null {
-    const password = group.get('newPassword')?.value;
-    const confirmPassword = group.get('confirmPassword')?.value;
-
-      return password === confirmPassword ? null : {passwordMismatch: true};
-  }
-
-  onSubmit(): void {
-    if (this.resetForm.invalid) {
-      return;
     }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    validateToken(token: string): void {
+        this.passwordResetService.validateToken(token).subscribe({
+            next: (response) => {
+                this.isValidatingToken.set(false);
+                this.isTokenValid.set(response.valid);
+                if (!response.valid) {
+                    this.errorMessage.set('This password reset link has expired or is invalid. Please request a new one.');
+                }
+            },
+            error: () => {
+                this.isValidatingToken.set(false);
+                this.isTokenValid.set(false);
+                this.errorMessage.set('Failed to validate token. Please request a new password reset link.');
+            }
+        });
+    }
 
-    this.passwordResetService.resetPassword({
-      token: this.token,
-      newPassword: this.resetForm.get('newPassword')?.value
-    })
-      .subscribe({
-        next: (response) => {
-          this.isSubmitting = false;
-          this.successMessage = response.message;
-          setTimeout(() => {
-            this.router.navigate(['/login'], { queryParams: { resetSuccess: true } });
-          }, 3000);
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
-        }
-      });
-  }
+    passwordMatchValidator(group: FormGroup) {
+        const password = group.get('newPassword')?.value;
+        const confirmPassword = group.get('confirmPassword')?.value;
+        return password === confirmPassword ? null : {passwordMismatch: true};
+    }
 
-  navigateToLogin(): void {
-    this.router.navigate(['/login']);
-  }
+    onSubmit(): void {
+        if (this.resetForm.invalid) return;
+
+        this.isSubmitting.set(true);
+        this.errorMessage.set('');
+        this.successMessage.set('');
+
+        this.passwordResetService.resetPassword({
+            token: this.token(),
+            newPassword: this.resetForm.get('newPassword')?.value
+        }).subscribe({
+            next: (response) => {
+                this.isSubmitting.set(false);
+                this.successMessage.set(response.message);
+                setTimeout(() => {
+                    this.router.navigate(['/login'], {queryParams: {resetSuccess: true}});
+                }, 3000);
+            },
+            error: (error) => {
+                this.isSubmitting.set(false);
+                this.errorMessage.set(error.error?.message || 'An error occurred. Please try again.');
+            }
+        });
+    }
+
+    navigateToLogin(): void {
+        this.router.navigate(['/login']);
+    }
 }

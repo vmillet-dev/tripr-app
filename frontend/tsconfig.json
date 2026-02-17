@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "types": ["vite/client", "vitest/globals"],
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,

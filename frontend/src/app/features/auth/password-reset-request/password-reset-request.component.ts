@@ -1,56 +1,51 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Component, inject, signal} from '@angular/core';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PasswordResetService} from '../../../core/services/password-reset.service';
 import {TranslocoModule} from '@jsverse/transloco';
 
 @Component({
-  selector: 'app-password-reset-request',
-  templateUrl: './password-reset-request.component.html',
-  imports: [ReactiveFormsModule, TranslocoModule]
+    selector: 'app-password-reset-request',
+    templateUrl: './password-reset-request.component.html',
+    imports: [ReactiveFormsModule, TranslocoModule]
 })
-export class PasswordResetRequestComponent implements OnInit {
-  resetForm!: FormGroup;
-  isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
+export class PasswordResetRequestComponent {
+    private formBuilder = inject(FormBuilder);
+    private passwordResetService = inject(PasswordResetService);
+    private router = inject(Router);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private passwordResetService: PasswordResetService,
-    private router: Router
-  ) {}
+    isSubmitting = signal<boolean>(false);
+    successMessage = signal<string | null>(null);
+    errorMessage = signal<string | null>(null);
 
-  ngOnInit(): void {
-    this.resetForm = this.formBuilder.group({
-      username: ['', [Validators.required]]
+    resetForm = this.formBuilder.group({
+        username: ['', [Validators.required]]
     });
-  }
 
-  onSubmit(): void {
-    if (this.resetForm.invalid) {
-      return;
+    onSubmit(): void {
+        if (this.resetForm.invalid) {
+            return;
+        }
+
+        this.isSubmitting.set(true);
+        this.errorMessage.set(null);
+        this.successMessage.set(null);
+
+        this.passwordResetService.requestPasswordReset(this.resetForm.value as any)
+            .subscribe({
+                next: (response) => {
+                    this.isSubmitting.set(false);
+                    this.successMessage.set(response.message);
+                    this.resetForm.reset();
+                },
+                error: (error) => {
+                    this.isSubmitting.set(false);
+                    this.errorMessage.set(error.error?.message || 'An error occurred. Please try again.');
+                }
+            });
     }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.passwordResetService.requestPasswordReset(this.resetForm.value)
-      .subscribe({
-        next: (response) => {
-          this.isSubmitting = false;
-          this.successMessage = response.message;
-          this.resetForm.reset();
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
-        }
-      });
-  }
-
-  navigateToLogin(): void {
-    this.router.navigate(['/login']);
-  }
+    navigateToLogin(): void {
+        this.router.navigate(['/login']);
+    }
 }

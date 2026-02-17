@@ -3,11 +3,11 @@
     <div class="col-12">
       <div class="bg-light rounded-3 p-4 p-md-5">
         <h1 class="display-5 fw-bold mb-2">{{ 'app.dashboard.title' | transloco }}</h1>
-        <p class="lead">{{ 'app.dashboard.welcome' | transloco: { username: username } }}</p>
+        <p class="lead">{{ 'app.dashboard.welcome' | transloco: {username: username()} }}</p>
       </div>
     </div>
   </div>
-  
+
   <div class="row g-4">
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
         <div class="card-body p-4">
@@ -27,7 +27,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="col-md-4">
       <div class="card h-100 shadow-sm">
         <div class="card-body p-4">
