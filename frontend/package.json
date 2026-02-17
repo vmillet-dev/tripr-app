@@ -1,6 +1,10 @@
 {
   "name": "tripr-app-frontend",
   "version": "0.0.0",
+  "engines": {
+    "npm": ">=11.0.0",
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
