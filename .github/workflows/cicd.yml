@@ -9,7 +9,7 @@ on:
 env:
   JAVA_VERSION: '25'
   JAVA_DISTRIBUTION: 'temurin'
-  NODE_VERSION: '22'
+  NODE_VERSION: '24'
 
 jobs:
   build-backend:
