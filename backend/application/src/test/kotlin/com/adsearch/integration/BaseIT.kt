@@ -41,7 +41,7 @@ abstract class BaseIT {
             .withPassword("test")
             .apply { start() }
 
-        val MAILPIT_CONTAINER: GenericContainer<*> = GenericContainer("axllent/mailpit:v1.23")
+        val MAILPIT_CONTAINER: GenericContainer<*> = GenericContainer("axllent/mailpit:v1.29")
             .withExposedPorts(1025, 8025)
             .apply { start() }
 
