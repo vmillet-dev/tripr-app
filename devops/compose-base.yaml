@@ -1,6 +1,6 @@
 services:
   postgres-base:
-    image: postgres:17.3
+    image: postgres:17.8
     environment:
       - POSTGRES_DB=tripr
       - POSTGRES_USER=postgres
