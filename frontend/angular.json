@@ -1,0 +1,30 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "tripr-app-frontend": {
+            "projectType": "application",
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "@angular/build:application",
+                    "options": {
+                        "outputPath": "dist",
+                        "index": "index.html",
+                        "browser": "src/main.ts",
+                        "tsConfig": "tsconfig.app.json"
+                    }
+                }
+            }
+        }
+    },
+    "cli": {
+        "analytics": false,
+        "schematicCollections": [
+            "@schematics/angular"
+        ]
+    }
+}

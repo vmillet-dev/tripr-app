@@ -1,19 +1,20 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {AuthService} from '../../core/services/auth.service';
+import {Component, inject} from '@angular/core';
 import {TranslocoPipe} from '@jsverse/transloco';
+import {toSignal} from "@angular/core/rxjs-interop";
+import {AuthService} from "../../core/services/auth.service";
+import {map} from "rxjs";
 
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
     imports: [TranslocoPipe]
 })
-export class DashboardComponent implements OnInit {
-  username: string | null = null;
-  private authService = inject(AuthService);
+export class DashboardComponent {
+    private authService = inject(AuthService);
 
-  ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.username = user?.username || null;
-    });
-  }
+    username = toSignal(
+        this.authService.currentUser$.pipe(map(user => user?.username || null)),
+        {initialValue: null}
+    );
 }
+

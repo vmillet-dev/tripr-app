@@ -15,9 +15,7 @@ export const appConfig: ApplicationConfig = {
         ...translocoProviders,
         provideAppInitializer(async () => {
             const auth = inject(AuthService);
-            return firstValueFrom(auth.refreshToken()).catch(() => {
-                return false;
-            });
+            return firstValueFrom(auth.refreshToken()).catch(() => false);
         })
     ]
 };

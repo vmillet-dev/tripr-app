@@ -4,11 +4,11 @@
       <div class="card shadow border-0 rounded-3">
         <div class="card-body p-4 p-md-5">
           <h2 class="card-title text-center mb-4">{{ 'app.auth.login.title' | transloco }}</h2>
-          
+
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
               <label for="username" class="form-label">{{ 'app.auth.login.username' | transloco }}</label>
-              <input type="text" id="username" data-cy="username-input" formControlName="username" 
+              <input type="text" id="username" data-cy="username-input" formControlName="username"
                      class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
               @if (f['username'].touched && f['username'].errors) {
                 <div class="invalid-feedback">
@@ -18,10 +18,10 @@
                 </div>
               }
             </div>
-            
+
             <div class="mb-3">
               <label for="password" class="form-label">{{ 'app.auth.login.password' | transloco }}</label>
-              <input type="password" id="password" data-cy="password-input" formControlName="password" 
+              <input type="password" id="password" data-cy="password-input" formControlName="password"
                      class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
               @if (f['password'].touched && f['password'].errors) {
                 <div class="invalid-feedback">
@@ -31,35 +31,35 @@
                 </div>
               }
             </div>
-            
+
             <div class="mb-3 text-end">
               <a routerLink="/password-reset-request" class="text-decoration-none small" data-cy="forgot-password-link">
                 {{ 'app.auth.login.forgotPassword' | transloco }}
               </a>
             </div>
-            
+
             <div class="d-grid gap-2 mb-3">
-              <button type="submit" data-cy="login-button" class="btn btn-primary" 
-                      [disabled]="loginForm.invalid || loading">
-                @if (loading) {
+              <button type="submit" data-cy="login-button" class="btn btn-primary"
+                      [disabled]="loginForm.invalid || loading()">
+                @if (loading()) {
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 }
                 {{ 'app.auth.login.submit' | transloco }}
               </button>
             </div>
-            
-            @if (error) {
-              <div class="alert alert-danger">{{ error }}</div>
+
+            @if (error()) {
+              <div class="alert alert-danger">{{ error() }}</div>
             }
-            @if (!error && isRegistered) {
+            @if (!error() && isRegistered()) {
               <div class="alert alert-success" data-cy="success-message">
                 {{ 'app.auth.login.registrationSuccess' | transloco }}
               </div>
             }
           </form>
-          
+
           <div class="text-center mt-4">
-            <p class="small text-muted">{{ 'app.auth.login.noAccount' | transloco }} 
+            <p class="small text-muted">{{ 'app.auth.login.noAccount' | transloco }}
               <a routerLink="/register" data-cy="register-link" class="text-decoration-none">
                 {{ 'app.auth.login.signUp' | transloco }}
               </a>

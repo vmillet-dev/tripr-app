@@ -4,11 +4,11 @@
       <div class="card shadow border-0 rounded-3">
         <div class="card-body p-4 p-md-5">
           <h2 class="card-title text-center mb-4">{{ 'app.auth.register.title' | transloco }}</h2>
-          
+
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
               <label for="username" class="form-label">{{ 'app.auth.register.username' | transloco }}</label>
-              <input type="text" id="username" data-cy="username-input" formControlName="username" 
+              <input type="text" id="username" data-cy="username-input" formControlName="username"
                      class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
               @if (f['username'].touched && f['username'].errors) {
                 <div class="invalid-feedback">
@@ -18,10 +18,10 @@
                 </div>
               }
             </div>
-            
+
             <div class="mb-3">
               <label for="email" class="form-label">{{ 'app.auth.register.email' | transloco }}</label>
-              <input type="email" id="email" data-cy="email-input" formControlName="email" 
+              <input type="email" id="email" data-cy="email-input" formControlName="email"
                      class="form-control" [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].errors }" />
               @if (f['email'].touched && f['email'].errors) {
                 <div class="invalid-feedback">
@@ -34,10 +34,10 @@
                 </div>
               }
             </div>
-            
+
             <div class="mb-3">
               <label for="password" class="form-label">{{ 'app.auth.register.password' | transloco }}</label>
-              <input type="password" id="password" data-cy="password-input" formControlName="password" 
+              <input type="password" id="password" data-cy="password-input" formControlName="password"
                      class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
               @if (f['password'].touched && f['password'].errors) {
                 <div class="invalid-feedback">
@@ -50,10 +50,11 @@
                 </div>
               }
             </div>
-            
+
             <div class="mb-4">
               <label for="confirmPassword" class="form-label">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
-              <input type="password" id="confirmPassword" data-cy="confirm-password-input" formControlName="confirmPassword" 
+              <input type="password" id="confirmPassword" data-cy="confirm-password-input"
+                     formControlName="confirmPassword"
                      class="form-control" [ngClass]="{ 'is-invalid': f['confirmPassword'].touched && f['confirmPassword'].errors }" />
               @if (f['confirmPassword'].touched && f['confirmPassword'].errors) {
                 <div class="invalid-feedback">
@@ -66,24 +67,24 @@
                 </div>
               }
             </div>
-            
+
             <div class="d-grid gap-2 mb-3">
-              <button type="submit" data-cy="register-button" class="btn btn-primary" 
-                      [disabled]="registerForm.invalid || loading">
-                @if (loading) {
+              <button type="submit" data-cy="register-button" class="btn btn-primary"
+                      [disabled]="registerForm.invalid || loading()">
+                @if (loading()) {
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 }
                 {{ 'app.auth.register.submit' | transloco }}
               </button>
             </div>
-            
-            @if (error) {
-              <div class="alert alert-danger">{{ error }}</div>
+
+            @if (error()) {
+              <div class="alert alert-danger">{{ error() }}</div>
             }
           </form>
-          
+
           <div class="text-center mt-4">
-            <p class="small text-muted">{{ 'app.auth.register.haveAccount' | transloco }} 
+            <p class="small text-muted">{{ 'app.auth.register.haveAccount' | transloco }}
               <a routerLink="/login" class="text-decoration-none">{{ 'app.auth.register.login' | transloco }}</a>
             </p>
           </div>
