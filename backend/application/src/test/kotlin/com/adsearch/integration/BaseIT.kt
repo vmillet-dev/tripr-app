@@ -35,7 +35,7 @@ abstract class BaseIT {
 
     companion object {
         // Static containers that will be shared between all test classes
-        private val POSTGRES_CONTAINER: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:17.8")
+        private val POSTGRES_CONTAINER: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:18.2")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test")
