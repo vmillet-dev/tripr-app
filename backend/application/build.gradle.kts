@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":domain"))
-    api(project(":infrastructure"))
+    api(project(":backend:domain"))
+    api(project(":backend:infrastructure"))
 
     implementation(libs.springboot.logging)
     implementation(libs.springboot.autoconfigure)

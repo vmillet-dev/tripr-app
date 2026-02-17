@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    implementation(project(":backend:domain"))
 
     runtimeOnly(libs.postgresql)
 
@@ -22,4 +22,12 @@ dependencies {
     implementation(libs.mapstruct.api)
 
     kapt(libs.mapstruct.kapt)
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir("${project(":api-spec").buildDir}/generated/server/src/main/kotlin")
+        }
+    }
 }

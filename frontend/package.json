@@ -6,12 +6,14 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm run api:clean && vite",
+    "build": "npm run api:clean && vite build",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "npm run api:clean && vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "npm run api:clean && vitest run --coverage",
+    "api:generate": "openapi-generator-cli generate",
+    "api:clean": "del-cli src/app/core/api/generated && npm run api:generate"
   },
   "private": true,
   "dependencies": {
@@ -36,9 +38,11 @@
     "@angular/build": "^21.1.4",
     "@angular/cli": "^21.1.4",
     "@angular/compiler-cli": "^21.1.4",
+    "@openapitools/openapi-generator-cli": "^2.29.0",
     "@types/node": "^25.2.3",
     "@vitejs/plugin-legacy": "^7.2.1",
     "@vitest/ui": "^4.0.18",
+    "del-cli": "^7.0.0",
     "jsdom": "^28.1.0",
     "puppeteer": "^24.37.3",
     "sass": "^1.97.3",

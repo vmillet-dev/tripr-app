@@ -3,8 +3,17 @@ package com.adsearch.infrastructure.adapter.`in`.rest
 import com.adsearch.domain.model.auth.AuthResponse
 import com.adsearch.domain.model.command.LoginUserCommand
 import com.adsearch.domain.model.command.RegisterUserCommand
-import com.adsearch.domain.port.`in`.*
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.*
+import com.adsearch.domain.port.`in`.CreateUserUseCase
+import com.adsearch.domain.port.`in`.LoginUserUseCase
+import com.adsearch.domain.port.`in`.LogoutUserUseCase
+import com.adsearch.domain.port.`in`.PasswordResetUseCase
+import com.adsearch.domain.port.`in`.RefreshTokenUseCase
+import com.adsearch.infrastructure.adapter.`in`.rest.AuthenticationApi
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthRequestDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthResponseDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetRequestDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.RegisterRequestDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.Cookie
@@ -16,7 +25,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * Controller for authentication endpoints
@@ -34,7 +48,7 @@ class AuthController(
     private val passwordResetUseCase: PasswordResetUseCase,
     @param:Value($$"${jwt.refresh-token.cookie-name}") private val cookieName: String,
     @param:Value($$"${jwt.refresh-token.expiration}") private val cookieMaxAge: Int
-) {
+) : AuthenticationApi {
 
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(this::class.java)
@@ -43,12 +57,7 @@ class AuthController(
     /**
      * Login endpoint
      */
-    @PostMapping("/login")
-    @Operation(
-        summary = "Authenticate user",
-        description = "Authenticates a user with username and password, returns JWT token and sets refresh token cookie"
-    )
-    fun login(
+    override fun login(
         @Valid @RequestBody request: AuthRequestDto,
         response: HttpServletResponse
     ): ResponseEntity<AuthResponseDto> {
