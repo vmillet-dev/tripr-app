@@ -10,7 +10,7 @@ RUN npm run build
 FROM gradle:9.3.1-jdk-25-and-25 AS backend-build
 WORKDIR /app
 COPY ./backend .
-COPY --from=frontend-build /app/dist/browser/ application/src/main/resources/static/
+COPY --from=frontend-build /app/dist/ application/src/main/resources/static/
 COPY --from=frontend-build /app/public/ application/src/main/resources/static/
 RUN gradle :application:bootJar
 

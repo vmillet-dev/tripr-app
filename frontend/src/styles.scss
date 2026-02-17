@@ -1,12 +1,6 @@
 /* Import custom variables first to override Bootstrap defaults */
 @use "assets/scss/_variables" as *;
 
-/* Import Bootstrap */
-@use "bootstrap/scss/bootstrap";
-
-/* Import Open Sans font */
-@use '@fontsource/open-sans/index.css';
-
 /* Global custom styles */
 html, body {
   height: 100%;
