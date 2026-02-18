@@ -2,6 +2,7 @@
 FROM timbru31/java-node:25-jdk-24 AS frontend-build
 WORKDIR /app
 COPY ./frontend/package*.json ./
+COPY ./api-spec/src/main/openapi/ ../api-spec/src/main/openapi/
 RUN npm install
 COPY ./frontend .
 RUN npm run build
