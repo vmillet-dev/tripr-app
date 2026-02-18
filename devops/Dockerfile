@@ -11,8 +11,8 @@ RUN npm run build
 FROM gradle:9.3.1-jdk-25-and-25 AS backend-build
 WORKDIR /app
 COPY . .
-COPY --from=frontend-build /app/dist/ application/src/main/resources/static/
-COPY --from=frontend-build /app/public/ application/src/main/resources/static/
+COPY --from=frontend-build /app/dist/ backend/application/src/main/resources/static/
+COPY --from=frontend-build /app/public/ backend/application/src/main/resources/static/
 RUN gradle :backend:application:bootJar
 
 # Step 3: Create the final image with the fat JAR (use multiarch image)
