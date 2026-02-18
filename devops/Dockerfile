@@ -10,15 +10,15 @@ RUN npm run build
 # Step 2: Build Spring Boot backend with Angular files included
 FROM gradle:9.3.1-jdk-25-and-25 AS backend-build
 WORKDIR /app
-COPY ./backend .
+COPY . .
 COPY --from=frontend-build /app/dist/ application/src/main/resources/static/
 COPY --from=frontend-build /app/public/ application/src/main/resources/static/
-RUN gradle :application:bootJar
+RUN gradle :backend:application:bootJar
 
 # Step 3: Create the final image with the fat JAR (use multiarch image)
 FROM eclipse-temurin:25.0.2_10-jre-alpine
 WORKDIR /app
-COPY --from=backend-build /app/application/build/libs/app.jar app.jar
+COPY --from=backend-build /app/backend/application/build/libs/app.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

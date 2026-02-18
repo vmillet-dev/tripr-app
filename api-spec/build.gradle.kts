@@ -14,7 +14,7 @@ openApiGenerate {
     outputDir.set("$generatedSourcesDir/server")
     apiPackage.set("com.adsearch.infrastructure.adapter.in.rest")
     modelPackage.set("com.adsearch.infrastructure.adapter.in.rest.dto")
-    invokerPackage.set("com.adsearch.infrastructure.config")
+    invokerPackage.set("com.adsearch.config")
     configOptions.set(
         mapOf(
             "delegatePattern" to "true",
