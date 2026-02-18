@@ -1,5 +1,5 @@
 # Step 1: Build Angular frontend
-FROM node:24.13.1 AS frontend-build
+FROM timbru31/java-node:25-jdk-24 AS frontend-build
 WORKDIR /app
 COPY ./frontend/package*.json ./
 RUN npm install
