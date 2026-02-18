@@ -5,7 +5,7 @@ plugins {
 }
 
 val openapiSpecFile = "$projectDir/src/main/openapi/auth.yaml"
-val generatedSourcesDir = "$buildDir/generated"
+val generatedSourcesDir = "${layout.buildDirectory.get()}/generated"
 
 // Configuration pour générer le serveur (backend Kotlin/Spring)
 openApiGenerate {
@@ -17,10 +17,10 @@ openApiGenerate {
     invokerPackage.set("com.adsearch.infrastructure.config")
     configOptions.set(
         mapOf(
+            "delegatePattern" to "true",
             "dateLibrary" to "java8",
             "interfaceOnly" to "true",
             "useTags" to "true",
-            "useBeanValidation" to "true",
             "performBeanValidation" to "true",
             "useSpringBoot3" to "true",
             "serializationLibrary" to "jackson",

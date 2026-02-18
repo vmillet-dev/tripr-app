@@ -99,14 +99,6 @@ paths:
       summary: Refresh access token
       description: Uses the refresh token cookie to generate a new access token
       operationId: refreshToken
-      parameters:
-        - name: Cookie
-          in: header
-          description: Refresh token cookie
-          required: true
-          schema:
-            type: string
-            example: "refreshToken=eyJhbGc..."
       responses:
         '200':
           description: New access token generated
@@ -128,14 +120,6 @@ paths:
       summary: Logout user
       description: Invalidates the refresh token and clears the refresh token cookie
       operationId: logout
-      parameters:
-        - name: Cookie
-          in: header
-          description: Refresh token cookie
-          required: true
-          schema:
-            type: string
-            example: "refreshToken=eyJhbGc..."
       responses:
         '200':
           description: Logged out successfully
@@ -274,15 +258,11 @@ components:
           type: string
           description: Username or email
           example: "john.doe@example.com"
-          minLength: 3
-          maxLength: 100
         password:
           type: string
           description: User password
           format: password
           example: "SecurePassword123!"
-          minLength: 8
-          maxLength: 100
 
     AuthResponseDto:
       type: object
@@ -296,29 +276,23 @@ components:
       type: object
       required:
         - username
-        - email
         - password
+        - email
       properties:
         username:
           type: string
           description: Desired username
           example: "johndoe"
-          minLength: 3
-          maxLength: 50
-          pattern: '^[a-zA-Z0-9_-]+$'
-        email:
-          type: string
-          format: email
-          description: User email address
-          example: "john.doe@example.com"
-          maxLength: 100
         password:
           type: string
           description: User password
           format: password
           example: "SecurePassword123!"
-          minLength: 8
-          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "john.doe@example.com"
 
     PasswordResetRequestDto:
       type: object

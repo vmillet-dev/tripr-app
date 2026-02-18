@@ -16,9 +16,11 @@ dependencies {
     implementation(libs.springboot.thymeleaf)
     implementation(libs.springboot.datajpa)
     implementation(libs.springboot.jdbc)
-    implementation(libs.springboot.jackson)
+//    implementation(libs.springboot.jackson)
 
-    implementation(libs.springdoc.openapi.starter.webmvc.ui)
+    implementation(libs.springdoc.openapi.starter.webmvc.ui) {
+        exclude(group = "tools.jackson.module", module = "jackson-module-kotlin")
+    }
 
     developmentOnly(libs.springboot.docker.compose)
     developmentOnly(libs.springboot.devtools)
