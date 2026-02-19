@@ -1,77 +1,111 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject, Observable, throwError} from 'rxjs';
+import {map, Observable, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {JwtHelperService} from '@auth0/angular-jwt';
-import {environment} from '../../../environments/environment';
-import {AuthRequest, AuthResponse, RegisterRequest} from '../models/auth.model';
+import {
+    ApiMessage,
+    AuthTokens,
+    CurrentUser,
+    LoginCredentials,
+    PasswordReset,
+    PasswordResetRequest,
+    RegisterData,
+    TokenValidation
+} from "../models/auth.model";
+import {TokenService} from "./token.service";
+import {
+    AuthenticationService,
+    AuthRequestDto,
+    PasswordResetDto,
+    PasswordResetRequestDto,
+    RegisterRequestDto
+} from "../api/generated";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class AuthService {
-    private apiUrl = `${environment.apiUrl}/auth`;
-    private http = inject(HttpClient);
 
-    private jwtHelper = new JwtHelperService();
-    private currentUserSubject = new BehaviorSubject<any>(null);
-    private token: string | null = null; // volatile token for safety purpose
+    private readonly authApi = inject(AuthenticationService);
+    private readonly tokenService = inject(TokenService);
 
-    public currentUser$ = this.currentUserSubject.asObservable();
+    public readonly currentUser$: Observable<CurrentUser | null> = this.tokenService.currentUser$;
 
-    login(credentials: AuthRequest): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials, {withCredentials: true})
-            .pipe(
-                tap(res => this.handleAccessToken(res)),
-                catchError(error => {
-                    return throwError(() => error);
-                })
-            );
+    login(credentials: LoginCredentials): Observable<AuthTokens> {
+        const dto: AuthRequestDto = {
+            username: credentials.username,
+            password: credentials.password,
+        };
+
+        return this.authApi.login(dto).pipe(
+            tap(res => this.tokenService.setToken(res.accessToken ?? '')),
+            map(res => ({accessToken: res.accessToken ?? ''})),
+            catchError(err => throwError(() => err))
+        );
     }
 
-    register(registerData: RegisterRequest): Observable<any> {
-        return this.http.post(`${this.apiUrl}/register`, registerData)
-            .pipe(
-                catchError(error => {
-                    return throwError(() => error);
-                })
-            );
+    register(data: RegisterData): Observable<ApiMessage> {
+        const dto: RegisterRequestDto = {
+            username: data.username,
+            password: data.password,
+            email: data.email,
+        };
+
+        return this.authApi.register(dto).pipe(
+            map(res => ({message: res.message ?? ''})),
+            catchError(err => throwError(() => err))
+        );
     }
 
-    refreshToken(): Observable<AuthResponse> {
-        return this.http
-            .post<AuthResponse>(`${this.apiUrl}/refresh`, {}, {withCredentials: true})
-            .pipe(tap(res => this.handleAccessToken(res)));
+    refreshToken(): Observable<AuthTokens> {
+        return this.authApi.refreshToken().pipe(
+            tap(res => this.tokenService.setToken(res.accessToken ?? '')),
+            map(res => ({accessToken: res.accessToken ?? ''})),
+            catchError(err => throwError(() => err))
+        );
     }
 
+    logout(): Observable<ApiMessage> {
+        return this.authApi.logout().pipe(
+            tap(() => this.tokenService.clearToken()),
+            map(res => ({message: res.message ?? ''})),
+            catchError(err => {
+                this.tokenService.clearToken(); // nettoyage même en cas d'erreur réseau
+                return throwError(() => err);
+            })
+        );
+    }
 
-    logout(): Observable<any> {
-        return this.http.post(`${this.apiUrl}/logout`, {}, {withCredentials: true})
-            .pipe(
-                tap(() => {
-                    this.token = null;
-                    this.currentUserSubject.next(null);
-                }),
-                catchError(error => {
-                    return throwError(() => error);
-                })
-            );
+    requestPasswordReset(data: PasswordResetRequest): Observable<ApiMessage> {
+        const dto: PasswordResetRequestDto = {username: data.username};
+
+        return this.authApi.requestPasswordReset(dto).pipe(
+            map(res => ({message: res.message ?? ''})),
+            catchError(err => throwError(() => err))
+        );
+    }
+
+    resetPassword(data: PasswordReset): Observable<ApiMessage> {
+        const dto: PasswordResetDto = {
+            token: data.token,
+            newPassword: data.newPassword,
+        };
+
+        return this.authApi.resetPassword(dto).pipe(
+            map(res => ({message: res.message ?? ''})),
+            catchError(err => throwError(() => err))
+        );
+    }
+
+    validatePasswordResetToken(token: string): Observable<TokenValidation> {
+        return this.authApi.validateToken(token).pipe(
+            map(res => ({valid: res.valid ?? false})),
+            catchError(err => throwError(() => err))
+        );
     }
 
     isAuthenticated(): boolean {
-        return this.token !== null && !this.jwtHelper.isTokenExpired(this.token);
+        return this.tokenService.isAuthenticated();
     }
 
     getToken(): string | null {
-        return this.token
-    }
-
-    private handleAccessToken(response: AuthResponse) {
-        this.token = response.accessToken;
-        const decodedToken = this.jwtHelper.decodeToken(this.token);
-        this.currentUserSubject.next({
-            username: decodedToken.username,
-            roles: decodedToken.roles
-        });
+        return this.tokenService.getToken();
     }
 }
