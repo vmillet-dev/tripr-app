@@ -21,7 +21,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev,e2e
     ports:
-      - "8080:8081"
+      - "8080:8080"
     depends_on:
       - postgres-e2e
       - mailpit-e2e

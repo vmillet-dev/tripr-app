@@ -123,7 +123,7 @@ cd backend
  :: Spring Boot ::                (v3.5.0)
 
 2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Started Application in 3.456 seconds
-2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Application is running on http://localhost:8081
+2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Application is running on http://localhost:8080
 ```
 
 #### 3. Start Frontend Application
@@ -148,8 +148,8 @@ npm start
 #### 4. Access the Application
 
 - **Frontend**: http://localhost:4200
-- **Backend API**: http://localhost:8081/api
-- **API Documentation**: http://localhost:8081/swagger-ui.html
+- **Backend API**: http://localhost:8080/api
+- **API Documentation**: http://localhost:8080/swagger-ui.html
 - **Email Testing (Mailpit)**: http://localhost:8026
 - **Database**: localhost:5433 (postgres/P4ssword!)
 
