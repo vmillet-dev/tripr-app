@@ -6,14 +6,15 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "dev": "npm run api:clean && vite",
-    "build": "npm run api:clean && vite build",
+    "dev": "npm run api:generate:ifneeded && vite",
+    "build": "npm run api:generate:ifneeded && vite build",
     "preview": "vite preview",
-    "test": "npm run api:clean && vitest",
+    "test": "npm run api:generate:ifneeded && vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "npm run api:clean && vitest run --coverage",
+    "test:coverage": "npm run api:generate:ifneeded && vitest run --coverage",
     "api:generate": "openapi-generator-cli generate",
-    "api:clean": "del-cli src/app/core/api/generated && npm run api:generate"
+    "api:generate:ifneeded": "node -e \"const fs=require('fs'); if(!fs.existsSync('src/app/core/api/generated')) { require('child_process').execSync('npm run api:generate', {stdio:'inherit'}); }\"",
+    "api:clean": "del-cli src/app/core/api/generated"
   },
   "private": true,
   "dependencies": {
