@@ -11,20 +11,6 @@ plugins {
     jacoco
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_25
-}
-
-allprojects {
-    group = "com.adsearch"
-    version = "0.0.1-SNAPSHOT"
-
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
 subprojects {
     apply(plugin = rootProject.libs.plugins.kotlin.jvm.get().pluginId)
     apply(plugin = "jacoco")

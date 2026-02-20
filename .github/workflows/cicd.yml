@@ -33,11 +33,9 @@ jobs:
             gradle-${{ runner.os }}-
 
       - name: Grant execute permission to Gradle wrapper
-        working-directory: backend
         run: chmod +x gradlew
 
       - name: Build backend
-        working-directory: backend
         run: ./gradlew assemble
 
   test-backend:
@@ -62,11 +60,9 @@ jobs:
             gradle-${{ runner.os }}-
 
       - name: Grant execute permission to Gradle wrapper
-        working-directory: backend
         run: chmod +x gradlew
 
       - name: Run backend tests
-        working-directory: backend
         run: ./gradlew test
 
   build-frontend:

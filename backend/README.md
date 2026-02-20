@@ -157,7 +157,7 @@ cd backend
  :: Spring Boot ::                (v3.5.0)
 
 2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Started Application in 3.456 seconds
-2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Application is running on http://localhost:8081
+2024-01-15 10:30:00.000  INFO --- [           main] com.adsearch.Application                 : Application is running on http://localhost:8080
 ```
 
 ### Docker Compose Setup for Development Environment
@@ -283,9 +283,10 @@ The backend implements a comprehensive testing strategy covering all architectur
 The backend provides comprehensive API documentation using OpenAPI 3.0 specification:
 
 **Access Points:**
-- **Interactive UI**: http://localhost:8081/swagger-ui.html
-- **JSON Spec**: http://localhost:8081/v3/api-docs
-- **YAML Spec**: http://localhost:8081/v3/api-docs.yaml
+
+- **Interactive UI**: http://localhost:8080/swagger-ui.html
+- **JSON Spec**: http://localhost:8080/v3/api-docs
+- **YAML Spec**: http://localhost:8080/v3/api-docs.yaml
 
 ### API Endpoints
 
@@ -346,7 +347,7 @@ jwt:
   refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}  # 7 days in milliseconds
 
 app:
-  base-url: ${BASE_URL:http://localhost:8081}
+  base-url: ${BASE_URL:http://localhost:8080}
 ```
 
 ## Troubleshooting

@@ -1,8 +1,8 @@
 import {Component, inject, signal} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {PasswordResetService} from '../../../core/services/password-reset.service';
 import {TranslocoModule} from '@jsverse/transloco';
+import {AuthService} from "../../../core/services/auth.service";
 
 @Component({
     selector: 'app-password-reset-request',
@@ -11,7 +11,7 @@ import {TranslocoModule} from '@jsverse/transloco';
 })
 export class PasswordResetRequestComponent {
     private formBuilder = inject(FormBuilder);
-    private passwordResetService = inject(PasswordResetService);
+    private authService = inject(AuthService);
     private router = inject(Router);
 
     isSubmitting = signal<boolean>(false);
@@ -31,7 +31,7 @@ export class PasswordResetRequestComponent {
         this.errorMessage.set(null);
         this.successMessage.set(null);
 
-        this.passwordResetService.requestPasswordReset(this.resetForm.value as any)
+        this.authService.requestPasswordReset(this.resetForm.value as any)
             .subscribe({
                 next: (response) => {
                     this.isSubmitting.set(false);
