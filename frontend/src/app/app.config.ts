@@ -6,7 +6,7 @@ import {translocoProviders} from './transloco/transloco-root.module';
 import {AuthService} from './core/services/auth.service';
 import {authInterceptor} from './core/interceptors/auth.interceptor';
 import {firstValueFrom} from "rxjs";
-import {provideApi} from "./core/api/generated/provide-api";
+import {provideApi} from "./core/api/generated";
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -18,6 +18,6 @@ export const appConfig: ApplicationConfig = {
             const auth = inject(AuthService);
             return firstValueFrom(auth.refreshToken()).catch(() => false);
         }),
-        provideApi({})
+        provideApi("/api")
     ]
 };
