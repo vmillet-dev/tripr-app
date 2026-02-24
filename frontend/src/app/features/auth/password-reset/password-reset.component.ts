@@ -2,9 +2,9 @@ import {Component, inject, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {PasswordResetService} from '../../../core/services/password-reset.service';
 import {TranslocoModule} from '@jsverse/transloco';
 import {map} from 'rxjs';
+import {AuthService} from "../../../core/services/auth.service";
 
 @Component({
     selector: 'app-password-reset',
@@ -15,7 +15,7 @@ import {map} from 'rxjs';
 })
 export class PasswordResetComponent {
     private fb = inject(FormBuilder);
-    private passwordResetService = inject(PasswordResetService);
+    private authService = inject(AuthService);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
 
@@ -47,7 +47,7 @@ export class PasswordResetComponent {
     }
 
     validateToken(token: string): void {
-        this.passwordResetService.validateToken(token).subscribe({
+        this.authService.validatePasswordResetToken(token).subscribe({
             next: (response) => {
                 this.isValidatingToken.set(false);
                 this.isTokenValid.set(response.valid);
@@ -76,7 +76,7 @@ export class PasswordResetComponent {
         this.errorMessage.set('');
         this.successMessage.set('');
 
-        this.passwordResetService.resetPassword({
+        this.authService.resetPassword({
             token: this.token(),
             newPassword: this.resetForm.get('newPassword')?.value
         }).subscribe({

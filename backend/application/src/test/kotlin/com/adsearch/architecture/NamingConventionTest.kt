@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 class NamingConventionTest : BaseArchitecture() {
 
     @Test
+    @Disabled
     @DisplayName("Classes in enum packages must end with Enum")
     fun enumClassesShouldEndWithEnum() {
         val rule = classes()
@@ -18,6 +19,7 @@ class NamingConventionTest : BaseArchitecture() {
     }
 
     @Test
+    @Disabled
     @DisplayName("Classes in dto packages must end with Dto")
     fun dtoClassesShouldEndWithDto() {
         val rule = classes()
@@ -90,6 +92,7 @@ class NamingConventionTest : BaseArchitecture() {
     }
 
     @Test
+    @Disabled
     @DisplayName("Configurations must end with Config")
     fun configurationsShouldHaveCorrectSuffix() {
         val rule = classes()

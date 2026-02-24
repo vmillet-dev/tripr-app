@@ -7,12 +7,14 @@ junit = "6.0.3"
 kotlin = "2.3.10"
 mapstruct = "1.7.0.Beta1"
 mockk = "1.14.9"
+openapi = "7.19.0"
 postgresql = "42.7.10"
 slf4j = "2.0.17"
 spring-boot = "4.0.2"
 springdoc-openapi = "3.0.1"
 testcontainers = "1.21.4"
 jsonpath = "3.0.0"
+jackson = "3.0.4"
 
 [libraries]
 # Spring Boot dependencies
@@ -28,7 +30,6 @@ springboot-thymeleaf = { module = "org.springframework.boot:spring-boot-thymelea
 springboot-datajpa = { module = "org.springframework.boot:spring-boot-data-jpa", version.ref = "spring-boot" }
 springboot-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc", version.ref = "spring-boot" }
 springboot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "spring-boot" }
-springboot-jackson = { module = "org.springframework.boot:spring-boot-jackson", version.ref = "spring-boot" }
 
 # Other dependencies
 mapstruct-api = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
@@ -38,6 +39,7 @@ slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 auth0-java-jwt = { module = "com.auth0:java-jwt", version.ref = "auth0-jwt" }
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+jackson-module = { module = "tools.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 
 # Test dependencies
 springboot-restclient = { module = "org.springframework.boot:spring-boot-restclient", version.ref = "spring-boot" }
@@ -58,3 +60,4 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "kotlin
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+openapi = { id = "org.openapi.generator", version.ref = "openapi" }

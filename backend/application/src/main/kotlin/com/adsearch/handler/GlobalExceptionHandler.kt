@@ -1,9 +1,9 @@
 package com.adsearch.handler
 
 import com.adsearch.domain.exception.BaseFunctionalException
-import com.adsearch.domain.model.enums.HttpStatusEnum
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.ErrorResponseDto
 import com.adsearch.domain.exception.BaseTechnicalException
+import com.adsearch.domain.model.enums.HttpStatusEnum
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.ErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -24,7 +24,7 @@ class GlobalExceptionHandler {
     fun handleBaseTechnicalException(
         ex: BaseTechnicalException,
         request: HttpServletRequest
-    ): ResponseEntity<ErrorResponseDto> {
+    ): ResponseEntity<ErrorResponse> {
         log.error("Exception occurred: ${ex.message}", ex)
 
         return createErrorResponse(
@@ -39,7 +39,7 @@ class GlobalExceptionHandler {
     fun handleBaseFunctionalException(
         ex: BaseFunctionalException,
         request: HttpServletRequest
-    ): ResponseEntity<ErrorResponseDto> {
+    ): ResponseEntity<ErrorResponse> {
         log.warn("Exception occurred: ${ex.message}", ex)
 
         return createErrorResponse(
@@ -51,7 +51,10 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidationExceptions(ex: MethodArgumentNotValidException, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
+    fun handleValidationExceptions(
+        ex: MethodArgumentNotValidException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
         val errors = ex.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
 
         return createErrorResponse(
@@ -66,7 +69,7 @@ class GlobalExceptionHandler {
     fun handleAuthorizationDeniedException(
         ex: AuthorizationDeniedException,
         request: HttpServletRequest
-    ): ResponseEntity<ErrorResponseDto> {
+    ): ResponseEntity<ErrorResponse> {
         val errorResponse = createErrorResponse(
             status = HttpStatus.FORBIDDEN,
             error = HttpStatus.FORBIDDEN.reasonPhrase,
@@ -80,7 +83,7 @@ class GlobalExceptionHandler {
 
 
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
+    fun handleGenericException(ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
         val errorResponse = createErrorResponse(
             status = HttpStatus.INTERNAL_SERVER_ERROR,
             error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase,
@@ -92,14 +95,19 @@ class GlobalExceptionHandler {
         return errorResponse
     }
 
-    private fun createErrorResponse(status: HttpStatus, error: String, message: String, path: String): ResponseEntity<ErrorResponseDto> {
-        val errorResponseDto = ErrorResponseDto(
+    private fun createErrorResponse(
+        status: HttpStatus,
+        error: String,
+        message: String,
+        path: String
+    ): ResponseEntity<ErrorResponse> {
+        val ErrorResponse = ErrorResponse(
             status = status.value(),
             error = error,
             message = message,
             path = path
         )
-        return ResponseEntity(errorResponseDto, status)
+        return ResponseEntity(ErrorResponse, status)
     }
 
     // Extension function to make the conversion more elegant
