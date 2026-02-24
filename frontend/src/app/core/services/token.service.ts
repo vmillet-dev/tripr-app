@@ -41,15 +41,6 @@ export class TokenService {
         }
     }
 
-    getExpirationDate(): Date | null {
-        if (!this.token) return null;
-        try {
-            return this.jwtHelper.getTokenExpirationDate(this.token);
-        } catch {
-            return null;
-        }
-    }
-
     getCurrentUser(): CurrentUser | null {
         return this.currentUserSubject.getValue();
     }
@@ -58,15 +49,11 @@ export class TokenService {
         return this.getCurrentUser()?.roles?.includes(role) ?? false;
     }
 
-    hasAnyRole(...roles: string[]): boolean {
-        return roles.some(role => this.hasRole(role));
-    }
-
     private decodeUser(token: string): CurrentUser | null {
         try {
             const decoded = this.jwtHelper.decodeToken(token);
             return {
-                username: decoded.username,
+                username: decoded.sub,
                 roles: decoded.roles ?? [],
             };
         } catch {
