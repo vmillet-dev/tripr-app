@@ -17,7 +17,7 @@ import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @AutoRegister
 @Suppress("unused")
