@@ -1,15 +1,14 @@
 package com.adsearch.domain.service
 
+import com.adsearch.domain.enums.TokenTypeEnum
+import com.adsearch.domain.enums.UserRoleEnum
 import com.adsearch.domain.exception.InvalidCredentialsException
 import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
-import com.adsearch.domain.model.RefreshTokenDom
-import com.adsearch.domain.model.UserDom
-import com.adsearch.domain.model.auth.AuthResponse
-import com.adsearch.domain.model.command.LoginUserCommand
-import com.adsearch.domain.model.enums.TokenTypeEnum
-import com.adsearch.domain.model.enums.UserRoleEnum
+import com.adsearch.domain.model.RefreshToken
+import com.adsearch.domain.model.User
+import com.adsearch.domain.port.`in`.LoginUserUseCase
 import com.adsearch.domain.port.out.ConfigurationProviderPort
 import com.adsearch.domain.port.out.authentication.AuthenticationProviderPort
 import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
@@ -45,24 +44,24 @@ class AuthenticationServiceTest {
         // Given
         val username = "john"
         val pwd = "pwd"
-        val user = UserDom(10, username, "john@mail.com", "hpass", setOf(UserRoleEnum.ROLE_USER.type), true)
+        val user = User(10, username, "john@mail.com", "hpass", setOf(UserRoleEnum.ROLE_USER.type), true)
         every { authenticationProvider.authenticate(username, pwd) } returns username
         every { userPersistence.findByUsername(username) } returns user
         every { configurationProvider.getRefreshTokenExpiration() } returns 3600L
         every { tokenGenerator.generateAccessToken(user) } returns "access-token"
 
         // When
-        val resp: AuthResponse = service.login(LoginUserCommand(username, pwd))
+        val resp: LoginUserUseCase.LoginUser = service.login(LoginUserUseCase.LoginUserCommand(username, pwd))
 
         // Then
         assertThat(resp.accessToken).isEqualTo("access-token")
         assertThat(resp.refreshToken).isNotBlank()
 
         verifyOrder {
-            authenticationProvider.authenticate(username, pwd)
-            userPersistence.findByUsername(username)
-            tokenPersistence.deleteByUserId(user.id, TokenTypeEnum.REFRESH)
-            tokenPersistence.save(withArg { rt: RefreshTokenDom ->
+            authenticationProvider.authenticate("john", "pwd")
+            userPersistence.findByUsername("john")
+            tokenPersistence.deleteRefreshTokenByUser(user)
+            tokenPersistence.save(withArg { rt: RefreshToken ->
                 assertThat(rt.userId).isEqualTo(user.id)
                 assertThat(rt.token).isNotBlank()
                 assertThat(rt.expiryDate).isAfterOrEqualTo(Instant.now())
@@ -77,7 +76,7 @@ class AuthenticationServiceTest {
         val pwd = "bad"
         every { authenticationProvider.authenticate(username, pwd) } throws RuntimeException("bad creds")
 
-        assertThatThrownBy { service.login(LoginUserCommand(username, pwd)) }
+        assertThatThrownBy { service.login(LoginUserUseCase.LoginUserCommand(username, pwd)) }
             .isInstanceOf(InvalidCredentialsException::class.java)
             .hasMessageContaining("Authentication failed for user $username")
     }
@@ -85,7 +84,7 @@ class AuthenticationServiceTest {
     @Test
     fun `logout should delete token when provided`() {
         val token = "rt-token"
-        val rt = RefreshTokenDom(1, token, Instant.now().plusSeconds(100), false)
+        val rt = RefreshToken(1, token, Instant.now().plusSeconds(100), false)
         every { tokenPersistence.findByToken(token, TokenTypeEnum.REFRESH) } returns rt
         service.logout(token)
         verify { tokenPersistence.delete(rt) }
@@ -110,14 +109,14 @@ class AuthenticationServiceTest {
 
     @Test
     fun `refreshAccessToken should throw TokenExpiredException when token expired or revoked`() {
-        val rt = RefreshTokenDom(5, "t", Instant.now().minusSeconds(10), false)
+        val rt = RefreshToken(5, "t", Instant.now().minusSeconds(10), false)
         every { tokenPersistence.findByToken("t", TokenTypeEnum.REFRESH) } returns rt
 
         assertThatThrownBy { service.refreshAccessToken("t") }
             .isInstanceOf(TokenExpiredException::class.java)
 
         // revoked case
-        val rt2 = RefreshTokenDom(5, "t2", Instant.now().plusSeconds(1000), true)
+        val rt2 = RefreshToken(5, "t2", Instant.now().plusSeconds(1000), true)
         every { tokenPersistence.findByToken("t2", TokenTypeEnum.REFRESH) } returns rt2
         assertThatThrownBy { service.refreshAccessToken("t2") }
             .isInstanceOf(TokenExpiredException::class.java)
@@ -127,7 +126,7 @@ class AuthenticationServiceTest {
 
     @Test
     fun `refreshAccessToken should throw UserNotFoundException when user not found`() {
-        val rt = RefreshTokenDom(99, "t3", Instant.now().plusSeconds(1000), false)
+        val rt = RefreshToken(99, "t3", Instant.now().plusSeconds(1000), false)
         every { tokenPersistence.findByToken("t3", TokenTypeEnum.REFRESH) } returns rt
         every { userPersistence.findById(99) } returns null
 
@@ -137,8 +136,8 @@ class AuthenticationServiceTest {
 
     @Test
     fun `refreshAccessToken should return new access token when valid`() {
-        val user = UserDom(20, "alice", "a@a.com", "p", setOf(UserRoleEnum.ROLE_USER.type), true)
-        val rt = RefreshTokenDom(user.id, "good", Instant.now().plusSeconds(1000), false)
+        val user = User(20, "alice", "a@a.com", "p", setOf(UserRoleEnum.ROLE_USER.type), true)
+        val rt = RefreshToken(user.id, "good", Instant.now().plusSeconds(1000), false)
         every { tokenPersistence.findByToken("good", TokenTypeEnum.REFRESH) } returns rt
         every { userPersistence.findById(user.id) } returns user
         every { tokenGenerator.generateAccessToken(user) } returns "new-access"

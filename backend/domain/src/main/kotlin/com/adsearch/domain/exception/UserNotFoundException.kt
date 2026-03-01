@@ -1,7 +1,7 @@
 package com.adsearch.domain.exception
 
-import com.adsearch.domain.model.enums.FunctionalErrorCodeEnum
-import com.adsearch.domain.model.enums.HttpStatusEnum
+import com.adsearch.domain.exception.enums.FunctionalErrorCodeEnum
+import com.adsearch.domain.exception.enums.HttpStatusEnum
 
 class UserNotFoundException(
     message: String = FunctionalErrorCodeEnum.USER_NOT_FOUND.defaultMessage,

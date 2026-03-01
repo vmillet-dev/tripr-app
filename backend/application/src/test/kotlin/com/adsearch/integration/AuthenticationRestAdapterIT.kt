@@ -30,7 +30,7 @@ import java.util.*
  * - Response structure validation for authentication endpoints
  */
 @DisplayName("Auth Controller Integration Tests")
-class AuthControllerIT : BaseIT() {
+class AuthenticationRestAdapterIT : BaseIT() {
 
     private val testUsername = "testuser"
     private val testPassword = "password"

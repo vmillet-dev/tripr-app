@@ -1,22 +1,7 @@
 package com.adsearch.infrastructure.adapter.`in`.rest
 
-import com.adsearch.domain.model.command.LoginUserCommand
-import com.adsearch.domain.model.command.RegisterUserCommand
-import com.adsearch.domain.port.`in`.CreateUserUseCase
-import com.adsearch.domain.port.`in`.LoginUserUseCase
-import com.adsearch.domain.port.`in`.LogoutUserUseCase
-import com.adsearch.domain.port.`in`.PasswordResetUseCase
-import com.adsearch.domain.port.`in`.RefreshTokenUseCase
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthRequestDto
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthResponseDto
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.Logout200Response
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetDto
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetRequestDto
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.Register200Response
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.RegisterRequestDto
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.RequestPasswordReset200Response
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.ResetPassword200Response
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.ValidateToken200Response
+import com.adsearch.domain.port.`in`.*
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.*
 import com.adsearch.infrastructure.adapter.`in`.rest.utils.ServletRequestUtils.currentRequest
 import com.adsearch.infrastructure.adapter.`in`.rest.utils.ServletRequestUtils.currentResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -35,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @Tag(name = "Authentication", description = "API for user authentication and token management")
 @PreAuthorize("permitAll()")
-class AuthController(
+class AuthenticationRestAdapter(
     private val loginUserUseCase: LoginUserUseCase,
     private val createUserUseCase: CreateUserUseCase,
     private val logoutUserUseCase: LogoutUserUseCase,
@@ -50,10 +35,9 @@ class AuthController(
     }
 
     override fun login(@Valid @RequestBody authRequestDto: AuthRequestDto): ResponseEntity<AuthResponseDto> {
-        val authResponse = loginUserUseCase.login(
-            LoginUserCommand(authRequestDto.username, authRequestDto.password)
-        )
-        authResponse.refreshToken?.let { token ->
+        val authResponse = loginUserUseCase.login(LoginUserUseCase.LoginUserCommand(authRequestDto.username, authRequestDto.password))
+
+        authResponse.refreshToken.let { token ->
             buildCookie(
                 cookieName,
                 token,
@@ -66,7 +50,7 @@ class AuthController(
 
     override fun register(@Valid @RequestBody registerRequestDto: RegisterRequestDto): ResponseEntity<Register200Response> {
         createUserUseCase.createUser(
-            RegisterUserCommand(
+            CreateUserUseCase.RegisterUserCommand(
                 registerRequestDto.username,
                 registerRequestDto.email,
                 registerRequestDto.password

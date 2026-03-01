@@ -1,7 +1,10 @@
 package com.adsearch.domain.port.`in`
 
-import com.adsearch.domain.model.auth.AuthResponse
 
 interface RefreshTokenUseCase {
-    fun refreshAccessToken(token: String?): AuthResponse
+    fun refreshAccessToken(token: String?): AccessToken
+
+    data class AccessToken(
+        val accessToken: String
+    )
 }

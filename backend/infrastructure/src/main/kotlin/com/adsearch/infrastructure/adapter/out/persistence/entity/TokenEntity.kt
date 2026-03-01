@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.persistence.entity
 
-import com.adsearch.domain.model.enums.TokenTypeEnum
+import com.adsearch.domain.enums.TokenTypeEnum
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

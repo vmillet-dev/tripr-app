@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260214-1
+      author: junie
+      changes:
+        - createTable:
+            tableName: T_TOKEN
+            columns:
+              - column:
+                  name: TKN_ID
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: TKN_TYPE
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: USR_ID
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: TKN_VALUE
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: TKN_EXPIRY_DATE
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: TKN_REVOKED
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
