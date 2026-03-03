@@ -17,7 +17,7 @@ class AuthorizationAccessIT : BaseIT() {
 
     @Test
     fun testPublicEndpoint() {
-        restTemplate
+        restClient
             .get()
             .uri("/api/auth/test/public")
             .exchange()
@@ -30,7 +30,7 @@ class AuthorizationAccessIT : BaseIT() {
     fun testRoleEndpoint_withAnonymousAccess() {
         obtainAccessToken("testuser")
 
-        restTemplate
+        restClient
             .get()
             .uri("/api/auth/test/user")
             .exchange()
@@ -40,7 +40,7 @@ class AuthorizationAccessIT : BaseIT() {
 
     @Test
     fun testUserEndpoint_WithUserRole() {
-        restTemplate
+        restClient
             .get()
             .uri("/api/auth/test/user")
             .headers(obtainAccessToken("testuser"))
@@ -52,7 +52,7 @@ class AuthorizationAccessIT : BaseIT() {
 
     @Test
     fun testAdminEndpoint_WithUserRole() {
-        restTemplate
+        restClient
             .get()
             .uri("/api/auth/test/admin")
             .headers(obtainAccessToken("testuser"))
@@ -62,7 +62,7 @@ class AuthorizationAccessIT : BaseIT() {
 
     @Test
     fun testUserEndpoint_WithAdminRole() {
-        restTemplate
+        restClient
             .get()
             .uri("/api/auth/test/admin")
             .headers(obtainAccessToken("testadmin"))
@@ -77,7 +77,7 @@ class AuthorizationAccessIT : BaseIT() {
         val request = AuthRequestDto(username, "password")
 
         // When
-        val response = restTemplate
+        val response = restClient
             .post()
             .uri("/api/auth/login")
             .contentType(MediaType.APPLICATION_JSON)

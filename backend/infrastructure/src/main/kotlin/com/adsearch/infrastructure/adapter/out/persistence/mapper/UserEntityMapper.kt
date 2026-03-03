@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.persistence.mapper
 
-import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.User
 import com.adsearch.infrastructure.adapter.out.persistence.entity.UserEntity
 import org.mapstruct.Mapper
 import org.mapstruct.ReportingPolicy
@@ -10,6 +10,6 @@ import org.mapstruct.ReportingPolicy
  */
 @Mapper(componentModel = "spring", uses = [RoleEntityMapper::class], unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface UserEntityMapper {
-    fun toDomain(entity: UserEntity): UserDom
-    fun toEntity(domain: UserDom): UserEntity
+    fun toDomain(entity: UserEntity): User
+    fun toEntity(domain: User): UserEntity
 }

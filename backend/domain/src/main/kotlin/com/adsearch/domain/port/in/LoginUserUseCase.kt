@@ -1,8 +1,15 @@
 package com.adsearch.domain.port.`in`
 
-import com.adsearch.domain.model.auth.AuthResponse
-import com.adsearch.domain.model.command.LoginUserCommand
-
 interface LoginUserUseCase {
-    fun login(cmd: LoginUserCommand): AuthResponse
+    fun login(cmd: LoginUserCommand): LoginUser
+
+    data class LoginUserCommand(
+        val username: String,
+        val password: String
+    )
+
+    data class LoginUser(
+        val accessToken: String,
+        val refreshToken: String
+    )
 }

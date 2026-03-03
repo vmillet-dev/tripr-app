@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.authentication
 
-import com.adsearch.domain.model.UserDom
+import com.adsearch.domain.model.User
 import com.adsearch.domain.port.out.authentication.TokenGeneratorPort
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -19,7 +19,7 @@ class JwtTokenGeneratorAdapter(
     private val algorithm: Algorithm = Algorithm.HMAC256(secret)
     private val verifier: JWTVerifier = JWT.require(algorithm).withIssuer(issuer).build()
 
-    override fun generateAccessToken(user: UserDom): String = JWT.create()
+    override fun generateAccessToken(user: User): String = JWT.create()
         .withSubject(user.username)
         .withArrayClaim("roles", user.roles.toTypedArray())
         .withIssuedAt(Instant.now())

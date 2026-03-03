@@ -1,12 +1,12 @@
 package com.adsearch.domain.model
 
-import com.adsearch.domain.model.enums.TokenTypeEnum
+import com.adsearch.domain.enums.TokenTypeEnum
 import java.time.Instant
 
 /**
  * Interface representing a common token domain model
  */
-interface TokenDom {
+interface Token {
     val userId: Long
     val token: String
     val expiryDate: Instant

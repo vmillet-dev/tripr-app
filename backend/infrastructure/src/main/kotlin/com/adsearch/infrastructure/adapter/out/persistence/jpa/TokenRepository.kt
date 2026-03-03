@@ -1,6 +1,6 @@
 package com.adsearch.infrastructure.adapter.out.persistence.jpa
 
-import com.adsearch.domain.model.enums.TokenTypeEnum
+import com.adsearch.domain.enums.TokenTypeEnum
 import com.adsearch.infrastructure.adapter.out.persistence.entity.TokenEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying

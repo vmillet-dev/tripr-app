@@ -2,7 +2,7 @@ package com.adsearch.handler
 
 import com.adsearch.domain.exception.BaseFunctionalException
 import com.adsearch.domain.exception.BaseTechnicalException
-import com.adsearch.domain.model.enums.HttpStatusEnum
+import com.adsearch.domain.exception.enums.HttpStatusEnum
 import com.adsearch.infrastructure.adapter.`in`.rest.dto.ErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory

@@ -1,9 +1,9 @@
 package com.adsearch.infrastructure.adapter.out.persistence.mapper
 
-import com.adsearch.domain.model.PasswordResetTokenDom
-import com.adsearch.domain.model.RefreshTokenDom
-import com.adsearch.domain.model.TokenDom
-import com.adsearch.domain.model.enums.TokenTypeEnum
+import com.adsearch.domain.model.PasswordResetToken
+import com.adsearch.domain.model.RefreshToken
+import com.adsearch.domain.model.Token
+import com.adsearch.domain.enums.TokenTypeEnum
 import com.adsearch.infrastructure.adapter.out.persistence.entity.TokenEntity
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
@@ -13,16 +13,16 @@ import org.mapstruct.Mapping
  */
 @Mapper(componentModel = "spring")
 interface TokenEntityMapper {
-    fun toPasswordResetDomain(entity: TokenEntity): PasswordResetTokenDom
-    fun toRefreshDomain(entity: TokenEntity): RefreshTokenDom
+    fun toPasswordResetDomain(entity: TokenEntity): PasswordResetToken
+    fun toRefreshDomain(entity: TokenEntity): RefreshToken
 
     @Mapping(target = "id", ignore = true)
-    fun toEntity(domain: TokenDom): TokenEntity
+    fun toEntity(domain: Token): TokenEntity
 
     /**
      * Maps TokenEntity to its specific domain implementation
      */
-    fun toDomain(entity: TokenEntity): TokenDom {
+    fun toDomain(entity: TokenEntity): Token {
         return if (entity.type == TokenTypeEnum.REFRESH) {
             toRefreshDomain(entity)
         } else {

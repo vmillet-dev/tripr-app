@@ -1,30 +1,36 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
-import {TranslocoPipe} from '@jsverse/transloco';
+import {toSignal} from "@angular/core/rxjs-interop";
+import {TranslocoPipe} from "@jsverse/transloco";
+
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    imports: [RouterLink, RouterLinkActive, TranslocoPipe]
+    standalone: true,
+    imports: [
+        TranslocoPipe,
+        RouterLinkActive,
+        RouterLink
+    ]
 })
-export class HeaderComponent implements OnInit {
-  isAuthenticated = false;
-  username: string | null = null;
+export class HeaderComponent {
 
-  private authService = inject(AuthService);
-  private router = inject(Router);
+    private authService = inject(AuthService);
+    private router = inject(Router);
 
-  ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.isAuthenticated = !!user;
-      this.username = user?.username || null;
+    currentUser = toSignal(this.authService.currentUser$, {
+        initialValue: null
     });
-  }
 
-  logout(): void {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/']);
-    });
-  }
+    isAuthenticated = computed(() => !!this.currentUser());
+
+    username = computed(() => this.currentUser()?.username ?? null);
+
+    logout(): void {
+        this.authService.logout().subscribe(() => {
+            this.router.navigate(['/']);
+        });
+    }
 }
