@@ -58,7 +58,14 @@ subprojects {
                         "**/dto/**",
                         "**/enums/**",
                         "**/exception/**",
-                        "**/annotation/**"
+                        "**/annotation/**",
+                        "**/entity/**",
+                        "**/*DefaultImpls.class",
+                        "**/*Api.class",
+                        "**/*Delegate.class",
+                        "**/*ExceptionHandler.class",
+                        "**/*ApiUtil.class",
+                        "**/*Exception.class"
                     )
                 }
             )
