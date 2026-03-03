@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 20260214-1
-      author: junie
+      author: init
       changes:
         - createTable:
             tableName: T_TOKEN
@@ -28,7 +28,6 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
-                    unique: true
               - column:
                   name: TKN_EXPIRY_DATE
                   type: TIMESTAMP
@@ -40,3 +39,7 @@ databaseChangeLog:
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
+        - addUniqueConstraint:
+            tableName: T_TOKEN
+            columnNames: TKN_VALUE, TKN_TYPE
+            constraintName: UK_T_TOKEN_VALUE_TYPE

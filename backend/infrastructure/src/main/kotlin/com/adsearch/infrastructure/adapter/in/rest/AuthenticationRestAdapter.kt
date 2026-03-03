@@ -1,20 +1,33 @@
 package com.adsearch.infrastructure.adapter.`in`.rest
 
-import com.adsearch.domain.port.`in`.*
-import com.adsearch.infrastructure.adapter.`in`.rest.dto.*
+import com.adsearch.domain.port.`in`.CreateUserUseCase
+import com.adsearch.domain.port.`in`.LoginUserUseCase
+import com.adsearch.domain.port.`in`.LogoutUserUseCase
+import com.adsearch.domain.port.`in`.PasswordResetUseCase
+import com.adsearch.domain.port.`in`.RefreshTokenUseCase
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthRequestDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.AuthResponseDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.Logout200Response
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.PasswordResetRequestDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.Register200Response
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.RegisterRequestDto
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.RequestPasswordReset200Response
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.ResetPassword200Response
+import com.adsearch.infrastructure.adapter.`in`.rest.dto.ValidateToken200Response
 import com.adsearch.infrastructure.adapter.`in`.rest.utils.ServletRequestUtils.currentRequest
 import com.adsearch.infrastructure.adapter.`in`.rest.utils.ServletRequestUtils.currentResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.Cookie
 import jakarta.validation.Valid
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.Duration
 
 @Suppress("SpringJavaInjectionPointsAutowiringInspection")
 @RestController
@@ -30,20 +43,9 @@ class AuthenticationRestAdapter(
     @param:Value($$"${jwt.refresh-token.expiration}") private val cookieMaxAge: Int
 ) : AuthenticationApi {
 
-    companion object {
-        val LOG: Logger = LoggerFactory.getLogger(this::class.java)
-    }
-
     override fun login(@Valid @RequestBody authRequestDto: AuthRequestDto): ResponseEntity<AuthResponseDto> {
         val authResponse = loginUserUseCase.login(LoginUserUseCase.LoginUserCommand(authRequestDto.username, authRequestDto.password))
-
-        authResponse.refreshToken.let { token ->
-            buildCookie(
-                cookieName,
-                token,
-                cookieMaxAge
-            ).also { currentResponse().addCookie(it) }
-        }
+        buildCookie(authResponse.refreshToken, cookieMaxAge)
         return ResponseEntity.ok(AuthResponseDto(authResponse.accessToken))
     }
 
@@ -61,43 +63,40 @@ class AuthenticationRestAdapter(
     }
 
     override fun refreshToken(): ResponseEntity<AuthResponseDto> {
-        val cookies: String? = currentRequest().cookies?.find { it.name == cookieName }?.value
-        val authResponse = refreshTokenUseCase.refreshAccessToken(cookies)
+        val token: String? = currentRequest().cookies?.find { it.name == cookieName }?.value
+        val accessToken = refreshTokenUseCase.refreshAccessToken(token)
 
-        return ResponseEntity.ok(AuthResponseDto(authResponse.accessToken))
+        return ResponseEntity.ok(AuthResponseDto(accessToken.accessToken))
     }
 
     override fun logout(): ResponseEntity<Logout200Response> {
         val cookies: String? = currentRequest().cookies?.find { it.name == cookieName }?.value
-
         logoutUserUseCase.logout(cookies)
-        buildCookie(cookieName, "", 0).also { currentResponse().addCookie(it) }
+        buildCookie("", 0)
         return ResponseEntity.ok(Logout200Response("Logged out successfully"))
     }
 
     override fun requestPasswordReset(@Valid @RequestBody passwordResetRequestDto: PasswordResetRequestDto): ResponseEntity<RequestPasswordReset200Response> {
-        LOG.info("Received password reset request for username: ${passwordResetRequestDto.username}")
         passwordResetUseCase.requestPasswordReset(passwordResetRequestDto.username)
         return ResponseEntity.ok(RequestPasswordReset200Response("If the username exists, a password reset email has been sent"))
     }
 
     override fun resetPassword(@Valid @RequestBody passwordResetDto: PasswordResetDto): ResponseEntity<ResetPassword200Response> {
-        LOG.info("Received password reset with token")
         passwordResetUseCase.resetPassword(passwordResetDto.token, passwordResetDto.newPassword)
         return ResponseEntity.ok(ResetPassword200Response("Password has been reset successfully"))
     }
 
     override fun validateToken(@RequestParam token: String): ResponseEntity<ValidateToken200Response> {
-        LOG.info("Validating password reset token")
         val isValid = passwordResetUseCase.validateToken(token)
         return ResponseEntity.ok(ValidateToken200Response(isValid))
     }
 
-    private fun buildCookie(name: String, value: String, maxAge: Int): Cookie =
-        Cookie(name, value).apply {
-            this.maxAge = maxAge
-            path = "/"
-            isHttpOnly = true
-            // TODO: enable in prod → secure = true
-        }
+    private fun buildCookie(value: String, maxAge: Int) =
+        ResponseCookie.from(cookieName, value)
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("Strict")
+            .path("/api/auth")
+            .maxAge(Duration.ofSeconds(maxAge.toLong()))
+            .build().also { currentResponse().addHeader(HttpHeaders.SET_COOKIE, it.toString()) }
 }

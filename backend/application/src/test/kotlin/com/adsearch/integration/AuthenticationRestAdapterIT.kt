@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
-import java.util.*
+import java.util.UUID
 
 
 /**
@@ -49,7 +49,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = AuthRequestDto(testUsername, testPassword)
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +76,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = AuthRequestDto(testUsername, "wrongpassword")
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +107,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = AuthRequestDto("nonexistentuser", testPassword)
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +143,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = RegisterRequestDto("newuser", "password123", "newuser@example.com")
 
             // When
-            val registerResponse = restTemplate
+            val registerResponse = restClient
                 .post()
                 .uri("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -156,7 +156,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
 
             // Verify user can login
             val loginRequest = AuthRequestDto("newuser", "password123")
-            val loginResponse = restTemplate
+            val loginResponse = restClient
                 .post()
                 .uri("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -186,7 +186,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = RegisterRequestDto(testUsername, "password123", "another@example.com")
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -218,7 +218,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = RegisterRequestDto("newuser_2", "password123", "testuser@mail.com")
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -255,7 +255,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val token = "e42f1f3e-ea56-47be-bc14-3b9bf1e5a58d"
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -278,7 +278,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val invalidToken = "invalid-token"
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -305,7 +305,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val token = "0cb1f58c-ecf9-4501-bfcb-68c527139f4e"
 
             // When
-            val logoutResponse = restTemplate
+            val logoutResponse = restClient
                 .post()
                 .uri("/api/auth/logout")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -320,7 +320,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             assertThat(logoutResponse).extracting("message").isEqualTo("Logged out successfully")
 
             // Verify token is invalidated
-            val refreshResponse = restTemplate
+            val refreshResponse = restClient
                 .post()
                 .uri("/api/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -348,7 +348,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             )
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/password/reset-request")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -392,7 +392,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = PasswordResetRequestDto("nonexistentuser")
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/password/reset-request")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -417,7 +417,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val request = PasswordResetDto("2503c57c-a5df-43f5-823d-756a223f725f", "newpassword")
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/password/reset")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -438,7 +438,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
                 password = "newpassword"
             )
 
-            val loginResponse = restTemplate
+            val loginResponse = restClient
                 .post()
                 .uri("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -463,7 +463,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             )
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .post()
                 .uri("/api/auth/password/reset")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -499,7 +499,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val token = "ae03e5ea-0eb0-41d1-911c-491092da4798"
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .get()
                 .uri("/api/auth/password/validate-token?token=$token")
                 .exchange()
@@ -521,7 +521,7 @@ class AuthenticationRestAdapterIT : BaseIT() {
             val invalidToken = UUID.randomUUID().toString()
 
             // When
-            val response = restTemplate
+            val response = restClient
                 .get()
                 .uri("/api/auth/password/validate-token?token=$invalidToken")
                 .exchange()

@@ -1,11 +1,11 @@
 package com.adsearch.domain.service
 
 import com.adsearch.domain.annotation.AutoRegister
-import com.adsearch.domain.enums.TokenTypeEnum
 import com.adsearch.domain.exception.InvalidTokenException
 import com.adsearch.domain.exception.TokenExpiredException
 import com.adsearch.domain.exception.UserNotFoundException
 import com.adsearch.domain.model.PasswordResetToken
+import com.adsearch.domain.model.Token
 import com.adsearch.domain.model.User
 import com.adsearch.domain.port.`in`.PasswordResetUseCase
 import com.adsearch.domain.port.out.ConfigurationProviderPort
@@ -13,10 +13,13 @@ import com.adsearch.domain.port.out.authentication.PasswordEncoderPort
 import com.adsearch.domain.port.out.notification.EmailServicePort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
+import com.adsearch.domain.port.out.persistence.deletePasswordResetTokenByToken
+import com.adsearch.domain.port.out.persistence.deletePasswordResetTokenByUser
+import com.adsearch.domain.port.out.persistence.findPasswordResetTokenByToken
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @AutoRegister
 @Suppress("unused")
@@ -40,7 +43,7 @@ class PasswordResetService(
             ?: throw UserNotFoundException("Password reset request failed - user not found with username: $username")
 
         // Delete any existing tokens for this user
-        tokenPersistence.deletePasswordRestTokenByUser(user)
+        tokenPersistence.deletePasswordResetTokenByUser(user)
 
         // Create a new token
         val expiryDate = Instant.now().plusSeconds(configurationProvider.getPasswordResetTokenExpiration())
@@ -56,11 +59,11 @@ class PasswordResetService(
      * Reset a user's password using a token
      */
     override fun resetPassword(token: String, newPassword: String) {
-        val resetToken = tokenPersistence.findByToken(token, TokenTypeEnum.PASSWORD_RESET)
+        val resetToken: Token = tokenPersistence.findPasswordResetTokenByToken(token)
             ?: throw InvalidTokenException("Password reset failed - token not found")
 
         if (resetToken.isExpired()) {
-            tokenPersistence.delete(resetToken)
+            tokenPersistence.deletePasswordResetTokenByToken(resetToken.token)
             throw TokenExpiredException("Password reset failed - expired token for user id: ${resetToken.userId}")
         }
 
@@ -71,7 +74,7 @@ class PasswordResetService(
         userPersistence.save(userWithHashedPwd)
 
         // Delete all tokens for this user
-        tokenPersistence.deletePasswordRestTokenByUser(user)
+        tokenPersistence.deletePasswordResetTokenByUser(user)
     }
 
     /**
@@ -79,10 +82,10 @@ class PasswordResetService(
      */
     override fun validateToken(token: String): Boolean {
 
-        val resetToken = tokenPersistence.findByToken(token, TokenTypeEnum.PASSWORD_RESET) ?: return false
+        val resetToken: Token = tokenPersistence.findPasswordResetTokenByToken(token) ?: return false
 
         if (resetToken.isExpired()) {
-            tokenPersistence.delete(resetToken)
+            tokenPersistence.deletePasswordResetTokenByToken(resetToken.token)
             return false
         }
 

@@ -60,7 +60,6 @@ class AuthenticationServiceTest {
         verifyOrder {
             authenticationProvider.authenticate("john", "pwd")
             userPersistence.findByUsername("john")
-            tokenPersistence.deleteRefreshTokenByUser(user)
             tokenPersistence.save(withArg { rt: RefreshToken ->
                 assertThat(rt.userId).isEqualTo(user.id)
                 assertThat(rt.token).isNotBlank()
@@ -84,10 +83,13 @@ class AuthenticationServiceTest {
     @Test
     fun `logout should delete token when provided`() {
         val token = "rt-token"
-        val rt = RefreshToken(1, token, Instant.now().plusSeconds(100), false)
-        every { tokenPersistence.findByToken(token, TokenTypeEnum.REFRESH) } returns rt
         service.logout(token)
-        verify { tokenPersistence.delete(rt) }
+        verify {
+            tokenPersistence.deleteTokenAndType(
+                "dcf752bf51d5062c0f24312ec8002c370371def660cb3a3406c2eba9cc30da0affd44d42c6e7d8a541a4940174cb19113c4e17d8e042b533d701e443fdcff360",
+                TokenTypeEnum.REFRESH
+            )
+        }
     }
 
     @Test
@@ -102,7 +104,7 @@ class AuthenticationServiceTest {
         assertThatThrownBy { service.refreshAccessToken(null) }
             .isInstanceOf(InvalidTokenException::class.java)
 
-        every { tokenPersistence.findByToken("missing", TokenTypeEnum.REFRESH) } returns null
+        every { tokenPersistence.findByTokenAndType(any(), TokenTypeEnum.REFRESH) } returns null
         assertThatThrownBy { service.refreshAccessToken("missing") }
             .isInstanceOf(InvalidTokenException::class.java)
     }
@@ -110,24 +112,36 @@ class AuthenticationServiceTest {
     @Test
     fun `refreshAccessToken should throw TokenExpiredException when token expired or revoked`() {
         val rt = RefreshToken(5, "t", Instant.now().minusSeconds(10), false)
-        every { tokenPersistence.findByToken("t", TokenTypeEnum.REFRESH) } returns rt
+        every { tokenPersistence.findByTokenAndType(any(), TokenTypeEnum.REFRESH) } returns rt
 
         assertThatThrownBy { service.refreshAccessToken("t") }
             .isInstanceOf(TokenExpiredException::class.java)
 
         // revoked case
         val rt2 = RefreshToken(5, "t2", Instant.now().plusSeconds(1000), true)
-        every { tokenPersistence.findByToken("t2", TokenTypeEnum.REFRESH) } returns rt2
+        every { tokenPersistence.findByTokenAndType("t2", TokenTypeEnum.REFRESH) } returns rt2
         assertThatThrownBy { service.refreshAccessToken("t2") }
             .isInstanceOf(TokenExpiredException::class.java)
-        verify { tokenPersistence.delete(rt) }
-        verify { tokenPersistence.delete(rt2) }
+        verify {
+            tokenPersistence.deleteTokenAndType(
+                "99f97d455d5d62b24f3a942a1abc3fa8863fc0ce2037f52f09bd785b22b800d4f2e7b2b614cb600ffc2a4fe24679845b24886d69bb776fcfa46e54d188889c6f",
+                TokenTypeEnum.REFRESH
+            )
+        }
+        verify {
+            tokenPersistence.deleteTokenAndType(
+                "dbabd9bd5c26b441bf9cd7c07b82b9974d9a71e1379253b9f644e7554287e2d155eb369e081e7ad2cf1594fdae4f6b0385260376f44f20b01ca0a8c05b32fafc",
+                TokenTypeEnum.REFRESH
+            )
+        }
     }
 
     @Test
     fun `refreshAccessToken should throw UserNotFoundException when user not found`() {
         val rt = RefreshToken(99, "t3", Instant.now().plusSeconds(1000), false)
-        every { tokenPersistence.findByToken("t3", TokenTypeEnum.REFRESH) } returns rt
+        every {
+            tokenPersistence.findByTokenAndType(any(), TokenTypeEnum.REFRESH)
+        } returns rt
         every { userPersistence.findById(99) } returns null
 
         assertThatThrownBy { service.refreshAccessToken("t3") }
@@ -138,7 +152,7 @@ class AuthenticationServiceTest {
     fun `refreshAccessToken should return new access token when valid`() {
         val user = User(20, "alice", "a@a.com", "p", setOf(UserRoleEnum.ROLE_USER.type), true)
         val rt = RefreshToken(user.id, "good", Instant.now().plusSeconds(1000), false)
-        every { tokenPersistence.findByToken("good", TokenTypeEnum.REFRESH) } returns rt
+        every { tokenPersistence.findByTokenAndType(any(), TokenTypeEnum.REFRESH) } returns rt
         every { userPersistence.findById(user.id) } returns user
         every { tokenGenerator.generateAccessToken(user) } returns "new-access"
 

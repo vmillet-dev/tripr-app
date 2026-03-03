@@ -8,7 +8,7 @@ import java.time.Instant
  */
 data class RefreshToken(
     override val userId: Long,
-    override val token: String,
+    override var token: String,
     override val expiryDate: Instant,
     override val revoked: Boolean,
     override val type: TokenTypeEnum = TokenTypeEnum.REFRESH

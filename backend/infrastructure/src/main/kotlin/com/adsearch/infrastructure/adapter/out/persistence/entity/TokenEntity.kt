@@ -9,10 +9,19 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import java.time.Instant
 
 @Entity
-@Table(name = "T_TOKEN")
+@Table(
+    name = "T_TOKEN",
+    uniqueConstraints = [
+        UniqueConstraint(
+            name = "UK_TOKEN_VALUE_TYPE",
+            columnNames = ["TKN_VALUE", "TKN_TYPE"]
+        )
+    ]
+)
 class TokenEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

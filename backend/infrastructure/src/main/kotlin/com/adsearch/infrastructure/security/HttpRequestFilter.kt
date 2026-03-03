@@ -49,8 +49,7 @@ class HttpRequestFilter(
         val jwt = authHeader.substring(7)
         LOG.debug("Processing JWT token")
 
-        val username: String =
-            tokenGenerator.validateAccessTokenAndGetUsername(jwt) ?: throw TokenExpiredException("Access token expired")
+        val username: String = tokenGenerator.validateAccessTokenAndGetUsername(jwt) ?: throw TokenExpiredException("Access token expired")
 
         val roles = tokenGenerator.getAuthoritiesFromToken(jwt)
         val authorities = roles.map { SimpleGrantedAuthority(it) }

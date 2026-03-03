@@ -22,6 +22,7 @@ abstract class AbstractArchTest {
             object : DescribedPredicate<JavaClass>("is not a Kotlin generated class") {
                 override fun test(javaClass: JavaClass): Boolean {
                     return !javaClass.fullName.contains("$") &&
+                        !javaClass.fullName.endsWith("Kt") &&
                         !javaClass.simpleName.endsWith("Impl") &&
                         javaClass.simpleName != "DefaultImpls"
                 }

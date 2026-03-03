@@ -21,7 +21,7 @@ abstract class BaseIT {
     @LocalServerPort
     protected var port: Int = 0
 
-    protected val restTemplate: RestTestClient by lazy {
+    protected val restClient: RestTestClient by lazy {
         RestTestClient.bindToServer()
             .baseUrl("http://localhost:$port")
             .build()

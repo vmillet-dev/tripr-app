@@ -21,20 +21,16 @@ class TokenPersistenceAdapter(
         tokenRepository.save(tokenEntityMapper.toEntity(dom))
     }
 
-    override fun findByToken(token: String, type: TokenTypeEnum): Token? {
-        val entity = tokenRepository.findByTokenAndType(token, type) ?: return null
-        return tokenEntityMapper.toDomain(entity)
+    override fun deleteTokenAndType(token: String, type: TokenTypeEnum) {
+        tokenRepository.deleteByTokenAndType(token, type)
     }
 
-    override fun delete(dom: Token) {
-        tokenRepository.deleteByTokenAndType(dom.token, dom.type)
-    }
-
-    override fun deleteRefreshTokenByUser(user: User) {
+    override fun deleteByUserAndType(user: User, type: TokenTypeEnum) {
         tokenRepository.deleteByUserIdAndType(user.id, TokenTypeEnum.REFRESH)
     }
 
-    override fun deletePasswordRestTokenByUser(user: User) {
-        tokenRepository.deleteByUserIdAndType(user.id, TokenTypeEnum.PASSWORD_RESET)
+    override fun findByTokenAndType(token: String, type: TokenTypeEnum): Token? {
+        val entity = tokenRepository.findByTokenAndType(token, type) ?: return null
+        return tokenEntityMapper.toDomain(entity)
     }
 }
