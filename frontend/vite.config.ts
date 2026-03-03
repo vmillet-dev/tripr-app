@@ -22,7 +22,6 @@ export default defineConfig({
     resolve: {
         mainFields: ['module'],
     },
-    publicDir: 'src/assets',
     test: {
         globals: true,
         environment: 'jsdom',

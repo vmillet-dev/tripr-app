@@ -1,14 +1,14 @@
 /* Import custom variables first to override Bootstrap defaults */
-@use "assets/scss/_variables" as *;
+@use "styles/variables" as *;
 
 /* Global custom styles */
 html, body {
-  height: 100%;
-  font-family: 'Open Sans', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    height: 100%;
+    font-family: 'Open Sans', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 /* Custom utility classes */
 .auth-container {
-  min-height: calc(100vh - 80px);
-  background-color: $light;
+    min-height: calc(100vh - 80px);
+    background-color: $light;
 }
