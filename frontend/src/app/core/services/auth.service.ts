@@ -26,7 +26,8 @@ export class AuthService {
     private readonly authApi = inject(AuthenticationService);
     private readonly tokenService = inject(TokenService);
 
-    public readonly currentUser$: Observable<CurrentUser | null> = this.tokenService.currentUser$;
+    public readonly currentUser = this.tokenService.currentUser;
+    public readonly currentUser$ = this.tokenService.currentUser$;
 
     login(credentials: LoginCredentials): Observable<AuthTokens> {
         const dto: AuthRequestDto = {

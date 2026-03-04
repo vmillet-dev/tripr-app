@@ -1,7 +1,7 @@
 import {JwtHelperService} from "@auth0/angular-jwt";
-import {BehaviorSubject, Observable} from "rxjs";
 import {CurrentUser} from "../models/auth.model";
-import {Injectable} from "@angular/core";
+import {Injectable, signal} from "@angular/core";
+import {toObservable} from "@angular/core/rxjs-interop";
 
 @Injectable({providedIn: 'root'})
 export class TokenService {
@@ -11,12 +11,13 @@ export class TokenService {
     // Token volatile en mémoire (jamais en localStorage → protection XSS)
     private token: string | null = null;
 
-    private readonly currentUserSubject = new BehaviorSubject<CurrentUser | null>(null);
-    public readonly currentUser$: Observable<CurrentUser | null> = this.currentUserSubject.asObservable();
+    private readonly currentUserSignal = signal<CurrentUser | null>(null);
+    public readonly currentUser = this.currentUserSignal.asReadonly();
+    public readonly currentUser$ = toObservable(this.currentUser);
 
     setToken(accessToken: string): void {
         this.token = accessToken;
-        this.currentUserSubject.next(this.decodeUser(accessToken));
+        this.currentUserSignal.set(this.decodeUser(accessToken));
     }
 
     getToken(): string | null {
@@ -25,7 +26,7 @@ export class TokenService {
 
     clearToken(): void {
         this.token = null;
-        this.currentUserSubject.next(null);
+        this.currentUserSignal.set(null);
     }
 
     isAuthenticated(): boolean {
@@ -42,7 +43,7 @@ export class TokenService {
     }
 
     getCurrentUser(): CurrentUser | null {
-        return this.currentUserSubject.getValue();
+        return this.currentUser();
     }
 
     hasRole(role: string): boolean {
