@@ -12,45 +12,54 @@ Tripr is a production-ready template designed for scalability, security, and a s
 ### 🏗️ Architecture Overview
 
 ```mermaid
-graph TB
-    subgraph Client ["Frontend (Angular 21)"]
+graph TD
+    %% Core Domain at the center
+    subgraph Core ["&nbsp;&nbsp;&nbsp;&nbsp;Domain Core&nbsp;&nbsp;&nbsp;&nbsp;"]
+        DOM{{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Business Logic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>(Services & Ports)"}}
+    end
+
+    %% Adapters surrounding the core
+    subgraph Adapters ["&nbsp;&nbsp;&nbsp;&nbsp;Infrastructure Adapters (Hexagon)&nbsp;&nbsp;&nbsp;&nbsp;"]
+        direction TB
+        REST[REST API / Web]
+        PERSIST[Persistence<br/>(PostgreSQL)]
+        SEC[Security<br/>(JWT)]
+        MAIL[Mail / SMTP]
+    end
+
+    %% Entry point orchestrating everything
+    subgraph Shell ["Application Shell"]
+        APP[Bootstrap / Config]
+    end
+
+    %% External entities
+    subgraph Client ["Frontend (Angular)"]
         UI[UI Components]
-        API_C[Generated API Client]
+        API_C[API Client]
     end
 
-    subgraph Server ["Backend (Spring Boot 4)"]
-        subgraph Hex ["Hexagonal Architecture"]
-            APP[Application Shell]
-            INF[Infrastructure Adapters]
-            DOM[Domain Core]
-        end
-    end
-
-    subgraph External ["External Services"]
-        DB[(PostgreSQL)]
-        SMTP[Maildev / SMTP]
-    end
-
+    %% Connections
     UI <--> API_C
-    API_C -- "OpenAPI Contract" --> INF
-    INF <--> DOM
-    APP --> INF
-    APP --> DOM
-    INF <--> DB
-    INF <--> SMTP
+    API_C -- "OpenAPI" --> REST
+    
+    APP --> Adapters
+    APP --> Core
+    
+    REST <--> DOM
+    DOM <--> PERSIST
+    DOM <--> SEC
+    DOM <--> MAIL
 
     %% Dark mode friendly styling
-    classDef domain fill:#1a237e,stroke:#3f51b5,stroke-width:2px,color:#ffffff;
+    classDef domain fill:#1a237e,stroke:#3f51b5,stroke-width:3px,color:#ffffff;
     classDef infra fill:#3e2723,stroke:#795548,stroke-width:2px,color:#ffffff;
     classDef app fill:#1b5e20,stroke:#4caf50,stroke-width:2px,color:#ffffff;
     classDef client fill:#4a148c,stroke:#9c27b0,stroke-width:2px,color:#ffffff;
-    classDef external fill:#212121,stroke:#9e9e9e,stroke-width:2px,color:#ffffff;
-
+    
     class DOM domain;
-    class INF infra;
+    class REST,PERSIST,SEC,MAIL infra;
     class APP app;
     class UI,API_C client;
-    class DB,SMTP external;
 ```
 
 ### 🛠️ Tech Stack
