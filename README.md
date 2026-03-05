@@ -14,7 +14,7 @@ Tripr is a production-ready template designed for scalability, security, and a s
 ```mermaid
 graph TB
     subgraph Client ["Frontend (Angular 21)"]
-        UI[Signals & Zoneless UI]
+        UI[UI Components]
         API_C[Generated API Client]
     end
 
@@ -35,13 +35,22 @@ graph TB
     API_C -- "OpenAPI Contract" --> INF
     INF <--> DOM
     APP --> INF
+    APP --> DOM
     INF <--> DB
     INF <--> SMTP
 
-    classDef primary fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef secondary fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
-    class DOM,UI primary;
-    class INF,APP,API_C secondary;
+    %% Dark mode friendly styling
+    classDef domain fill:#1a237e,stroke:#3f51b5,stroke-width:2px,color:#ffffff;
+    classDef infra fill:#3e2723,stroke:#795548,stroke-width:2px,color:#ffffff;
+    classDef app fill:#1b5e20,stroke:#4caf50,stroke-width:2px,color:#ffffff;
+    classDef client fill:#4a148c,stroke:#9c27b0,stroke-width:2px,color:#ffffff;
+    classDef external fill:#212121,stroke:#9e9e9e,stroke-width:2px,color:#ffffff;
+
+    class DOM domain;
+    class INF infra;
+    class APP app;
+    class UI,API_C client;
+    class DB,SMTP external;
 ```
 
 ### 🛠️ Tech Stack
@@ -49,7 +58,7 @@ graph TB
 | Component    | Key Technologies                                                                     |
 |:-------------|:-------------------------------------------------------------------------------------|
 | **Backend**  | Kotlin, Spring Boot 4.+, Spring Security (JWT), Liquibase, MapStruct, Testcontainers |
-| **Frontend** | Angular 21, Vite, Vitest, Bootstrap 5, Transloco (i18n), Signals                     |
+| **Frontend** | Angular 21, Vite, Vitest, Bootstrap 5, Transloco (i18n), Signals, Zoneless           |
 | **Bridge**   | **OpenAPI Generator** (Automatic Model & API Synchronization)                        |
 | **DevOps**   | Docker, GitHub Actions, Ansible                                                      |
 
@@ -89,4 +98,4 @@ cd frontend && npm install && npm run dev
 ---
 
 - 📖 [**Backend Documentation**](backend/README.md) — *Architecture, API & Tests*
-- 📖 [**Frontend Documentation**](frontend/README.md) — *Signals, Standalone & Vite*
+- 📖 [**Frontend Documentation**](frontend/README.md) — *Modern Angular, Tooling & Vite*

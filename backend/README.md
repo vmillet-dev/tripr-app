@@ -15,14 +15,14 @@ The project follows the **Ports & Adapters** pattern to decouple business logic 
 - **`domain/`**: **The Core**.
     - `model/`: Domain entities and value objects.
     - `port/`: Inbound (In) and Outbound (Out) interfaces.
-    - `service/`: Business orchestration implementing *In-Ports* by using *Out-Ports*.
+    - `service/`: Business orchestration. Services implement *In-Ports* and use *Out-Ports* to execute business logic.
 - **`infrastructure/`**: **The Adapters**.
-    - Concrete port implementations (JPA/PostgreSQL Persistence, JWT Security, SMTP Email).
-    - REST Controllers and external configurations.
+    - Concrete implementations of *Out-Ports* (Persistence with JPA/PostgreSQL, Security with JWT, Email with SMTP).
+    - Inbound adapters such as REST Controllers.
 - **`application/`**: **The Shell**.
-    - Application bootstrap (Main class).
-    - Global configuration (Spring, Security, Liquibase).
-    - Integration tests and architectural compliance (**ArchUnit**).
+    - Entry point of the application (Main class).
+    - Global configurations (Spring, Security, Docker Compose).
+    - Integration tests and architectural validation (**ArchUnit**).
 
 ---
 
