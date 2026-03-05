@@ -6,13 +6,13 @@ Modern **Angular 21** application, optimized for performance and developer exper
 
 ### 🎨 Principles & Conventions
 
-This project embraces the latest innovations in the Angular ecosystem:
+This project follows modern Angular standards to ensure maintainability and performance:
 
-- **Signals**: Reactive and granular state management.
-- **Zoneless**: Removal of `zone.js` for increased performance and better control over the rendering cycle.
-- **Standalone Components**: Modular architecture without `NgModules`.
-- **Vite & Analog**: Ultra-fast tooling for development and build.
-- **Internationalization**: Multi-language support via **Transloco**.
+- **Standalone Components**: Modular architecture without the overhead of `NgModules`.
+- **Reactive State**: Strategic use of **Signals** and **RxJS** for clean data flow.
+- **Performance**: Optimization with **Zoneless** change detection.
+- **Tooling**: Ultra-fast development and builds via **Vite** and **Analog**.
+- **I18n**: Full internationalization support with **Transloco**.
 
 ---
 
