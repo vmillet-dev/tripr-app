@@ -1,6 +1,8 @@
 # 🏗️ Tripr API — Backend
 
-Robust API built with **Spring Boot 3.4** and **Kotlin**, using a strict **Hexagonal Architecture** to ensure domain isolation and testability.
+Robust API built with **Spring Boot 4** and **Kotlin**, using a strict **Hexagonal Architecture** to ensure domain isolation and testability.
+
+The project follows a **Contract-First** approach using **OpenAPI**. The server-side code is generated from the OpenAPI spec, ensuring a perfect sync between documentation and implementation.
 
 🔗 **Swagger UI** (dev mode): [http://localhost:8080/api/swagger-ui](http://localhost:8080/api/swagger-ui)
 
