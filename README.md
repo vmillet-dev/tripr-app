@@ -13,53 +13,67 @@ Tripr is a production-ready template designed for scalability, security, and a s
 
 ```mermaid
 graph LR
-    %% Client Layer (Left)
-    subgraph Client ["&nbsp;&nbsp;&nbsp;Frontend (Angular)&nbsp;&nbsp;&nbsp;"]
+    subgraph ANGULAR["🅰️ Angular Frontend"]
         direction TB
-        UI["UI Components<br/>(Signals / Zoneless)"]
-        API_C["API Client<br/>(Generated)"]
+        A1["📦 Core Module\n─────────────\nServices\nGuards\nInterceptors"]
+        A2["📦 Feature Modules\n─────────────\nComponents\nPages\nResolvers"]
+        A3["📦 Shared Module\n─────────────\nUI Components\nPipes / Directives"]
+        A1 --- A2 --- A3
     end
 
-    %% Middle Layer (Bridge)
-    OC[["&nbsp;&nbsp;&nbsp;OpenAPI Generator&nbsp;&nbsp;&nbsp;"]]
-
-    %% Backend Layer (Right)
-    subgraph Backend ["&nbsp;&nbsp;&nbsp;Backend (Spring Boot 4)&nbsp;&nbsp;&nbsp;"]
+    subgraph OAG["⚙️ OpenAPI Generator"]
         direction TB
-        
-        subgraph Shell ["Application Shell"]
-            APP["Bootstrap / Config"]
+        O1["📄 openapi.yaml\n(contract)"]
+        O2["🔄 Generated Client\n─────────────\nModels (TS)\nAPI Services (TS)"]
+        O1 --> O2
+    end
+
+    subgraph SPRINGBOOT["🍃 Spring Boot — Hexagonal Architecture"]
+        direction TB
+
+        subgraph APP["📦 application"]
+            AP1["🚀 Main Class\n─────────────\nSpringApplication\nGlobal Config\nBeans / Properties"]
         end
 
-        subgraph Hexagon ["Hexagonal Core"]
+        subgraph IN_ADAPTERS["📦 adapters · in"]
+            IN1["🌐 REST Controllers\n─────────────\nRequest / Response DTOs\nValidation\nOpenAPI annotations"]
+        end
+
+        subgraph DOMAIN["📦 domain"]
             direction TB
-            INF["Infrastructure Adapters<br/>(REST, Persistence, Security)"]
-            DOM{{"&nbsp;&nbsp;&nbsp;Domain Core&nbsp;&nbsp;&nbsp;<br/>(Services & Ports)"}}
+            DO1["🧩 Objects\n─────────────\nEntities\nValue Objects\nAggregates"]
+            DO2["🔌 Ports · in\n─────────────\nUse Case Interfaces"]
+            DO3["🔌 Ports · out\n─────────────\nRepository Interfaces\nNotification Interfaces"]
+            DO4["⚙️ Services\n─────────────\nUse Case Implementations\nBusiness Logic"]
+            DO2 --> DO4
+            DO4 --> DO3
+            DO4 --- DO1
         end
+
+        subgraph OUT_ADAPTERS["📦 adapters · out"]
+            direction TB
+            OUT1["🗄️ Persistence\n─────────────\nJPA Repositories\nEntity Mappers\nDB Config"]
+            OUT2["📧 Notification\n─────────────\nEmail Service\nSMTP / Templates"]
+        end
+
+        IN1 -->|"appelle"| DO2
+        DO3 -->|"implémenté par"| OUT1
+        DO3 -->|"implémenté par"| OUT2
+        APP -.->|"configure"| IN1
+        APP -.->|"configure"| OUT1
+        APP -.->|"configure"| OUT2
     end
 
-    %% Connections
-    UI <--> API_C
-    API_C <--> OC
-    OC <--> INF
-    
-    APP -.-> INF
-    APP -.-> DOM
-    
-    INF <--> DOM
+    A2 -->|"HTTP calls\nvia generated\nAPI services"| OAG
+    OAG -->|"REST API\nJSON"| IN1
 
-    %% Styling
-    classDef domain fill:#1a237e,stroke:#3f51b5,stroke-width:3px,color:#ffffff;
-    classDef infra fill:#3e2723,stroke:#795548,stroke-width:2px,color:#ffffff;
-    classDef app fill:#1b5e20,stroke:#4caf50,stroke-width:2px,color:#ffffff;
-    classDef client fill:#4a148c,stroke:#9c27b0,stroke-width:2px,color:#ffffff;
-    classDef contract fill:#f57f17,stroke:#fbc02d,stroke-width:2px,color:#ffffff;
-    
-    class DOM domain;
-    class INF infra;
-    class APP app;
-    class UI,API_C client;
-    class OC contract;
+    style ANGULAR fill:#dd0031,color:#fff,stroke:#a50025
+    style OAG fill:#f5a623,color:#000,stroke:#c47d00
+    style SPRINGBOOT fill:#6db33f,color:#fff,stroke:#4a7c2a
+    style APP fill:#2d5a1b,color:#fff,stroke:#1a3a0f
+    style IN_ADAPTERS fill:#1e6e9f,color:#fff,stroke:#0d4a70
+    style DOMAIN fill:#4a4a8a,color:#fff,stroke:#2d2d6b
+    style OUT_ADAPTERS fill:#1e6e9f,color:#fff,stroke:#0d4a70
 ```
 
 ### 🛠️ Tech Stack
