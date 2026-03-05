@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.noarg) apply false
     alias(libs.plugins.spring.boot) apply false
     alias(libs.plugins.kotlin.kapt) apply false
-    jacoco
+    alias(libs.plugins.kover)
 }
 
 java {
