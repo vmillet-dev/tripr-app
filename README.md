@@ -21,10 +21,10 @@ graph TD
     %% Adapters surrounding the core
     subgraph Adapters ["&nbsp;&nbsp;&nbsp;&nbsp;Infrastructure Adapters (Hexagon)&nbsp;&nbsp;&nbsp;&nbsp;"]
         direction TB
-        REST[REST API / Web]
-        PERSIST[Persistence<br/>(PostgreSQL)]
-        SEC[Security<br/>(JWT)]
-        MAIL[Mail / SMTP]
+        REST["REST API / Web"]
+        PERSIST["Persistence<br/>(PostgreSQL)"]
+        SEC["Security<br/>(JWT)"]
+        MAIL["Mail / SMTP"]
     end
 
     %% Entry point orchestrating everything
