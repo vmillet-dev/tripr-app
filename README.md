@@ -12,54 +12,52 @@ Tripr is a production-ready template designed for scalability, security, and a s
 ### 🏗️ Architecture Overview
 
 ```mermaid
-graph TD
-    %% Core Domain at the center
-    subgraph Core ["&nbsp;&nbsp;&nbsp;&nbsp;Domain Core&nbsp;&nbsp;&nbsp;&nbsp;"]
-        DOM{{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Business Logic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>(Services & Ports)"}}
-    end
-
-    %% Adapters surrounding the core
-    subgraph Adapters ["&nbsp;&nbsp;&nbsp;&nbsp;Infrastructure Adapters (Hexagon)&nbsp;&nbsp;&nbsp;&nbsp;"]
-        direction TB
-        REST["REST API / Web"]
-        PERSIST["Persistence<br/>(PostgreSQL)"]
-        SEC["Security<br/>(JWT)"]
-        MAIL["Mail / SMTP"]
-    end
-
-    %% Entry point orchestrating everything
-    subgraph Shell ["Application Shell"]
-        APP[Bootstrap / Config]
-    end
-
-    %% External entities
+graph LR
+    %% Client Layer
     subgraph Client ["Frontend (Angular)"]
-        UI[UI Components]
-        API_C[API Client]
+        UI["UI Components"]
+        API_C["API Client"]
+    end
+
+    %% Contract Layer
+    OC[["&nbsp;&nbsp;&nbsp;OpenAPI Contract&nbsp;&nbsp;&nbsp;"]]
+
+    %% Backend Layer
+    subgraph Backend ["Backend (Spring Boot 4)"]
+        direction TB
+        subgraph Shell ["Application Shell"]
+            APP["Bootstrap / Config"]
+        end
+
+        subgraph Hex ["Hexagon"]
+            direction LR
+            INF["Infrastructure<br/>(Adapters)"]
+            DOM{{"&nbsp;&nbsp;&nbsp;Domain Core&nbsp;&nbsp;&nbsp;<br/>(Services & Ports)"}}
+        end
     end
 
     %% Connections
     UI <--> API_C
-    API_C -- "OpenAPI" --> REST
+    API_C <--> OC
+    OC <--> INF
     
-    APP --> Adapters
-    APP --> Core
+    APP --> INF
+    APP --> DOM
     
-    REST <--> DOM
-    DOM <--> PERSIST
-    DOM <--> SEC
-    DOM <--> MAIL
+    INF <--> DOM
 
-    %% Dark mode friendly styling
+    %% Styling
     classDef domain fill:#1a237e,stroke:#3f51b5,stroke-width:3px,color:#ffffff;
     classDef infra fill:#3e2723,stroke:#795548,stroke-width:2px,color:#ffffff;
     classDef app fill:#1b5e20,stroke:#4caf50,stroke-width:2px,color:#ffffff;
     classDef client fill:#4a148c,stroke:#9c27b0,stroke-width:2px,color:#ffffff;
+    classDef contract fill:#f57f17,stroke:#fbc02d,stroke-width:2px,color:#ffffff;
     
     class DOM domain;
-    class REST,PERSIST,SEC,MAIL infra;
+    class INF infra;
     class APP app;
     class UI,API_C client;
+    class OC contract;
 ```
 
 ### 🛠️ Tech Stack
