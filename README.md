@@ -13,25 +13,27 @@ Tripr is a production-ready template designed for scalability, security, and a s
 
 ```mermaid
 graph LR
-    %% Client Layer
-    subgraph Client ["Frontend (Angular)"]
-        UI["UI Components"]
-        API_C["API Client"]
+    %% Client Layer (Left)
+    subgraph Client ["&nbsp;&nbsp;&nbsp;Frontend (Angular)&nbsp;&nbsp;&nbsp;"]
+        direction TB
+        UI["UI Components<br/>(Signals / Zoneless)"]
+        API_C["API Client<br/>(Generated)"]
     end
 
-    %% Contract Layer
-    OC[["&nbsp;&nbsp;&nbsp;OpenAPI Contract&nbsp;&nbsp;&nbsp;"]]
+    %% Middle Layer (Bridge)
+    OC[["&nbsp;&nbsp;&nbsp;OpenAPI Generator&nbsp;&nbsp;&nbsp;"]]
 
-    %% Backend Layer
-    subgraph Backend ["Backend (Spring Boot 4)"]
+    %% Backend Layer (Right)
+    subgraph Backend ["&nbsp;&nbsp;&nbsp;Backend (Spring Boot 4)&nbsp;&nbsp;&nbsp;"]
         direction TB
+        
         subgraph Shell ["Application Shell"]
             APP["Bootstrap / Config"]
         end
 
-        subgraph Hex ["Hexagon"]
-            direction LR
-            INF["Infrastructure<br/>(Adapters)"]
+        subgraph Hexagon ["Hexagonal Core"]
+            direction TB
+            INF["Infrastructure Adapters<br/>(REST, Persistence, Security)"]
             DOM{{"&nbsp;&nbsp;&nbsp;Domain Core&nbsp;&nbsp;&nbsp;<br/>(Services & Ports)"}}
         end
     end
@@ -41,8 +43,8 @@ graph LR
     API_C <--> OC
     OC <--> INF
     
-    APP --> INF
-    APP --> DOM
+    APP -.-> INF
+    APP -.-> DOM
     
     INF <--> DOM
 
