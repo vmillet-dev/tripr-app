@@ -7,6 +7,7 @@ import {AuthService} from './core/services/auth.service';
 import {authInterceptor} from './core/interceptors/auth.interceptor';
 import {firstValueFrom} from "rxjs";
 import {provideApi} from "./core/api/generated";
+import {provideSignalFormsConfig} from "@angular/forms/signals";
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -18,6 +19,7 @@ export const appConfig: ApplicationConfig = {
             const auth = inject(AuthService);
             return firstValueFrom(auth.refreshToken()).catch(() => false);
         }),
-        provideApi("/api")
+        provideApi("/api"),
+        provideSignalFormsConfig()
     ]
 };

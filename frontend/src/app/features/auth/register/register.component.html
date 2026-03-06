@@ -5,14 +5,15 @@
         <div class="card-body p-4 p-md-5">
           <h2 class="card-title text-center mb-4">{{ 'app.auth.register.title' | transloco }}</h2>
 
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <form (submit)="$event.preventDefault(); onSubmit()">
             <div class="mb-3">
               <label for="username" class="form-label">{{ 'app.auth.register.username' | transloco }}</label>
-              <input type="text" id="username" data-cy="username-input" formControlName="username"
-                     class="form-control" [ngClass]="{ 'is-invalid': f['username'].touched && f['username'].errors }" />
-              @if (f['username'].touched && f['username'].errors) {
+              <input type="text" id="username" data-cy="username-input" [formField]="registerForm.username" required
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': registerForm.username().touched() && !registerForm.username().valid() }"/>
+              @if (registerForm.username().touched() && !registerForm.username().valid()) {
                 <div class="invalid-feedback">
-                  @if (f['username'].errors['required']) {
+                  @if (registerForm.username().errors()?.['required']) {
                     <div>{{ 'app.auth.validation.usernameRequired' | transloco }}</div>
                   }
                 </div>
@@ -21,14 +22,15 @@
 
             <div class="mb-3">
               <label for="email" class="form-label">{{ 'app.auth.register.email' | transloco }}</label>
-              <input type="email" id="email" data-cy="email-input" formControlName="email"
-                     class="form-control" [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].errors }" />
-              @if (f['email'].touched && f['email'].errors) {
+              <input type="email" id="email" data-cy="email-input" [formField]="registerForm.email" required
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': registerForm.email().touched() && !registerForm.email().valid() }"/>
+              @if (registerForm.email().touched() && !registerForm.email().valid()) {
                 <div class="invalid-feedback">
-                  @if (f['email'].errors['required']) {
+                  @if (registerForm.email().errors()?.['required']) {
                     <div>{{ 'app.auth.validation.emailRequired' | transloco }}</div>
                   }
-                  @if (f['email'].errors['email']) {
+                  @if (registerForm.email().errors()?.['email']) {
                     <div>{{ 'app.auth.validation.emailInvalid' | transloco }}</div>
                   }
                 </div>
@@ -37,14 +39,16 @@
 
             <div class="mb-3">
               <label for="password" class="form-label">{{ 'app.auth.register.password' | transloco }}</label>
-              <input type="password" id="password" data-cy="password-input" formControlName="password"
-                     class="form-control" [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }" />
-              @if (f['password'].touched && f['password'].errors) {
+              <input type="password" id="password" data-cy="password-input" [formField]="registerForm.password" required
+                     minlength="6"
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': registerForm.password().touched() && !registerForm.password().valid() }"/>
+              @if (registerForm.password().touched() && !registerForm.password().valid()) {
                 <div class="invalid-feedback">
-                  @if (f['password'].errors['required']) {
+                  @if (registerForm.password().errors()?.['required']) {
                     <div>{{ 'app.auth.validation.passwordRequired' | transloco }}</div>
                   }
-                  @if (f['password'].errors['minlength']) {
+                  @if (registerForm.password().errors()?.['minlength']) {
                     <div>{{ 'app.auth.validation.passwordMinLength' | transloco }}</div>
                   }
                 </div>
@@ -54,14 +58,15 @@
             <div class="mb-4">
               <label for="confirmPassword" class="form-label">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
               <input type="password" id="confirmPassword" data-cy="confirm-password-input"
-                     formControlName="confirmPassword"
-                     class="form-control" [ngClass]="{ 'is-invalid': f['confirmPassword'].touched && f['confirmPassword'].errors }" />
-              @if (f['confirmPassword'].touched && f['confirmPassword'].errors) {
+                     [formField]="registerForm.confirmPassword" required
+                     class="form-control"
+                     [ngClass]="{ 'is-invalid': registerForm.confirmPassword().touched() && (!registerForm.confirmPassword().valid() || registerForm.errors()?.['passwordMismatch']) }"/>
+              @if (registerForm.confirmPassword().touched()) {
                 <div class="invalid-feedback">
-                  @if (f['confirmPassword'].errors['required']) {
+                  @if (registerForm.confirmPassword().errors()?.['required']) {
                     <div>{{ 'app.auth.validation.confirmPasswordRequired' | transloco }}</div>
                   }
-                  @if (f['confirmPassword'].errors['passwordMismatch']) {
+                  @if (registerForm.errors()?.['passwordMismatch']) {
                     <div>{{ 'app.auth.validation.passwordMismatch' | transloco }}</div>
                   }
                 </div>
@@ -70,16 +75,16 @@
 
             <div class="d-grid gap-2 mb-3">
               <button type="submit" data-cy="register-button" class="btn btn-primary"
-                      [disabled]="registerForm.invalid || loading()">
-                @if (loading()) {
+                      [disabled]="!registerForm().valid() || registerAction.loading()">
+                @if (registerAction.loading()) {
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 }
                 {{ 'app.auth.register.submit' | transloco }}
               </button>
             </div>
 
-            @if (error()) {
-              <div class="alert alert-danger">{{ error() }}</div>
+            @if (registerAction.error()) {
+              <div class="alert alert-danger">{{ registerAction.error() }}</div>
             }
           </form>
 
