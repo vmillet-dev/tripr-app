@@ -26,7 +26,7 @@ class TokenPersistenceAdapter(
     }
 
     override fun deleteByUserAndType(user: User, type: TokenTypeEnum) {
-        tokenRepository.deleteByUserIdAndType(user.id, TokenTypeEnum.REFRESH)
+        tokenRepository.deleteByUserIdAndType(user.id, type)
     }
 
     override fun findByTokenAndType(token: String, type: TokenTypeEnum): Token? {
