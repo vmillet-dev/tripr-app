@@ -1,6 +1,8 @@
 # 🏗️ Tripr API — Backend
 
-Robust API built with **Spring Boot 3.4** and **Kotlin**, using a strict **Hexagonal Architecture** to ensure domain isolation and testability.
+Robust API built with **Spring Boot 4** and **Kotlin**, using a strict **Hexagonal Architecture** to ensure domain isolation and testability.
+
+The project follows a **Contract-First** approach using **OpenAPI**. The server-side code is generated from the OpenAPI spec, ensuring a perfect sync between documentation and implementation.
 
 🔗 **Swagger UI** (dev mode): [http://localhost:8080/api/swagger-ui](http://localhost:8080/api/swagger-ui)
 
@@ -13,14 +15,14 @@ The project follows the **Ports & Adapters** pattern to decouple business logic 
 - **`domain/`**: **The Core**.
     - `model/`: Domain entities and value objects.
     - `port/`: Inbound (In) and Outbound (Out) interfaces.
-    - `service/`: Business orchestration implementing *In-Ports* by using *Out-Ports*.
+    - `service/`: Business orchestration. Services implement *In-Ports* and use *Out-Ports* to execute business logic.
 - **`infrastructure/`**: **The Adapters**.
-    - Concrete port implementations (JPA/PostgreSQL Persistence, JWT Security, SMTP Email).
-    - REST Controllers and external configurations.
+    - Concrete implementations of *Out-Ports* (Persistence with JPA/PostgreSQL, Security with JWT, Email with SMTP).
+    - Inbound adapters such as REST Controllers.
 - **`application/`**: **The Shell**.
-    - Application bootstrap (Main class).
-    - Global configuration (Spring, Security, Liquibase).
-    - Integration tests and architectural compliance (**ArchUnit**).
+    - Entry point of the application (Main class).
+    - Global configurations (Spring, Security, Docker Compose).
+    - Integration tests and architectural validation (**ArchUnit**).
 
 ---
 
