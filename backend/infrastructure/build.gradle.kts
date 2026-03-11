@@ -24,6 +24,11 @@ dependencies {
         exclude(group = "tools.jackson.module", module = "jackson-module-kotlin")
     }
     kapt(libs.mapstruct.kapt)
+
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
+    testImplementation(libs.assertJ)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.matching { it.name == "kaptGenerateStubsKotlin" }.configureEach {

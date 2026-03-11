@@ -8,12 +8,12 @@ plugins {
     alias(libs.plugins.kotlin.noarg) apply false
     alias(libs.plugins.spring.boot) apply false
     alias(libs.plugins.kotlin.kapt) apply false
-    jacoco
+    alias(libs.plugins.kover)
 }
 
 subprojects {
     apply(plugin = rootProject.libs.plugins.kotlin.jvm.get().pluginId)
-    apply(plugin = "jacoco")
+    apply(plugin = rootProject.libs.plugins.kover.get().pluginId)
 
     kotlin {
         compilerOptions {
@@ -28,7 +28,7 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
-        finalizedBy("jacocoTestReport")
+        finalizedBy("koverHtmlReport", "koverXmlReport")
     }
 
     tasks.withType<BootRun> {
@@ -39,29 +39,43 @@ subprojects {
         enabled = false
     }
 
-    jacoco {
-        toolVersion = rootProject.libs.versions.jacoco.get()
-    }
-
-    afterEvaluate {
-        tasks.named<JacocoReport>("jacocoTestReport") {
-            dependsOn(tasks.test)
-
-            reports {
-                xml.required.set(true)
-            }
-
-            classDirectories.setFrom(
-                fileTree("build/classes/kotlin/main") {
-                    exclude(
-                        "**/config/**",
-                        "**/dto/**",
-                        "**/enums/**",
-                        "**/exception/**",
-                        "**/annotation/**"
+    kover {
+        reports {
+            filters {
+                excludes {
+                    classes(
+                        "**.config.**",
+                        "**.dto.**",
+                        "**.enums.**",
+                        "**.exception.**",
+                        "**.annotation.**",
+                        "**.entity.**",
+                        "**.model.**",
+                        "**.*DefaultImpls",
+                        "**.*Api",
+                        "**.*Delegate",
+                        "**.*ExceptionHandler",
+                        "**.*ApiUtil",
+                        "**.*Exception",
+                        $$"**.*$Companion"
                     )
                 }
-            )
+            }
+            total {
+                xml {
+                    onCheck = true
+                }
+                html {
+                    onCheck = true
+                }
+            }
+            verify {
+                rule {
+                    bound {
+                        minValue = 80
+                    }
+                }
+            }
         }
     }
 }
