@@ -56,17 +56,18 @@
             </div>
 
             <div class="mb-4">
-              <label for="confirmPassword" class="form-label">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
+              <label for="confirmPassword"
+                     class="form-label">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
               <input type="password" id="confirmPassword" data-cy="confirm-password-input"
                      [formField]="registerForm.confirmPassword" required
                      class="form-control"
-                     [ngClass]="{ 'is-invalid': registerForm.confirmPassword().touched() && (!registerForm.confirmPassword().valid() || registerForm.errors()?.['passwordMismatch']) }"/>
+                     [ngClass]="{ 'is-invalid': registerForm.confirmPassword().touched() && (!registerForm.confirmPassword().valid() || registerForm.errors?.['passwordMismatch']) }"/>
               @if (registerForm.confirmPassword().touched()) {
                 <div class="invalid-feedback">
                   @if (registerForm.confirmPassword().errors()?.['required']) {
                     <div>{{ 'app.auth.validation.confirmPasswordRequired' | transloco }}</div>
                   }
-                  @if (registerForm.errors()?.['passwordMismatch']) {
+                  @if (registerForm.errors?.['passwordMismatch']) {
                     <div>{{ 'app.auth.validation.passwordMismatch' | transloco }}</div>
                   }
                 </div>
