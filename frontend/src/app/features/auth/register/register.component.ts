@@ -2,7 +2,6 @@ import {Component, inject, signal} from '@angular/core';
 import {email, form, FormField, minLength, required, validate} from '@angular/forms/signals';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/services/auth.service';
-import {NgClass} from '@angular/common';
 import {TranslocoPipe} from '@jsverse/transloco';
 import {createAsyncAction} from '../../../core/utils/async-action.util';
 import {RegisterData} from '../../../core/models/auth.model';
@@ -15,7 +14,7 @@ interface RegisterModel extends RegisterData {
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    imports: [NgClass, RouterLink, TranslocoPipe, FormField, FormInputComponent]
+    imports: [RouterLink, TranslocoPipe, FormField, FormInputComponent]
 })
 export class RegisterComponent {
     private router = inject(Router);
@@ -40,9 +39,7 @@ export class RegisterComponent {
         required(fields.confirmPassword);
 
         validate(fields.confirmPassword, ({value, valueOf}) => {
-            return value() === valueOf(fields.password)
-                ? null
-                : {kind: 'passwordMismatch'};
+            return value() === valueOf(fields.password) ? null : {kind: 'passwordMismatch'};
         });
     });
 

@@ -16,7 +16,11 @@
       "dashboard": "Dashboard",
       "login": "Login",
       "signup": "Sign Up",
-      "logout": "Logout"
+      "logout": "Logout",
+      "languages": {
+        "fr": "French",
+        "en": "English"
+      }
     },
     "auth": {
       "login": {

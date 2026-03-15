@@ -16,7 +16,11 @@
       "dashboard": "Tableau de bord",
       "login": "Connexion",
       "signup": "S'inscrire",
-      "logout": "Déconnexion"
+      "logout": "Déconnexion",
+      "languages": {
+        "fr": "Français",
+        "en": "Anglais"
+      }
     },
     "auth": {
       "login": {
