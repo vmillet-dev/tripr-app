@@ -2,7 +2,7 @@ import {Component, computed, inject} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {toSignal} from "@angular/core/rxjs-interop";
-import {TranslocoPipe} from "@jsverse/transloco";
+import {TranslocoPipe, TranslocoService} from "@jsverse/transloco";
 
 
 @Component({
@@ -16,9 +16,21 @@ import {TranslocoPipe} from "@jsverse/transloco";
     ]
 })
 export class HeaderComponent {
+    private readonly translocoService = inject(TranslocoService);
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
 
-    private authService = inject(AuthService);
-    private router = inject(Router);
+    changeLanguage(lang: 'fr' | 'en'): void {
+        this.translocoService.setActiveLang(lang);
+    }
+
+    currentLanguage(): 'fr' | 'en' {
+        return this.translocoService.getActiveLang() === 'en' ? 'en' : 'fr';
+    }
+
+    currentLanguageFlag(): string {
+        return this.currentLanguage() === 'fr' ? '🇫🇷' : '🇬🇧';
+    }
 
     currentUser = toSignal(this.authService.currentUser$, {
         initialValue: null

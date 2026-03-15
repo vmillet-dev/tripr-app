@@ -12,13 +12,7 @@ import {
     TokenValidation
 } from "../models/auth.model";
 import {TokenService} from "./token.service";
-import {
-    AuthenticationService,
-    AuthRequestDto,
-    PasswordResetDto,
-    PasswordResetRequestDto,
-    RegisterRequestDto
-} from "../api/generated";
+import {AuthenticationService} from "../api/generated";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -29,36 +23,29 @@ export class AuthService {
     public readonly currentUser$: Observable<CurrentUser | null> = this.tokenService.currentUser$;
 
     login(credentials: LoginCredentials): Observable<AuthTokens> {
-        const dto: AuthRequestDto = {
+        return this.authApi.login({
             username: credentials.username,
             password: credentials.password,
-        };
-
-        return this.authApi.login(dto).pipe(
+        }).pipe(
             tap(res => this.tokenService.setToken(res.accessToken ?? '')),
-            map(res => ({accessToken: res.accessToken ?? ''})),
-            catchError(err => throwError(() => err))
+            map(res => ({accessToken: res.accessToken ?? ''}))
         );
     }
 
     register(data: RegisterData): Observable<ApiMessage> {
-        const dto: RegisterRequestDto = {
+        return this.authApi.register({
             username: data.username,
             password: data.password,
             email: data.email,
-        };
-
-        return this.authApi.register(dto).pipe(
-            map(res => ({message: res.message ?? ''})),
-            catchError(err => throwError(() => err))
+        }).pipe(
+            map(res => ({message: res.message ?? ''}))
         );
     }
 
     refreshToken(): Observable<AuthTokens> {
         return this.authApi.refreshToken().pipe(
             tap(res => this.tokenService.setToken(res.accessToken ?? '')),
-            map(res => ({accessToken: res.accessToken ?? ''})),
-            catchError(err => throwError(() => err))
+            map(res => ({accessToken: res.accessToken ?? ''}))
         );
     }
 
@@ -74,30 +61,23 @@ export class AuthService {
     }
 
     requestPasswordReset(data: PasswordResetRequest): Observable<ApiMessage> {
-        const dto: PasswordResetRequestDto = {username: data.username};
-
-        return this.authApi.requestPasswordReset(dto).pipe(
-            map(res => ({message: res.message ?? ''})),
-            catchError(err => throwError(() => err))
+        return this.authApi.requestPasswordReset({username: data.username}).pipe(
+            map(res => ({message: res.message ?? ''}))
         );
     }
 
     resetPassword(data: PasswordReset): Observable<ApiMessage> {
-        const dto: PasswordResetDto = {
+        return this.authApi.resetPassword({
             token: data.token,
             newPassword: data.newPassword,
-        };
-
-        return this.authApi.resetPassword(dto).pipe(
-            map(res => ({message: res.message ?? ''})),
-            catchError(err => throwError(() => err))
+        }).pipe(
+            map(res => ({message: res.message ?? ''}))
         );
     }
 
     validatePasswordResetToken(token: string): Observable<TokenValidation> {
         return this.authApi.validateToken(token).pipe(
-            map(res => ({valid: res.valid ?? false})),
-            catchError(err => throwError(() => err))
+            map(res => ({valid: res.valid ?? false}))
         );
     }
 

@@ -1,0 +1,38 @@
+@if (!hidden()) {
+  <div class="mb-3">
+    @if (label()) {
+      <label [for]="id()" class="form-label">
+        {{ label()! | transloco }}
+      </label>
+    }
+
+    <input
+      class="form-control"
+      [class.is-invalid]="showErrors()"
+      [id]="id()"
+      [type]="type()"
+      [value]="value()"
+      [attr.placeholder]="placeholder() ? (placeholder()! | transloco) : null"
+      [attr.autocomplete]="autocomplete()"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      [required]="required()"
+      [attr.min]="min() ?? null"
+      [attr.max]="max() ?? null"
+      [attr.minlength]="minLength() ?? null"
+      [attr.maxlength]="maxLength() ?? null"
+      (input)="value.set(($any($event.target)).value)"
+      (blur)="touched.set(true)"
+    />
+
+    @if (showErrors()) {
+      <div class="invalid-feedback d-block">
+        @for (error of errors(); track $index) {
+          <div>
+            {{ errorKey(error) | transloco : errorParams(error) }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

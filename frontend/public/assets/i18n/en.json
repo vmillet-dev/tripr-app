@@ -1,4 +1,19 @@
 {
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "min": "Minimum value is {{min}}",
+    "max": "Maximum value is {{max}}",
+    "minLength": "Minimum {{minLength}} characters required",
+    "maxLength": "Maximum {{maxLength}} characters allowed",
+    "pattern": "Invalid format",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "errors": {
+    "FUNC_001": "Login failed, invalid credentials provided",
+    "FUNC_004": "username {{username}} already exists",
+    "FUNC_006": "email {{email}} already exists"
+  },
   "app": {
     "title": "Tripr App",
     "header": {
@@ -6,7 +21,11 @@
       "dashboard": "Dashboard",
       "login": "Login",
       "signup": "Sign Up",
-      "logout": "Logout"
+      "logout": "Logout",
+      "languages": {
+        "fr": "French",
+        "en": "English"
+      }
     },
     "auth": {
       "login": {

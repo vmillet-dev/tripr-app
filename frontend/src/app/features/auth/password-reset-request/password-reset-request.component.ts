@@ -1,48 +1,51 @@
 import {Component, inject, signal} from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {form, FormField, required} from '@angular/forms/signals';
 import {Router} from '@angular/router';
-import {TranslocoModule} from '@jsverse/transloco';
+import {TranslocoPipe} from '@jsverse/transloco';
 import {AuthService} from "../../../core/services/auth.service";
+import {createAsyncAction} from "../../../core/utils/async-action.util";
+import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
+import {FormSubmitDirective} from "../../../core/directives/form-submit.directive";
 
 @Component({
     selector: 'app-password-reset-request',
     templateUrl: './password-reset-request.component.html',
-    imports: [ReactiveFormsModule, TranslocoModule]
+    imports: [FormField, TranslocoPipe, FormInputComponent, FormSubmitDirective]
 })
 export class PasswordResetRequestComponent {
-    private formBuilder = inject(FormBuilder);
     private authService = inject(AuthService);
     private router = inject(Router);
 
-    isSubmitting = signal<boolean>(false);
     successMessage = signal<string | null>(null);
-    errorMessage = signal<string | null>(null);
 
-    resetForm = this.formBuilder.group({
-        username: ['', [Validators.required]]
+    resetModel = signal({
+        username: ''
     });
 
+    resetForm = form(this.resetModel, (fields) => {
+        required(fields.username);
+    });
+
+    resetAction = createAsyncAction(
+        (username: string) => this.authService.requestPasswordReset({username}),
+        {
+            onSuccess: (response) => {
+                this.successMessage.set(response.message);
+                this.resetModel.set({username: ''});
+            }
+        }
+    );
+
     onSubmit(): void {
-        if (this.resetForm.invalid) {
+        if (!this.resetForm().valid()) {
             return;
         }
 
-        this.isSubmitting.set(true);
-        this.errorMessage.set(null);
         this.successMessage.set(null);
-
-        this.authService.requestPasswordReset(this.resetForm.value as any)
-            .subscribe({
-                next: (response) => {
-                    this.isSubmitting.set(false);
-                    this.successMessage.set(response.message);
-                    this.resetForm.reset();
-                },
-                error: (error) => {
-                    this.isSubmitting.set(false);
-                    this.errorMessage.set(error.error?.message || 'An error occurred. Please try again.');
-                }
-            });
+        this.resetAction.execute(this.resetModel().username).subscribe({
+            next: (res) => this.resetAction.handleSuccess(res),
+            error: (err) => this.resetAction.handleError(err)
+        });
     }
 
     navigateToLogin(): void {
