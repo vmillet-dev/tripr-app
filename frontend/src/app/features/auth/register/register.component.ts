@@ -6,6 +6,7 @@ import {TranslocoPipe} from '@jsverse/transloco';
 import {createAsyncAction} from '../../../core/utils/async-action.util';
 import {RegisterData} from '../../../core/models/auth.model';
 import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
+import {FormSubmitDirective} from "../../../core/directives/form-submit.directive";
 
 interface RegisterModel extends RegisterData {
     confirmPassword: string;
@@ -14,7 +15,7 @@ interface RegisterModel extends RegisterData {
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    imports: [RouterLink, TranslocoPipe, FormField, FormInputComponent]
+    imports: [RouterLink, TranslocoPipe, FormField, FormInputComponent, FormSubmitDirective]
 })
 export class RegisterComponent {
     private router = inject(Router);
@@ -43,8 +44,6 @@ export class RegisterComponent {
         });
     });
 
-    submitted = signal(false);
-
     registerAction = createAsyncAction(
         (data: RegisterData) => this.authService.register(data),
         {
@@ -54,8 +53,6 @@ export class RegisterComponent {
     );
 
     onSubmit(): void {
-        this.submitted.set(true);
-
         if (!this.registerForm().valid()) {
             return;
         }

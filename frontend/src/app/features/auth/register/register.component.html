@@ -8,7 +8,6 @@
           <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
             <app-form-input
               [formField]="registerForm.username"
-              [submitted]="submitted()"
               id="username"
               label="app.auth.register.username"
               placeholder="app.auth.register.username">
@@ -16,7 +15,6 @@
 
             <app-form-input
               [formField]="registerForm.email"
-              [submitted]="submitted()"
               id="email"
               type="email"
               label="app.auth.register.email"
@@ -26,7 +24,6 @@
 
             <app-form-input
               [formField]="registerForm.password"
-              [submitted]="submitted()"
               id="password"
               type="password"
               label="app.auth.register.password"
@@ -36,7 +33,6 @@
 
             <app-form-input
               [formField]="registerForm.confirmPassword"
-              [submitted]="submitted()"
               id="confirmPassword"
               type="password"
               label="app.auth.register.confirmPassword"

@@ -8,7 +8,6 @@
           <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
             <app-form-input
               [formField]="loginForm.username"
-              [submitted]="submitted()"
               id="username"
               label="app.auth.login.username"
               placeholder="app.auth.login.username"
@@ -17,7 +16,6 @@
 
             <app-form-input
               [formField]="loginForm.password"
-              [submitted]="submitted()"
               id="password"
               type="password"
               label="app.auth.login.password"

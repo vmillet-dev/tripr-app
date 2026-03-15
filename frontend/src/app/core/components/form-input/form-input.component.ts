@@ -1,6 +1,7 @@
-import {Component, computed, input, model,} from '@angular/core';
+import {Component, computed, inject, input, model} from '@angular/core';
 import {FormValueControl, NgValidationError, ValidationError, WithOptionalField,} from '@angular/forms/signals';
 import {TranslocoPipe} from '@jsverse/transloco';
+import {FormSubmitDirective} from "../../directives/form-submit.directive";
 
 /**
  * Generic text-like input component for Angular Signal Forms.
@@ -26,6 +27,8 @@ import {TranslocoPipe} from '@jsverse/transloco';
     templateUrl: './form-input.component.html'
 })
 export class FormInputComponent implements FormValueControl<string> {
+    private formSubmit = inject(FormSubmitDirective, {optional: true});
+
     /**
      * Current field value bound by Signal Forms.
      * Must not be required at component creation time because `[formField]`
@@ -63,8 +66,11 @@ export class FormInputComponent implements FormValueControl<string> {
 
     /**
      * Whether the parent form has been submitted.
+     * If not provided, it tries to get it from the FormSubmitDirective.
      */
-    readonly submitted = input(false);
+    readonly submitted = input(false, {
+        transform: (value: boolean) => value || (this.formSubmit?.submitted() ?? false)
+    });
 
     /**
      * Validation errors provided by Signal Forms.
@@ -81,7 +87,10 @@ export class FormInputComponent implements FormValueControl<string> {
     /**
      * Displays validation messages only after the field has been touched or the form has been submitted.
      */
-    readonly showErrors = computed(() => (this.touched() || this.submitted()) && this.invalid());
+    readonly showErrors = computed(() => {
+        const isSubmitted = this.submitted() || (this.formSubmit?.submitted() ?? false);
+        return (this.touched() || isSubmitted) && this.invalid();
+    });
 
     /**
      * Returns the translation key associated with a validation error.

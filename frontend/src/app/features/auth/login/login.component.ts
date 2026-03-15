@@ -6,11 +6,12 @@ import {TranslocoPipe} from '@jsverse/transloco';
 import {createAsyncAction} from '../../../core/utils/async-action.util';
 import {LoginCredentials} from '../../../core/models/auth.model';
 import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
+import {FormSubmitDirective} from "../../../core/directives/form-submit.directive";
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    imports: [RouterLink, TranslocoPipe, FormField, FormInputComponent, FormInputComponent]
+    imports: [RouterLink, TranslocoPipe, FormField, FormInputComponent, FormSubmitDirective]
 })
 export class LoginComponent implements OnInit {
     private route = inject(ActivatedRoute);
@@ -30,8 +31,6 @@ export class LoginComponent implements OnInit {
         required(fields.password);
     });
 
-    submitted = signal(false);
-
     loginAction = createAsyncAction(
         (credentials: LoginCredentials) => this.authService.login(credentials),
         {
@@ -48,8 +47,6 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.submitted.set(true);
-
         if (!this.loginForm().valid()) {
             return;
         }

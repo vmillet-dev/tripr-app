@@ -5,11 +5,12 @@ import {TranslocoPipe} from '@jsverse/transloco';
 import {AuthService} from "../../../core/services/auth.service";
 import {createAsyncAction} from "../../../core/utils/async-action.util";
 import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
+import {FormSubmitDirective} from "../../../core/directives/form-submit.directive";
 
 @Component({
     selector: 'app-password-reset-request',
     templateUrl: './password-reset-request.component.html',
-    imports: [FormField, TranslocoPipe, FormInputComponent]
+    imports: [FormField, TranslocoPipe, FormInputComponent, FormSubmitDirective]
 })
 export class PasswordResetRequestComponent {
     private authService = inject(AuthService);
@@ -25,8 +26,6 @@ export class PasswordResetRequestComponent {
         required(fields.username);
     });
 
-    submitted = signal(false);
-
     resetAction = createAsyncAction(
         (username: string) => this.authService.requestPasswordReset({username}),
         {
@@ -38,8 +37,6 @@ export class PasswordResetRequestComponent {
     );
 
     onSubmit(): void {
-        this.submitted.set(true);
-
         if (!this.resetForm().valid()) {
             return;
         }

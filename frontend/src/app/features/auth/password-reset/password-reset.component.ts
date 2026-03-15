@@ -7,12 +7,13 @@ import {map} from 'rxjs';
 import {AuthService} from "../../../core/services/auth.service";
 import {createAsyncAction} from "../../../core/utils/async-action.util";
 import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
+import {FormSubmitDirective} from "../../../core/directives/form-submit.directive";
 
 @Component({
     selector: 'app-password-reset',
     templateUrl: './password-reset.component.html',
     standalone: true,
-    imports: [FormField, TranslocoPipe, FormInputComponent]
+    imports: [FormField, TranslocoPipe, FormInputComponent, FormSubmitDirective]
 })
 export class PasswordResetComponent {
     private authService = inject(AuthService);
@@ -53,8 +54,6 @@ export class PasswordResetComponent {
         });
     });
 
-    submitted = signal(false);
-
     resetAction = createAsyncAction(
         (data: any) => this.authService.resetPassword(data),
         {
@@ -80,8 +79,6 @@ export class PasswordResetComponent {
     }
 
     onSubmit(): void {
-        this.submitted.set(true);
-
         if (!this.resetForm().valid()) return;
 
         this.successMessage.set('');
