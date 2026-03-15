@@ -113,21 +113,22 @@ export class FormInputComponent implements FormValueControl<string> {
      * - maxLength -> { maxLength }
      */
     errorParams(error: ValidationError): Record<string, unknown> {
-        if (!(error instanceof NgValidationError)) {
-            return {};
+        const err = error as any;
+        if (error instanceof NgValidationError || (err.kind && (err.min !== undefined || err.max !== undefined || err.minLength !== undefined || err.maxLength !== undefined))) {
+            switch (error.kind) {
+                case 'min':
+                    return {min: err.min};
+                case 'max':
+                    return {max: err.max};
+                case 'minLength':
+                    return {minLength: err.minLength};
+                case 'maxLength':
+                    return {maxLength: err.maxLength};
+                default:
+                    break;
+            }
         }
 
-        switch (error.kind) {
-            case 'min':
-                return {min: error.min};
-            case 'max':
-                return {max: error.max};
-            case 'minLength':
-                return {minLength: error.minLength};
-            case 'maxLength':
-                return {maxLength: error.maxLength};
-            default:
-                return {};
-        }
+        return err.params || {};
     }
 }

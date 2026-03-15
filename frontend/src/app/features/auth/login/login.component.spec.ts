@@ -6,14 +6,14 @@ import {getTranslocoModule} from '../../../transloco/testing/transloco-testing.m
 import {of, throwError} from 'rxjs';
 import {By} from '@angular/platform-browser';
 import {HttpErrorResponse} from '@angular/common/http';
-import {vi} from 'vitest';
+import {Mock, vi} from 'vitest';
 import {provideZonelessChangeDetection} from '@angular/core';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
     let fixture: ComponentFixture<LoginComponent>;
-    let authService: any;
-    let router: any;
+    let authService: AuthService;
+    let router: Router;
 
     beforeEach(async () => {
         const authServiceMock = {
@@ -80,7 +80,6 @@ describe('LoginComponent', () => {
 
         const successAlert = fixture.debugElement.query(By.css('[data-cy="success-message"]'));
         expect(successAlert).toBeTruthy();
-        // Use string from en.json
         expect(successAlert.nativeElement.textContent).toContain('Registration completed successfully');
     });
 
@@ -94,14 +93,11 @@ describe('LoginComponent', () => {
 
         expect(authService.login).not.toHaveBeenCalled();
 
-        // Check if error messages are shown in the FormInputComponent
-        // The errors are shown because FormSubmitDirective marks submitted as true
         const errors = fixture.debugElement.queryAll(By.css('.invalid-feedback'));
         expect(errors.length).toBeGreaterThan(0);
     });
 
     it('should call authService.login when form is valid and submitted', async () => {
-        // Fill inputs
         const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
         const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
 
@@ -112,7 +108,7 @@ describe('LoginComponent', () => {
 
         fixture.detectChanges();
 
-        authService.login.mockReturnValue(of({accessToken: 'fake-token'}));
+        (authService.login as Mock).mockReturnValue(of({accessToken: 'fake-token'}));
 
         const form = fixture.debugElement.query(By.css('form'));
         form.triggerEventHandler('submit', {
@@ -130,7 +126,6 @@ describe('LoginComponent', () => {
     });
 
     it('should show error message when login fails', async () => {
-        // Fill inputs
         const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
         const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
 
@@ -145,7 +140,7 @@ describe('LoginComponent', () => {
             error: {error: 'INVALID_CREDENTIALS'},
             status: 401
         });
-        authService.login.mockReturnValue(throwError(() => errorResponse));
+        (authService.login as Mock).mockReturnValue(throwError(() => errorResponse));
 
         const form = fixture.debugElement.query(By.css('form'));
         form.triggerEventHandler('submit', {

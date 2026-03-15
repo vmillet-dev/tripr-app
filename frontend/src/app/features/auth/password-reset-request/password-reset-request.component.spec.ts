@@ -6,14 +6,14 @@ import {getTranslocoModule} from '../../../transloco/testing/transloco-testing.m
 import {of, throwError} from 'rxjs';
 import {By} from '@angular/platform-browser';
 import {HttpErrorResponse} from '@angular/common/http';
-import {vi} from 'vitest';
+import {Mock, vi} from 'vitest';
 import {provideZonelessChangeDetection} from '@angular/core';
 
 describe('PasswordResetRequestComponent', () => {
     let component: PasswordResetRequestComponent;
     let fixture: ComponentFixture<PasswordResetRequestComponent>;
-    let authService: any;
-    let router: any;
+    let authService: AuthService;
+    let router: Router;
 
     beforeEach(async () => {
         const authServiceMock = {
@@ -64,7 +64,7 @@ describe('PasswordResetRequestComponent', () => {
         fixture.detectChanges();
 
         const successMsg = 'Reset link sent to your email';
-        authService.requestPasswordReset.mockReturnValue(of({message: successMsg}));
+        (authService.requestPasswordReset as Mock).mockReturnValue(of({message: successMsg}));
 
         const form = fixture.debugElement.query(By.css('form'));
         form.triggerEventHandler('submit', {
@@ -79,7 +79,6 @@ describe('PasswordResetRequestComponent', () => {
         expect(successAlert).toBeTruthy();
         expect(successAlert.nativeElement.textContent).toContain(successMsg);
 
-        // Form input should be hidden after success according to template (@if (successMessage() == null))
         const inputAfterSuccess = fixture.debugElement.query(By.css('[data-cy="username-input"]'));
         expect(inputAfterSuccess).toBeFalsy();
     });
@@ -94,7 +93,7 @@ describe('PasswordResetRequestComponent', () => {
             error: {error: 'USER_NOT_FOUND'},
             status: 404
         });
-        authService.requestPasswordReset.mockReturnValue(throwError(() => errorResponse));
+        (authService.requestPasswordReset as Mock).mockReturnValue(throwError(() => errorResponse));
 
         const form = fixture.debugElement.query(By.css('form'));
         form.triggerEventHandler('submit', {

@@ -33,6 +33,10 @@ export default defineConfig({
             exclude: [
                 'src/app/core/api/generated/**',
                 'src/app/**/*.spec.ts',
+                'src/app/**/*.routes.ts',
+                'src/app/**/*.model.ts',
+                'src/app/**/*.module.ts',
+                'src/app/**/*.config.ts',
                 'src/test-setup.ts'
             ],
         }

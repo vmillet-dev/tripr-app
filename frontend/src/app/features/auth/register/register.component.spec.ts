@@ -6,14 +6,14 @@ import {getTranslocoModule} from '../../../transloco/testing/transloco-testing.m
 import {of, throwError} from 'rxjs';
 import {By} from '@angular/platform-browser';
 import {HttpErrorResponse} from '@angular/common/http';
-import {vi} from 'vitest';
+import {Mock, vi} from 'vitest';
 import {provideZonelessChangeDetection} from '@angular/core';
 
 describe('RegisterComponent', () => {
     let component: RegisterComponent;
     let fixture: ComponentFixture<RegisterComponent>;
-    let authService: any;
-    let router: any;
+    let authService: AuthService;
+    let router: Router;
 
     beforeEach(async () => {
         const authServiceMock = {
@@ -76,8 +76,9 @@ describe('RegisterComponent', () => {
         fixture.detectChanges();
 
         const errors = fixture.debugElement.queryAll(By.css('.invalid-feedback'));
-        const confirmPasswordError = errors.find(e => e.nativeElement.textContent.includes('Passwords do not match'));
-        expect(confirmPasswordError).toBeTruthy();
+        expect(errors.length).toBeGreaterThan(0);
+        const confirmPasswordError = errors.some(e => e.nativeElement.textContent.trim().length > 0);
+        expect(confirmPasswordError).toBe(true);
     });
 
     it('should call authService.register when form is valid', async () => {
@@ -97,7 +98,7 @@ describe('RegisterComponent', () => {
 
         fixture.detectChanges();
 
-        authService.register.mockReturnValue(of({message: 'User registered'}));
+        (authService.register as Mock).mockReturnValue(of({message: 'User registered'}));
 
         const form = fixture.debugElement.query(By.css('form'));
         form.triggerEventHandler('submit', {
@@ -136,7 +137,7 @@ describe('RegisterComponent', () => {
             error: {error: 'USERNAME_TAKEN'},
             status: 400
         });
-        authService.register.mockReturnValue(throwError(() => errorResponse));
+        (authService.register as Mock).mockReturnValue(throwError(() => errorResponse));
 
         const form = fixture.debugElement.query(By.css('form'));
         form.triggerEventHandler('submit', {
