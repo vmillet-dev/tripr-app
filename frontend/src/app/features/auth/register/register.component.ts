@@ -46,10 +46,7 @@ export class RegisterComponent {
 
     registerAction = createAsyncAction(
         (data: RegisterData) => this.authService.register(data),
-        {
-            onSuccess: () => this.router.navigate(['/login'], {queryParams: {registered: true}}),
-            defaultErrorMessage: 'Registration failed'
-        }
+        {onSuccess: () => this.router.navigate(['/login'], {queryParams: {registered: true}})}
     );
 
     onSubmit(): void {
@@ -61,7 +58,7 @@ export class RegisterComponent {
 
         this.registerAction.execute(data).subscribe({
             next: (res) => this.registerAction.handleSuccess(res),
-            error: (err) => this.registerAction.handleError(err)
+            error: (err) => this.registerAction.handleError(err, {username: data.username, email: data.email})
         });
     }
 }

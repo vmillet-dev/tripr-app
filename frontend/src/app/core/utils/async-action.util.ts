@@ -2,9 +2,14 @@ import {computed, signal} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 
+export interface AsyncError {
+    message: string;
+    params?: any;
+}
+
 export interface AsyncActionState<R> {
     loading: () => boolean;
-    error: () => string | null;
+    error: () => AsyncError | null;
     data: () => R | null;
     success: () => boolean;
     isIdle: () => boolean;
@@ -25,7 +30,7 @@ export function createAsyncAction<T, R>(
     options?: AsyncActionOptions<R>
 ) {
     const loading = signal(false);
-    const error = signal<string | null>(null);
+    const error = signal<AsyncError | null>(null);
     const data = signal<R | null>(null);
     const success = signal(false);
 
@@ -46,12 +51,13 @@ export function createAsyncAction<T, R>(
         options?.onSuccess?.(res);
     };
 
-    const handleError = (err: any) => {
-        const message = err instanceof HttpErrorResponse
-            ? err.error?.message || err.statusText
-            : err.message || options?.defaultErrorMessage || 'An error occurred';
+    const handleError = (err: any, params?: any) => {
+        const message = err instanceof HttpErrorResponse ? err.error?.error : 'DEFAULT'
 
-        error.set(message);
+        error.set({
+            message: 'errors.' + message,
+            params
+        });
         loading.set(false);
         options?.onError?.(err);
     };

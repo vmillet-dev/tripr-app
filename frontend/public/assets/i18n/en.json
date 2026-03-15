@@ -9,6 +9,11 @@
     "pattern": "Invalid format",
     "passwordMismatch": "Passwords do not match"
   },
+  "errors": {
+    "FUNC_001": "Login failed, invalid credentials provided",
+    "FUNC_004": "username {{username}} already exists",
+    "FUNC_006": "email {{email}} already exists"
+  },
   "app": {
     "title": "Tripr App",
     "header": {

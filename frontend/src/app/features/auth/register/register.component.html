@@ -50,8 +50,10 @@
               </button>
             </div>
 
-            @if (registerAction.error()) {
-              <div class="alert alert-danger">{{ registerAction.error() }}</div>
+            @if (registerAction.error(); as error) {
+              <div
+                class="alert alert-danger">{{ error.message | transloco: error.params }}
+              </div>
             }
           </form>
 

@@ -39,9 +39,12 @@
               </button>
             </div>
 
-            @if (loginAction.error()) {
-              <div class="alert alert-danger">{{ loginAction.error() }}</div>
+            @if (loginAction.error(); as error) {
+              <div
+                class="alert alert-danger">{{ error.message | transloco }}
+              </div>
             }
+
             @if (!loginAction.error() && isRegistered()) {
               <div class="alert alert-success" data-cy="success-message">
                 {{ 'app.auth.login.registrationSuccess' | transloco }}
