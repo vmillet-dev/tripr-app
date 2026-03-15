@@ -29,7 +29,12 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         reporters: ['default'],
         coverage: {
-            include: ['packages/**/src/**.{js,jsx,ts,tsx}'],
+            include: ['src/app/**/*.{ts,tsx}'],
+            exclude: [
+                'src/app/core/api/generated/**',
+                'src/app/**/*.spec.ts',
+                'src/test-setup.ts'
+            ],
         }
     }
 });

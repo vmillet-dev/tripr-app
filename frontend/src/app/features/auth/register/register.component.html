@@ -10,7 +10,8 @@
               [formField]="registerForm.username"
               id="username"
               label="app.auth.register.username"
-              placeholder="app.auth.register.username">
+              placeholder="app.auth.register.username"
+              data-cy="username-input">
             </app-form-input>
 
             <app-form-input
@@ -19,7 +20,8 @@
               type="email"
               label="app.auth.register.email"
               placeholder="app.auth.register.email"
-              autocomplete="email">
+              autocomplete="email"
+              data-cy="email-input">
             </app-form-input>
 
             <app-form-input
@@ -28,7 +30,8 @@
               type="password"
               label="app.auth.register.password"
               placeholder="app.auth.register.password"
-              autocomplete="new-password">
+              autocomplete="new-password"
+              data-cy="password-input">
             </app-form-input>
 
             <app-form-input
@@ -37,7 +40,8 @@
               type="password"
               label="app.auth.register.confirmPassword"
               placeholder="app.auth.register.confirmPassword"
-              autocomplete="new-password">
+              autocomplete="new-password"
+              data-cy="confirm-password-input">
             </app-form-input>
 
             <div class="d-grid gap-2 mb-3">
