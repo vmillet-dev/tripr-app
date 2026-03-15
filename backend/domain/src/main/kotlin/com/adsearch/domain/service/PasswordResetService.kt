@@ -39,8 +39,7 @@ class PasswordResetService(
      * Request a password reset for a user
      */
     override fun requestPasswordReset(username: String) {
-        val user: User = userPersistence.findByUsername(username)
-            ?: throw UserNotFoundException("Password reset request failed - user not found with username: $username")
+        val user: User = userPersistence.findByUsername(username) ?: return // For security reason, we must not throw any error if the user doesn't exist
 
         // Delete any existing tokens for this user
         tokenPersistence.deletePasswordResetTokenByUser(user)

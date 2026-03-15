@@ -10,6 +10,7 @@
     "passwordMismatch": "Passwords do not match"
   },
   "errors": {
+    "DEFAULT": "Technical issue, please try again later",
     "FUNC_001": "Login failed, invalid credentials provided",
     "FUNC_004": "username {{username}} already exists",
     "FUNC_006": "email {{email}} already exists"

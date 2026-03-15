@@ -12,12 +12,14 @@ import com.adsearch.domain.port.out.authentication.PasswordEncoderPort
 import com.adsearch.domain.port.out.notification.EmailServicePort
 import com.adsearch.domain.port.out.persistence.TokenPersistencePort
 import com.adsearch.domain.port.out.persistence.UserPersistencePort
+import com.adsearch.domain.port.out.persistence.deletePasswordResetTokenByUser
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.Instant
 
 class PasswordResetServiceTest {
@@ -52,8 +54,11 @@ class PasswordResetServiceTest {
     @Test
     fun `requestPasswordReset should throw UserNotFoundException when user missing`() {
         every { userPersistence.findByUsername("no") } returns null
-        assertThatThrownBy { service.requestPasswordReset("no") }
-            .isInstanceOf(UserNotFoundException::class.java)
+        assertDoesNotThrow { service.requestPasswordReset("no") }
+
+        verify(exactly = 0) { tokenPersistence.deletePasswordResetTokenByUser(any()) }
+        verify(exactly = 0) { tokenPersistence.save(any()) }
+        verify(exactly = 0) { emailService.sendPasswordResetEmail(any(), any()) }
     }
 
     @Test

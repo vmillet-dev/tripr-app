@@ -55,7 +55,7 @@ export function createAsyncAction<T, R>(
         const message = err instanceof HttpErrorResponse ? err.error?.error : 'DEFAULT'
 
         error.set({
-            message: 'errors.' + message,
+            message: 'errors.' + (message ?? 'DEFAULT'),
             params
         });
         loading.set(false);

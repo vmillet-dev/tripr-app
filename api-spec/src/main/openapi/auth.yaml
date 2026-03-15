@@ -303,7 +303,6 @@ components:
           type: string
           description: Username or email for password reset
           example: "john.doe@example.com"
-          minLength: 3
           maxLength: 100
 
     PasswordResetDto:

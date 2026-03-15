@@ -10,6 +10,7 @@
     "passwordMismatch": "Les mots de passe ne correspondent pas"
   },
   "errors": {
+    "DEFAULT": "Erreur technique, merci de réessayer plus tard",
     "FUNC_001": "Échec de la connexion, identifiants incorrects",
     "FUNC_004": "l'utilisateur {{username}} existe déjà",
     "FUNC_006": "l'email {{email}} existe déjà"
