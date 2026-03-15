@@ -1,11 +1,12 @@
 import {Component, inject, signal} from '@angular/core';
-import {form, FormField, validate} from '@angular/forms/signals';
+import {email, form, FormField, minLength, required, validate} from '@angular/forms/signals';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/services/auth.service';
 import {NgClass} from '@angular/common';
 import {TranslocoPipe} from '@jsverse/transloco';
 import {createAsyncAction} from '../../../core/utils/async-action.util';
 import {RegisterData} from '../../../core/models/auth.model';
+import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
 
 interface RegisterModel extends RegisterData {
     confirmPassword: string;
@@ -14,7 +15,7 @@ interface RegisterModel extends RegisterData {
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    imports: [NgClass, RouterLink, TranslocoPipe, FormField]
+    imports: [NgClass, RouterLink, TranslocoPipe, FormField, FormInputComponent]
 })
 export class RegisterComponent {
     private router = inject(Router);
@@ -28,9 +29,20 @@ export class RegisterComponent {
     });
 
     registerForm = form(this.registerModel, (fields) => {
-        validate(fields, (ctx) => {
-            const {password, confirmPassword} = ctx.value();
-            return password === confirmPassword ? null : [{kind: 'passwordMismatch'}];
+        required(fields.username);
+
+        required(fields.email);
+        email(fields.email);
+
+        required(fields.password);
+        minLength(fields.password, 6);
+
+        required(fields.confirmPassword);
+
+        validate(fields.confirmPassword, ({value, valueOf}) => {
+            return value() === valueOf(fields.password)
+                ? null
+                : {kind: 'passwordMismatch'};
         });
     });
 

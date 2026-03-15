@@ -6,73 +6,41 @@
           <h2 class="card-title text-center mb-4">{{ 'app.auth.register.title' | transloco }}</h2>
 
           <form (submit)="$event.preventDefault(); onSubmit()">
-            <div class="mb-3">
-              <label for="username" class="form-label">{{ 'app.auth.register.username' | transloco }}</label>
-              <input type="text" id="username" data-cy="username-input" [formField]="registerForm.username" required
-                     class="form-control"
-                     [ngClass]="{ 'is-invalid': registerForm.username().touched() && !registerForm.username().valid() }"/>
-              @if (registerForm.username().touched() && !registerForm.username().valid()) {
-                <div class="invalid-feedback">
-                  @if (registerForm.username().errors()?.['required']) {
-                    <div>{{ 'app.auth.validation.usernameRequired' | transloco }}</div>
-                  }
-                </div>
-              }
-            </div>
+            <app-form-input
+              [formField]="registerForm.username"
+              id="username"
+              type="text"
+              label="app.auth.register.username"
+              placeholder="app.auth.register.username">
+            </app-form-input>
 
-            <div class="mb-3">
-              <label for="email" class="form-label">{{ 'app.auth.register.email' | transloco }}</label>
-              <input type="email" id="email" data-cy="email-input" [formField]="registerForm.email" required
-                     class="form-control"
-                     [ngClass]="{ 'is-invalid': registerForm.email().touched() && !registerForm.email().valid() }"/>
-              @if (registerForm.email().touched() && !registerForm.email().valid()) {
-                <div class="invalid-feedback">
-                  @if (registerForm.email().errors()?.['required']) {
-                    <div>{{ 'app.auth.validation.emailRequired' | transloco }}</div>
-                  }
-                  @if (registerForm.email().errors()?.['email']) {
-                    <div>{{ 'app.auth.validation.emailInvalid' | transloco }}</div>
-                  }
-                </div>
-              }
-            </div>
 
-            <div class="mb-3">
-              <label for="password" class="form-label">{{ 'app.auth.register.password' | transloco }}</label>
-              <input type="password" id="password" data-cy="password-input" [formField]="registerForm.password" required
-                     minlength="6"
-                     class="form-control"
-                     [ngClass]="{ 'is-invalid': registerForm.password().touched() && !registerForm.password().valid() }"/>
-              @if (registerForm.password().touched() && !registerForm.password().valid()) {
-                <div class="invalid-feedback">
-                  @if (registerForm.password().errors()?.['required']) {
-                    <div>{{ 'app.auth.validation.passwordRequired' | transloco }}</div>
-                  }
-                  @if (registerForm.password().errors()?.['minlength']) {
-                    <div>{{ 'app.auth.validation.passwordMinLength' | transloco }}</div>
-                  }
-                </div>
-              }
-            </div>
+            <app-form-input
+              [formField]="registerForm.email"
+              id="email"
+              type="email"
+              label="app.auth.register.email"
+              placeholder="app.auth.register.email"
+              autocomplete="email">
+            </app-form-input>
 
-            <div class="mb-4">
-              <label for="confirmPassword"
-                     class="form-label">{{ 'app.auth.register.confirmPassword' | transloco }}</label>
-              <input type="password" id="confirmPassword" data-cy="confirm-password-input"
-                     [formField]="registerForm.confirmPassword" required
-                     class="form-control"
-                     [ngClass]="{ 'is-invalid': registerForm.confirmPassword().touched() && (!registerForm.confirmPassword().valid() || registerForm.errors?.['passwordMismatch']) }"/>
-              @if (registerForm.confirmPassword().touched()) {
-                <div class="invalid-feedback">
-                  @if (registerForm.confirmPassword().errors()?.['required']) {
-                    <div>{{ 'app.auth.validation.confirmPasswordRequired' | transloco }}</div>
-                  }
-                  @if (registerForm.errors?.['passwordMismatch']) {
-                    <div>{{ 'app.auth.validation.passwordMismatch' | transloco }}</div>
-                  }
-                </div>
-              }
-            </div>
+            <app-form-input
+              [formField]="registerForm.password"
+              id="password"
+              type="password"
+              label="app.auth.register.password"
+              placeholder="app.auth.register.password"
+              autocomplete="new-password">
+            </app-form-input>
+
+            <app-form-input
+              [formField]="registerForm.confirmPassword"
+              id="confirmPassword"
+              type="password"
+              label="app.auth.register.confirmPassword"
+              placeholder="app.auth.register.confirmPassword"
+              autocomplete="new-password">
+            </app-form-input>
 
             <div class="d-grid gap-2 mb-3">
               <button type="submit" data-cy="register-button" class="btn btn-primary"

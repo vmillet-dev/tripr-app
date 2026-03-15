@@ -1,4 +1,14 @@
 {
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "min": "Minimum value is {{min}}",
+    "max": "Maximum value is {{max}}",
+    "minLength": "Minimum {{minLength}} characters required",
+    "maxLength": "Maximum {{maxLength}} characters allowed",
+    "pattern": "Invalid format",
+    "passwordMismatch": "Passwords do not match"
+  },
   "app": {
     "title": "Tripr App",
     "header": {
