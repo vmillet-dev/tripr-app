@@ -59,19 +59,10 @@
         "sendResetLink": "Envoyer le lien de réinitialisation",
         "resetPassword": "Réinitialiser le mot de passe",
         "backToLogin": "Retour à la connexion",
+        "backToPwdResetRequest": "Retour pour réinitialiser votre mot de passe.",
         "validatingLink": "Validation de votre lien de réinitialisation...",
-        "loading": "Chargement..."
-      },
-      "validation": {
-        "usernameRequired": "Le nom d'utilisateur est requis",
-        "passwordRequired": "Le mot de passe est requis",
-        "emailRequired": "L'email est requis",
-        "emailInvalid": "L'email est invalide",
-        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
-        "passwordMinLength8": "Le mot de passe doit contenir au moins 8 caractères",
-        "confirmPasswordRequired": "La confirmation du mot de passe est requise",
-        "confirmPasswordRequired2": "La confirmation du mot de passe est requise",
-        "passwordMismatch": "Les mots de passe ne correspondent pas"
+        "loading": "Chargement...",
+        "invalidToken": "Votre token de réinitialisation de mot de passe n'est pas valide. Veuillez réessayer."
       }
     },
     "dashboard": {

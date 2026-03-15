@@ -28,12 +28,7 @@ export class PasswordResetRequestComponent {
 
     resetAction = createAsyncAction(
         (username: string) => this.authService.requestPasswordReset({username}),
-        {
-            onSuccess: (response) => {
-                this.successMessage.set(response.message);
-                this.resetModel.set({username: ''});
-            }
-        }
+        {onSuccess: (response) => this.successMessage.set(response.message)}
     );
 
     onSubmit(): void {

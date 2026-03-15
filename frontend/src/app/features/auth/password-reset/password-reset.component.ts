@@ -12,7 +12,6 @@ import {FormSubmitDirective} from "../../../core/directives/form-submit.directiv
 @Component({
     selector: 'app-password-reset',
     templateUrl: './password-reset.component.html',
-    standalone: true,
     imports: [FormField, TranslocoPipe, FormInputComponent, FormSubmitDirective]
 })
 export class PasswordResetComponent {
@@ -94,7 +93,7 @@ export class PasswordResetComponent {
         });
     }
 
-    navigateToLogin(): void {
-        this.router.navigate(['/login']);
+    navigateToPasswordResetRequest(): void {
+        this.router.navigate(['/password-reset-request']);
     }
 }

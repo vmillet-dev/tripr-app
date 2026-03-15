@@ -59,19 +59,10 @@
         "sendResetLink": "Send Reset Link",
         "resetPassword": "Reset Password",
         "backToLogin": "Back to Login",
+        "backToPwdResetRequest": "Back to reset your password.",
         "validatingLink": "Validating your reset link...",
-        "loading": "Loading..."
-      },
-      "validation": {
-        "usernameRequired": "Username is required",
-        "passwordRequired": "Password is required",
-        "emailRequired": "Email is required",
-        "emailInvalid": "Email is invalid",
-        "passwordMinLength": "Password must be at least 6 characters",
-        "passwordMinLength8": "Password must be at least 8 characters",
-        "confirmPasswordRequired": "Confirm Password is required",
-        "confirmPasswordRequired2": "Confirm password is required",
-        "passwordMismatch": "Passwords do not match"
+        "loading": "Loading...",
+        "invalidToken": "Your password reset token is invalid. Please try again."
       }
     },
     "dashboard": {
