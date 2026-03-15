@@ -1,16 +1,16 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
-import {form, FormField} from '@angular/forms/signals';
+import {form, FormField, required} from '@angular/forms/signals';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/services/auth.service';
-import {NgClass} from '@angular/common';
 import {TranslocoPipe} from '@jsverse/transloco';
 import {createAsyncAction} from '../../../core/utils/async-action.util';
 import {LoginCredentials} from '../../../core/models/auth.model';
+import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
-    imports: [NgClass, RouterLink, TranslocoPipe, FormField]
+    imports: [RouterLink, TranslocoPipe, FormField, FormInputComponent, FormInputComponent]
 })
 export class LoginComponent implements OnInit {
     private route = inject(ActivatedRoute);
@@ -25,7 +25,12 @@ export class LoginComponent implements OnInit {
         password: ''
     });
 
-    loginForm = form(this.loginModel);
+    loginForm = form(this.loginModel, (fields) => {
+        required(fields.username);
+        required(fields.password);
+    });
+
+    submitted = signal(false);
 
     loginAction = createAsyncAction(
         (credentials: LoginCredentials) => this.authService.login(credentials),
@@ -43,6 +48,8 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit(): void {
+        this.submitted.set(true);
+
         if (!this.loginForm().valid()) {
             return;
         }

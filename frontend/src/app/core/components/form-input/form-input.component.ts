@@ -62,6 +62,11 @@ export class FormInputComponent implements FormValueControl<string> {
     readonly invalid = input(false);
 
     /**
+     * Whether the parent form has been submitted.
+     */
+    readonly submitted = input(false);
+
+    /**
      * Validation errors provided by Signal Forms.
      * Each error exposes a `kind` and may expose additional metadata depending on the validator.
      */
@@ -74,9 +79,9 @@ export class FormInputComponent implements FormValueControl<string> {
     readonly maxLength = input<number | undefined>(undefined);
 
     /**
-     * Displays validation messages only after the field has been touched.
+     * Displays validation messages only after the field has been touched or the form has been submitted.
      */
-    readonly showErrors = computed(() => this.touched() && this.invalid());
+    readonly showErrors = computed(() => (this.touched() || this.submitted()) && this.invalid());
 
     /**
      * Returns the translation key associated with a validation error.

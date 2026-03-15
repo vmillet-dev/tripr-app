@@ -5,18 +5,18 @@
         <div class="card-body p-4 p-md-5">
           <h2 class="card-title text-center mb-4">{{ 'app.auth.register.title' | transloco }}</h2>
 
-          <form (submit)="$event.preventDefault(); onSubmit()">
+          <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
             <app-form-input
               [formField]="registerForm.username"
+              [submitted]="submitted()"
               id="username"
-              type="text"
               label="app.auth.register.username"
               placeholder="app.auth.register.username">
             </app-form-input>
 
-
             <app-form-input
               [formField]="registerForm.email"
+              [submitted]="submitted()"
               id="email"
               type="email"
               label="app.auth.register.email"
@@ -26,6 +26,7 @@
 
             <app-form-input
               [formField]="registerForm.password"
+              [submitted]="submitted()"
               id="password"
               type="password"
               label="app.auth.register.password"
@@ -35,6 +36,7 @@
 
             <app-form-input
               [formField]="registerForm.confirmPassword"
+              [submitted]="submitted()"
               id="confirmPassword"
               type="password"
               label="app.auth.register.confirmPassword"
@@ -44,7 +46,7 @@
 
             <div class="d-grid gap-2 mb-3">
               <button type="submit" data-cy="register-button" class="btn btn-primary"
-                      [disabled]="!registerForm().valid() || registerAction.loading()">
+                      [disabled]="registerAction.loading()">
                 @if (registerAction.loading()) {
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 }

@@ -43,6 +43,8 @@ export class RegisterComponent {
         });
     });
 
+    submitted = signal(false);
+
     registerAction = createAsyncAction(
         (data: RegisterData) => this.authService.register(data),
         {
@@ -52,6 +54,8 @@ export class RegisterComponent {
     );
 
     onSubmit(): void {
+        this.submitted.set(true);
+
         if (!this.registerForm().valid()) {
             return;
         }

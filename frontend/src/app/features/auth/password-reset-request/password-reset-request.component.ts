@@ -1,14 +1,15 @@
 import {Component, inject, signal} from '@angular/core';
-import {form, FormField} from '@angular/forms/signals';
+import {form, FormField, required} from '@angular/forms/signals';
 import {Router} from '@angular/router';
-import {TranslocoModule} from '@jsverse/transloco';
+import {TranslocoPipe} from '@jsverse/transloco';
 import {AuthService} from "../../../core/services/auth.service";
 import {createAsyncAction} from "../../../core/utils/async-action.util";
+import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
 
 @Component({
     selector: 'app-password-reset-request',
     templateUrl: './password-reset-request.component.html',
-    imports: [FormField, TranslocoModule]
+    imports: [FormField, TranslocoPipe, FormInputComponent]
 })
 export class PasswordResetRequestComponent {
     private authService = inject(AuthService);
@@ -20,7 +21,11 @@ export class PasswordResetRequestComponent {
         username: ''
     });
 
-    resetForm = form(this.resetModel);
+    resetForm = form(this.resetModel, (fields) => {
+        required(fields.username);
+    });
+
+    submitted = signal(false);
 
     resetAction = createAsyncAction(
         (username: string) => this.authService.requestPasswordReset({username}),
@@ -33,6 +38,8 @@ export class PasswordResetRequestComponent {
     );
 
     onSubmit(): void {
+        this.submitted.set(true);
+
         if (!this.resetForm().valid()) {
             return;
         }

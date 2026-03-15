@@ -5,34 +5,25 @@
         <div class="card-body p-4 p-md-5">
           <h2 class="card-title text-center mb-4">{{ 'app.auth.login.title' | transloco }}</h2>
 
-          <form (submit)="$event.preventDefault(); onSubmit()">
-            <div class="mb-3">
-              <label for="username" class="form-label">{{ 'app.auth.login.username' | transloco }}</label>
-              <input type="text" id="username" data-cy="username-input" [formField]="loginForm.username" required
-                     class="form-control"
-                     [ngClass]="{ 'is-invalid': loginForm.username().touched() && !loginForm.username().valid() }"/>
-              @if (loginForm.username().touched() && !loginForm.username().valid()) {
-                <div class="invalid-feedback">
-                  @if (loginForm.username().errors()?.['required']) {
-                    <div>{{ 'app.auth.validation.usernameRequired' | transloco }}</div>
-                  }
-                </div>
-              }
-            </div>
+          <form (submit)="$event.preventDefault(); onSubmit()" novalidate>
+            <app-form-input
+              [formField]="loginForm.username"
+              [submitted]="submitted()"
+              id="username"
+              label="app.auth.login.username"
+              placeholder="app.auth.login.username"
+              data-cy="username-input">
+            </app-form-input>
 
-            <div class="mb-3">
-              <label for="password" class="form-label">{{ 'app.auth.login.password' | transloco }}</label>
-              <input type="password" id="password" data-cy="password-input" [formField]="loginForm.password" required
-                     class="form-control"
-                     [ngClass]="{ 'is-invalid': loginForm.password().touched() && !loginForm.password().valid() }"/>
-              @if (loginForm.password().touched() && !loginForm.password().valid()) {
-                <div class="invalid-feedback">
-                  @if (loginForm.password().errors()?.['required']) {
-                    <div>{{ 'app.auth.validation.passwordRequired' | transloco }}</div>
-                  }
-                </div>
-              }
-            </div>
+            <app-form-input
+              [formField]="loginForm.password"
+              [submitted]="submitted()"
+              id="password"
+              type="password"
+              label="app.auth.login.password"
+              placeholder="app.auth.login.password"
+              data-cy="password-input">
+            </app-form-input>
 
             <div class="mb-3 text-end">
               <a routerLink="/password-reset-request" class="text-decoration-none small" data-cy="forgot-password-link">
@@ -42,7 +33,7 @@
 
             <div class="d-grid gap-2 mb-3">
               <button type="submit" data-cy="login-button" class="btn btn-primary"
-                      [disabled]="!loginForm().valid() || loginAction.loading()">
+                      [disabled]="loginAction.loading()">
                 @if (loginAction.loading()) {
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 }

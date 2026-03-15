@@ -1,17 +1,18 @@
 import {Component, inject, signal} from '@angular/core';
-import {form, FormField, validate} from '@angular/forms/signals';
+import {form, FormField, minLength, required, validate} from '@angular/forms/signals';
 import {ActivatedRoute, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {TranslocoModule} from '@jsverse/transloco';
+import {TranslocoPipe} from '@jsverse/transloco';
 import {map} from 'rxjs';
 import {AuthService} from "../../../core/services/auth.service";
 import {createAsyncAction} from "../../../core/utils/async-action.util";
+import {FormInputComponent} from "../../../core/components/form-input/form-input.component";
 
 @Component({
     selector: 'app-password-reset',
     templateUrl: './password-reset.component.html',
     standalone: true,
-    imports: [FormField, TranslocoModule]
+    imports: [FormField, TranslocoPipe, FormInputComponent]
 })
 export class PasswordResetComponent {
     private authService = inject(AuthService);
@@ -43,11 +44,16 @@ export class PasswordResetComponent {
     });
 
     resetForm = form(this.resetModel, (fields) => {
-        validate(fields, (ctx) => {
-            const {newPassword, confirmPassword} = ctx.value();
-            return newPassword === confirmPassword ? null : [{kind: 'passwordMismatch'}];
+        required(fields.newPassword);
+        minLength(fields.newPassword, 8);
+        required(fields.confirmPassword);
+
+        validate(fields.confirmPassword, ({value, valueOf}) => {
+            return value() === valueOf(fields.newPassword) ? null : {kind: 'passwordMismatch'};
         });
     });
+
+    submitted = signal(false);
 
     resetAction = createAsyncAction(
         (data: any) => this.authService.resetPassword(data),
@@ -74,6 +80,8 @@ export class PasswordResetComponent {
     }
 
     onSubmit(): void {
+        this.submitted.set(true);
+
         if (!this.resetForm().valid()) return;
 
         this.successMessage.set('');
