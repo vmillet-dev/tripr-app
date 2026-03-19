@@ -20,6 +20,6 @@ export const appConfig: ApplicationConfig = {
             return firstValueFrom(auth.refreshToken()).catch(() => false);
         }),
         provideApi("/api"),
-        provideSignalFormsConfig()
+        provideSignalFormsConfig({})
     ]
 };

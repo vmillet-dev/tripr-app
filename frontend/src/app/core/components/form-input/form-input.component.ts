@@ -23,6 +23,9 @@ import {FormSubmitDirective} from "../../directives/form-submit.directive";
  */
 @Component({
     selector: 'app-form-input',
+    host: {
+        '[attr.data-cy]': 'null'
+    },
     imports: [TranslocoPipe],
     templateUrl: './form-input.component.html'
 })
@@ -44,6 +47,23 @@ export class FormInputComponent implements FormValueControl<string> {
 
     /** HTML id used by both the label and the input. */
     readonly id = input.required<string>();
+
+    /** Cypress data attribute for testing. */
+    readonly dataCy = input<string | null>(null, {alias: 'data-cy'});
+
+    /**
+     * Generated Cypress data attribute for internal input.
+     * Falls back to `id()-input` if not provided.
+     */
+    readonly internalDataCy = computed(() => {
+        const provided = this.dataCy();
+        if (provided) {
+            return provided;
+        }
+        // Fallback: convert camelCase ID to kebab-case and append -input
+        const kebabId = this.id().replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+        return `${kebabId}-input`;
+    });
 
     /** Input type. */
     readonly type = input<'text' | 'email' | 'password'>('text');

@@ -10,6 +10,7 @@
       class="form-control"
       [class.is-invalid]="showErrors()"
       [id]="id()"
+      [attr.data-cy]="internalDataCy()"
       [type]="type()"
       [value]="value()"
       [attr.placeholder]="placeholder() ? (placeholder()! | transloco) : null"
