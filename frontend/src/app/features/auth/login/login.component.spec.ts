@@ -98,8 +98,8 @@ describe('LoginComponent', () => {
     });
 
     it('should call authService.login when form is valid and submitted', async () => {
-        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
+        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"]')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"]')).nativeElement;
 
         usernameInput.value = 'testuser';
         usernameInput.dispatchEvent(new Event('input'));
@@ -126,8 +126,8 @@ describe('LoginComponent', () => {
     });
 
     it('should show error message when login fails', async () => {
-        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
+        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"]')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"]')).nativeElement;
 
         usernameInput.value = 'testuser';
         usernameInput.dispatchEvent(new Event('input'));

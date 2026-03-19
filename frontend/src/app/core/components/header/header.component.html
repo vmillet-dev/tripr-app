@@ -69,7 +69,7 @@
               {{ username() }}
             </span>
 
-            <button class="btn btn-outline-danger" (click)="logout()">
+            <button class="btn btn-outline-danger" (click)="logout()" data-cy="logout-button">
               {{ 'app.header.logout' | transloco }}
             </button>
           }

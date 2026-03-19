@@ -37,7 +37,8 @@
         "forgotPassword": "Mot de passe oublié?",
         "noAccount": "Vous n'avez pas de compte?",
         "signUp": "S'inscrire",
-        "registrationSuccess": "Inscription effectuée avec succès"
+        "registrationSuccess": "Inscription effectuée avec succès",
+        "resetSuccess": "Votre mot de passe a été réinitialisé avec succès"
       },
       "register": {
         "title": "S'inscrire",

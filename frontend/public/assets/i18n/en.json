@@ -37,7 +37,8 @@
         "forgotPassword": "Forgot Password?",
         "noAccount": "Don't have an account?",
         "signUp": "Sign Up",
-        "registrationSuccess": "Registration completed successfully"
+        "registrationSuccess": "Registration completed successfully",
+        "resetSuccess": "Your password has been reset successfully"
       },
       "register": {
         "title": "Sign Up",

@@ -63,23 +63,19 @@ describe('HeaderComponent', () => {
         expect(logoutBtn).toBeFalsy();
     });
 
-    it.skip('should show username and logout button when authenticated', async () => {
+    it('should show username and logout button when authenticated', async () => {
         currentUserSubject.next({username: 'testuser', roles: []});
-        fixture.detectChanges();
-        await fixture.whenStable();
         fixture.detectChanges();
 
         const logoutBtn = fixture.debugElement.query(By.css('[data-cy="logout-button"]'));
-        const usernameSpan = fixture.debugElement.query(By.css('[data-cy="username-display"]'));
+        const usernameSpan = fixture.debugElement.query(By.css('[data-cy="user-menu"]'));
 
         expect(logoutBtn).toBeTruthy();
         expect(usernameSpan.nativeElement.textContent).toContain('testuser');
     });
 
-    it.skip('should call logout and navigate to home on logout click', async () => {
+    it('should call logout and navigate to home on logout click', async () => {
         currentUserSubject.next({username: 'testuser', roles: []});
-        fixture.detectChanges();
-        await fixture.whenStable();
         fixture.detectChanges();
 
         const logoutBtn = fixture.debugElement.query(By.css('[data-cy="logout-button"]'));

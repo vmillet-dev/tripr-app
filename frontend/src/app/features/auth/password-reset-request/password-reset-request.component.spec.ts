@@ -58,7 +58,7 @@ describe('PasswordResetRequestComponent', () => {
     });
 
     it('should call authService.requestPasswordReset and show success message', async () => {
-        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
+        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"]')).nativeElement;
         usernameInput.value = 'testuser';
         usernameInput.dispatchEvent(new Event('input'));
         fixture.detectChanges();
@@ -84,7 +84,7 @@ describe('PasswordResetRequestComponent', () => {
     });
 
     it('should show error message when request fails', async () => {
-        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
+        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"]')).nativeElement;
         usernameInput.value = 'unknownuser';
         usernameInput.dispatchEvent(new Event('input'));
         fixture.detectChanges();

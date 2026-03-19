@@ -1,69 +1,101 @@
 // cypress/support/commands.ts
 
 declare global {
-  namespace Cypress {
-    interface Chainable {
-      register(username: string, email: string, password: string): Chainable<void>;
-      login(username: string, password: string): Chainable<void>;
-      requestPasswordReset(username: string): Chainable<void>;
-      resetPassword(token: string, newPassword: string): Chainable<void>;
+    namespace Cypress {
+        interface Chainable {
+            register(username: string, email: string, password: string): Chainable<void>;
+
+            login(username: string, password: string): Chainable<void>;
+
+            requestPasswordReset(username: string): Chainable<void>;
+
+            resetPassword(token: string, newPassword: string): Chainable<void>;
+
+            deleteAllEmails(): Chainable<void>;
+
+            getLastEmail(toEmail: string): Chainable<any>;
+        }
     }
-  }
 }
 
+Cypress.Commands.add('deleteAllEmails', () => {
+    const mailpitUrl = 'http://localhost:8026'; // Adjusted to 8026 for this environment
+    cy.request('DELETE', `${mailpitUrl}/api/v1/messages`);
+});
+
+Cypress.Commands.add('getLastEmail', (toEmail: string) => {
+    const mailpitUrl = 'http://localhost:8026'; // Adjusted to 8026 for this environment
+    // Retry until we find an email (it might take a second for the server to send/receive it)
+    const fetchEmail = () => {
+        return cy.request('GET', `${mailpitUrl}/api/v1/messages`).then((response) => {
+            const messages = response.body.messages;
+            const userMessage = messages.find((m: any) => m.To.some((to: any) => to.Address === toEmail));
+
+            if (!userMessage) {
+                cy.wait(500);
+                return fetchEmail();
+            }
+
+            return cy.request('GET', `${mailpitUrl}/api/v1/message/${userMessage.ID}`);
+        });
+    };
+
+    return fetchEmail();
+});
+
 Cypress.Commands.add('register', (username, email, password) => {
-  cy.visit('/register');
-  cy.get('[data-cy=username-input]').type(username);
-  cy.get('[data-cy=email-input]').type(email);
-  cy.get('[data-cy=password-input]').type(password);
-  cy.get('[data-cy=confirm-password-input]').type(password);
-  
-  // Intercept the register API call
-  cy.intercept('POST', '/api/auth/register').as('registerRequest');
-  cy.get('[data-cy=register-button]').click();
-  cy.wait('@registerRequest');
+    cy.visit('/register');
+    cy.get('[data-cy=username-input]').type(username);
+    cy.get('[data-cy=email-input]').type(email);
+    cy.get('[data-cy=password-input]').type(password);
+    cy.get('[data-cy=confirm-password-input]').type(password);
+
+    // Intercept the register API call
+    cy.intercept('POST', '/api/auth/register').as('registerRequest');
+    cy.get('[data-cy=register-button]').click();
+    cy.wait('@registerRequest');
 });
 
 Cypress.Commands.add('login', (username, password) => {
-  cy.visit('/login');
-  cy.get('[data-cy=username-input]').type(username);
-  cy.get('[data-cy=password-input]').type(password);
-  
-  // Intercept the login API call
-  cy.intercept('POST', '/api/auth/login').as('loginRequest');
-  cy.get('[data-cy=login-button]').click();
-  cy.wait('@loginRequest');
+    cy.visit('/login');
+    cy.get('[data-cy=username-input]').type(username);
+    cy.get('[data-cy=password-input]').type(password);
+
+    // Intercept the login API call
+    cy.intercept('POST', '/api/auth/login').as('loginRequest');
+    cy.get('[data-cy=login-button]').click();
+    cy.wait('@loginRequest');
 });
 
 Cypress.Commands.add('requestPasswordReset', (username) => {
-  cy.visit('/password-reset-request');
-  cy.get('[data-cy=username-input]').type(username);
-  
-  // Intercept the password reset request API call
-  cy.intercept('POST', '/api/auth/password/reset-request').as('resetRequest');
-  cy.get('[data-cy=reset-request-button]').click();
-  cy.wait('@resetRequest');
+    cy.visit('/password-reset-request');
+    cy.get('[data-cy=username-input]').type(username);
+
+    // Intercept the password reset request API call
+    cy.intercept('POST', '/api/auth/password/reset-request').as('resetRequest');
+    cy.get('[data-cy=reset-request-button]').click();
+    cy.wait('@resetRequest');
 });
 
 Cypress.Commands.add('resetPassword', (token, newPassword) => {
-  cy.visit(`/password-reset?token=${token}`);
-  
-  // Intercept the token validation API call for waiting
-  cy.intercept('GET', '/api/auth/password/validate-token*').as('validateToken');
-  cy.wait('@validateToken');
-  
-  // Only proceed if token is valid
-  cy.get('body').then(($body) => {
-    if ($body.find('[data-cy=new-password-input]').length > 0) {
-      cy.get('[data-cy=new-password-input]').type(newPassword);
-      cy.get('[data-cy=confirm-password-input]').type(newPassword);
-      
-      // Intercept the password reset API call for waiting
-      cy.intercept('POST', '/api/auth/password/reset').as('resetPassword');
-      cy.get('[data-cy=reset-password-button]').click();
-      cy.wait('@resetPassword');
-    }
-  });
+    cy.visit(`/password-reset?token=${token}`);
+
+    // Intercept the token validation API call for waiting
+    cy.intercept('GET', '/api/auth/password/validate-token*').as('validateToken');
+    cy.wait('@validateToken');
+
+    // Only proceed if token is valid
+    cy.get('body').then(($body) => {
+        if ($body.find('[data-cy=new-password-input]').length > 0) {
+            cy.get('[data-cy=new-password-input]').type(newPassword);
+            cy.get('[data-cy=confirm-password-input]').type(newPassword);
+
+            // Intercept the password reset API call for waiting
+            cy.intercept('POST', '/api/auth/password/reset').as('resetPassword');
+            cy.get('[data-cy=reset-password-button]').click();
+            cy.wait('@resetPassword');
+        }
+    });
 });
 
 export {};

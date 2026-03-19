@@ -3,25 +3,25 @@ import {FormInputComponent} from './form-input.component';
 import {getTranslocoModule} from "../../../transloco/testing/transloco-testing.module";
 import {By} from '@angular/platform-browser';
 import {FormSubmitDirective} from '../../directives/form-submit.directive';
-import {Component, viewChild} from '@angular/core';
+import {Component, signal, viewChild} from '@angular/core';
 
 @Component({
     standalone: true,
     imports: [FormInputComponent, FormSubmitDirective],
     template: `
         <form #form="formSubmit">
-            <app-form-input id="test-input" [label]="label" [placeholder]="placeholder" [invalid]="isInvalid"
-                            [errors]="errors"
-                            [touched]="isTouched"></app-form-input>
+            <app-form-input id="test-input" [label]="label()" [placeholder]="placeholder()" [invalid]="isInvalid()"
+                            [errors]="errors()"
+                            [touched]="isTouched()"></app-form-input>
         </form>
     `
 })
 class TestHostComponent {
-    label: string | null = 'Test Label';
-    placeholder: string | null = null;
-    isInvalid = false;
-    isTouched = false;
-    errors: any[] = [];
+    label = signal<string | null>('Test Label');
+    placeholder = signal<string | null>(null);
+    isInvalid = signal(false);
+    isTouched = signal(false);
+    errors = signal<any[]>([]);
     inputComponent = viewChild(FormInputComponent);
     formDirective = viewChild(FormSubmitDirective);
 }
@@ -46,10 +46,9 @@ describe('FormInputComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it.skip('should display label and placeholder when provided', async () => {
-        hostComponent.label = 'app.test.label';
-        hostComponent.placeholder = 'app.test.placeholder';
-        await fixture.whenStable();
+    it('should display label and placeholder when provided', async () => {
+        hostComponent.label.set('app.test.label');
+        hostComponent.placeholder.set('app.test.placeholder');
         fixture.detectChanges();
 
         const label = fixture.debugElement.query(By.css('label'));
@@ -60,24 +59,21 @@ describe('FormInputComponent', () => {
     });
 
     describe('Validation errors display (showErrors)', () => {
-        it.skip('should NOT show errors initially', async () => {
-            hostComponent.isInvalid = true;
-            await fixture.whenStable();
+        it('should NOT show errors initially', async () => {
+            hostComponent.isInvalid.set(true);
             fixture.detectChanges();
             expect(component.showErrors()).toBe(false);
         });
 
-        it.skip('should show errors when invalid and touched', async () => {
-            hostComponent.isInvalid = true;
-            hostComponent.isTouched = true;
-            await fixture.whenStable();
+        it('should show errors when invalid and touched', async () => {
+            hostComponent.isInvalid.set(true);
+            hostComponent.isTouched.set(true);
             fixture.detectChanges();
             expect(component.showErrors()).toBe(true);
         });
 
-        it.skip('should show errors when invalid and form is submitted', async () => {
-            hostComponent.isInvalid = true;
-            await fixture.whenStable();
+        it('should show errors when invalid and form is submitted', async () => {
+            hostComponent.isInvalid.set(true);
             fixture.detectChanges();
             hostComponent.formDirective()?.submitted.set(true);
             fixture.detectChanges();

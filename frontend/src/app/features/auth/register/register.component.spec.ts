@@ -58,8 +58,8 @@ describe('RegisterComponent', () => {
     });
 
     it('should show password mismatch error', async () => {
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
-        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"] input')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"]')).nativeElement;
+        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"]')).nativeElement;
 
         passwordInput.value = 'password123';
         passwordInput.dispatchEvent(new Event('input'));
@@ -82,10 +82,10 @@ describe('RegisterComponent', () => {
     });
 
     it('should call authService.register when form is valid', async () => {
-        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
-        const emailInput = fixture.debugElement.query(By.css('[data-cy="email-input"] input')).nativeElement;
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
-        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"] input')).nativeElement;
+        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"]')).nativeElement;
+        const emailInput = fixture.debugElement.query(By.css('[data-cy="email-input"]')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"]')).nativeElement;
+        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"]')).nativeElement;
 
         usernameInput.value = 'testuser';
         usernameInput.dispatchEvent(new Event('input'));
@@ -117,10 +117,10 @@ describe('RegisterComponent', () => {
     });
 
     it('should show error message when registration fails', async () => {
-        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"] input')).nativeElement;
-        const emailInput = fixture.debugElement.query(By.css('[data-cy="email-input"] input')).nativeElement;
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"] input')).nativeElement;
-        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"] input')).nativeElement;
+        const usernameInput = fixture.debugElement.query(By.css('[data-cy="username-input"]')).nativeElement;
+        const emailInput = fixture.debugElement.query(By.css('[data-cy="email-input"]')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="password-input"]')).nativeElement;
+        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"]')).nativeElement;
 
         usernameInput.value = 'testuser';
         usernameInput.dispatchEvent(new Event('input'));

@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
     private authService = inject(AuthService);
 
     isRegistered = signal<boolean>(false);
+    resetSuccess = signal<boolean>(false);
     private returnUrl: string = '/';
 
     loginModel = signal<LoginCredentials>({
@@ -44,6 +45,8 @@ export class LoginComponent implements OnInit {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
         // Check if user was redirected after registration
         this.isRegistered.set(this.route.snapshot.queryParams['registered'] === 'true');
+        // Check if user was redirected after password reset
+        this.resetSuccess.set(this.route.snapshot.queryParams['resetSuccess'] === 'true');
     }
 
     onSubmit(): void {

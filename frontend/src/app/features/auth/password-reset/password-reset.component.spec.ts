@@ -72,8 +72,8 @@ describe('PasswordResetComponent', () => {
     });
 
     it('should show password mismatch error', async () => {
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="new-password-input"] input')).nativeElement;
-        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"] input')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="new-password-input"]')).nativeElement;
+        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"]')).nativeElement;
 
         passwordInput.value = 'password123';
         passwordInput.dispatchEvent(new Event('input'));
@@ -97,8 +97,8 @@ describe('PasswordResetComponent', () => {
 
     it('should call authService.resetPassword on valid submission', async () => {
         vi.useFakeTimers();
-        const passwordInput = fixture.debugElement.query(By.css('[data-cy="new-password-input"] input')).nativeElement;
-        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"] input')).nativeElement;
+        const passwordInput = fixture.debugElement.query(By.css('[data-cy="new-password-input"]')).nativeElement;
+        const confirmPasswordInput = fixture.debugElement.query(By.css('[data-cy="confirm-password-input"]')).nativeElement;
 
         passwordInput.value = 'newpassword123';
         passwordInput.dispatchEvent(new Event('input'));
