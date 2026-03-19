@@ -24,7 +24,7 @@ describe('Password Reset Workflow', () => {
         cy.get('.invalid-feedback').should('be.visible').and('contain', 'Ce champ est obligatoire');
     });
 
-    it('should validate password length in reset form', () => {
+    it('should validate password reset form fields', () => {
         // Use a dummy token to show the form
         cy.intercept('GET', '**/api/auth/password/validate-token*', {
             statusCode: 200,
@@ -34,9 +34,19 @@ describe('Password Reset Workflow', () => {
         cy.visit('/password-reset?token=dummy-token');
         cy.wait('@validateTokenMock');
 
+        // Test mandatory fields
+        cy.get('[data-cy=reset-password-button]').click();
+        cy.get('.invalid-feedback').should('be.visible').and('contain', 'Ce champ est obligatoire');
+
+        // Test password length
         cy.get('[data-cy=new-password-input]').type('123');
         cy.get('[data-cy=confirm-password-input]').type('123');
         cy.get('.invalid-feedback').should('be.visible').and('contain', 'Minimum 8 caractères requis');
+
+        // Test password mismatch
+        cy.get('[data-cy=new-password-input]').clear().type('Password123!');
+        cy.get('[data-cy=confirm-password-input]').clear().type('DifferentPassword123!');
+        cy.get('.invalid-feedback').should('be.visible').and('contain', 'Les mots de passe ne correspondent pas');
     });
 
     it('should complete full password reset flow via Mailpit', () => {

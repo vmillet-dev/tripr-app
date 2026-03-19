@@ -1,11 +1,9 @@
-// cypress/e2e/auth.cy.ts
+// cypress/e2e/register.cy.ts
 
-describe('Authentication', () => {
+describe('Registration Flow', () => {
     const username = `testuser_${Date.now()}`;
     const email = `testuser_${Date.now()}@example.com`;
     const password = 'Password123!';
-    const invalidUsername = 'nonexistentuser';
-    const invalidPassword = 'wrongpassword';
 
     it('should navigate to the register page', () => {
         cy.visit('/login');
@@ -23,9 +21,14 @@ describe('Authentication', () => {
         // Check form validation
         cy.get('.invalid-feedback').should('be.visible').and('contain', 'Ce champ est obligatoire');
 
+        // Test invalid email format
+        cy.get('[data-cy=email-input]').type('invalid-email');
+        cy.get('[data-cy=username-input]').click(); // trigger validation
+        cy.get('.invalid-feedback').should('be.visible').and('contain', 'Veuillez entrer une adresse email valide');
+
         // Test password validation
         cy.get('[data-cy=username-input]').type(username);
-        cy.get('[data-cy=email-input]').type(email);
+        cy.get('[data-cy=email-input]').clear().type(email);
         cy.get('[data-cy=password-input]').type('123');
         cy.get('[data-cy=confirm-password-input]').type('123');
         cy.get('.invalid-feedback').should('be.visible').and('contain', 'Minimum 6 caractères requis');
@@ -61,7 +64,8 @@ describe('Authentication', () => {
     });
 
     it('should not register with existing username or email', () => {
-        // We try to register the same user again
+        // First, ensure the user exists (actually we reuse the one from the previous test if run sequentially,
+        // but Cypress tests should ideally be independent. However, here we just use the same username/email)
         cy.intercept('POST', '**/api/auth/register').as('registerDuplicate');
 
         cy.visit('/register');
@@ -77,84 +81,5 @@ describe('Authentication', () => {
 
         // Error message should be visible
         cy.get('.alert-danger').should('be.visible');
-    });
-
-    it('should validate the login form', () => {
-        cy.visit('/login');
-
-        // Skip validation test in CI environment
-        cy.log('Login form validation test - checking form exists');
-        cy.get('[data-cy=username-input]').should('exist');
-        cy.get('[data-cy=password-input]').should('exist');
-        cy.get('[data-cy=login-button]').should('exist');
-    });
-
-    it('should handle invalid login credentials', () => {
-        cy.intercept('POST', '**/api/auth/login').as('loginRequest');
-
-        cy.visit('/login');
-
-        // Fill out the login form with invalid credentials
-        cy.get('[data-cy=username-input]').type(invalidUsername);
-        cy.get('[data-cy=password-input]').type(invalidPassword);
-
-        // Submit the form
-        cy.get('[data-cy=login-button]').click();
-
-        // Wait for API call to complete
-        cy.wait('@loginRequest');
-
-        // Error message should be visible
-        cy.get('.alert-danger').should('be.visible');
-    });
-
-    it('should login with valid credentials', () => {
-        cy.visit('/login');
-
-        // Fill out the login form with valid credentials
-        cy.get('[data-cy=username-input]').type(username);
-        cy.get('[data-cy=password-input]').type(password);
-
-        // Intercept login
-        cy.intercept('POST', '**/api/auth/login').as('loginRequest');
-
-        // Submit the form
-        cy.get('[data-cy=login-button]').click();
-
-        // Wait for login
-        cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
-
-        // Check if we are redirected to dashboard
-        cy.url().should('include', '/dashboard');
-        cy.get('h1').should('be.visible');
-    });
-
-    it('should logout correctly', () => {
-        // First login
-        cy.login(username, password);
-        cy.visit('/dashboard');
-
-        // Then logout
-        cy.get('[data-cy=logout-button]').click();
-
-        // Should be back to home page
-        cy.url().should('eq', Cypress.config().baseUrl + '/');
-
-        // Try to go back to dashboard - should be redirected to login
-        cy.visit('/dashboard');
-        cy.url().should('include', '/login');
-    });
-
-    it('should not allow access to dashboard when not logged in', () => {
-        // Ensure we are not logged in (e.g. by clearing cookies/localStorage if needed,
-        // but Cypress does this by default between tests)
-        cy.visit('/dashboard');
-        cy.url().should('include', '/login');
-    });
-
-    it('should navigate to password reset request page', () => {
-        cy.visit('/login');
-        cy.get('[data-cy=forgot-password-link]').click();
-        cy.url().should('include', '/password-reset-request');
     });
 });
