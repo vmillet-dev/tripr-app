@@ -4,8 +4,6 @@ Robust API built with **Spring Boot 4** and **Kotlin**, using a strict **Hexagon
 
 The project follows a **Contract-First** approach using **OpenAPI**. The server-side code is generated from the OpenAPI spec, ensuring a perfect sync between documentation and implementation.
 
-🔗 **Swagger UI** (dev mode): [http://localhost:8080/api/swagger-ui](http://localhost:8080/api/swagger-ui)
-
 ---
 
 ### 🏛️ Hexagonal Architecture

@@ -80,6 +80,12 @@ cd backend && ./gradlew bootRun
 cd frontend && npm install && npm run dev
 ```
 
+### 🛠️ Dev Links
+
+- 🌐 **Frontend** → http://localhost:4200
+- 📄 **Swagger UI** → http://localhost:8080/api/swagger-ui
+- 📬 **Mailpit** → http://localhost:8026
+
 ### 📁 Monorepo Structure
 
 ```text

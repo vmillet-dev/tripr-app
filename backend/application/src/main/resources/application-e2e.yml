@@ -9,4 +9,6 @@ spring:
 jwt:
   secret: verySecretKeyThatShouldBeAtLeast32CharactersLong
 password-reset:
-  base-url: localhost:8080
+  base-url: localhost:8081
+server:
+  port: 8081
