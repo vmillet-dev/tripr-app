@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.Instant
 
 class PasswordResetServiceTest {
@@ -64,16 +63,16 @@ class PasswordResetServiceTest {
             verify { emailService.sendPasswordResetEmail("bob@e.com", any()) }
         }
 
-    @Test
-    fun `requestPasswordReset should throw UserNotFoundException when user missing`() {
-        every { userPersistence.findByUsername("no") } returns null
-        assertDoesNotThrow { passwordResetService.requestPasswordReset("no") }
+        @Test
+        fun `requestPasswordReset should throw UserNotFoundException when user missing`() {
+            every { userPersistence.findByUsername("no") } returns null
+            assertDoesNotThrow { passwordResetService.requestPasswordReset("no") }
 
-        verify(exactly = 0) { tokenPersistence.deletePasswordResetTokenByUser(any()) }
-        verify(exactly = 0) { tokenPersistence.save(any()) }
-        verify(exactly = 0) { emailService.sendPasswordResetEmail(any(), any()) }
-    }
+            verify(exactly = 0) { tokenPersistence.deletePasswordResetTokenByUser(any()) }
+            verify(exactly = 0) { tokenPersistence.save(any()) }
+            verify(exactly = 0) { emailService.sendPasswordResetEmail(any(), any()) }
         }
+    }
 
     @Nested
     inner class ResetPassword {

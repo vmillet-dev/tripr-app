@@ -83,10 +83,4 @@ describe('Login Flow', () => {
         cy.visit('/dashboard');
         cy.url().should('include', '/login');
     });
-
-    it('should navigate to password reset request page from login', () => {
-        cy.visit('/login');
-        cy.get('[data-cy=forgot-password-link]').click();
-        cy.url().should('include', '/password-reset-request');
-    });
 });

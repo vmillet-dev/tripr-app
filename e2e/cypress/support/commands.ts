@@ -19,15 +19,16 @@ declare global {
 }
 
 Cypress.Commands.add('deleteAllEmails', () => {
-    const mailpitUrl = 'http://localhost:8026'; // Adjusted to 8026 for this environment
+    const mailpitUrl = 'http://localhost:8027'; // Adjusted to 8026 for this environment
     cy.request('DELETE', `${mailpitUrl}/api/v1/messages`);
 });
 
 Cypress.Commands.add('getLastEmail', (toEmail: string) => {
-    const mailpitUrl = 'http://localhost:8026'; // Adjusted to 8026 for this environment
+    const mailpitUrl = 'http://localhost:8027'; // Adjusted to 8026 for this environment
     // Retry until we find an email (it might take a second for the server to send/receive it)
     const fetchEmail = () => {
         return cy.request('GET', `${mailpitUrl}/api/v1/messages`).then((response) => {
+            console.log(response)
             const messages = response.body.messages;
             const userMessage = messages.find((m: any) => m.To.some((to: any) => to.Address === toEmail));
 
