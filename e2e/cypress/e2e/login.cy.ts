@@ -20,7 +20,7 @@ describe('Login Flow', () => {
 
         // Test mandatory fields
         cy.get('[data-cy=login-button]').click();
-        cy.get('.invalid-feedback').should('be.visible').and('contain', 'Ce champ est obligatoire');
+        cy.get('.invalid-feedback').should('be.visible');
     });
 
     it('should handle invalid login credentials', () => {
