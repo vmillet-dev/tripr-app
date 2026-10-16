@@ -16,7 +16,7 @@ COPY --from=frontend-build /app/public/ backend/application/src/main/resources/s
 RUN gradle :backend:application:bootJar
 
 # Step 3: Create the final image with the fat JAR (use multiarch image)
-FROM eclipse-temurin:25.0.2_10-jre-alpine
+FROM eclipse-temurin:25.0.4_7-jre-alpine
 WORKDIR /app
 COPY --from=backend-build /app/backend/application/build/libs/app.jar app.jar
 
